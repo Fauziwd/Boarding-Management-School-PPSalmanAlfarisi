@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Achievement;
-use App\Models\Santri; // Pastikan penggunaan nama kelas ini benar
+use App\Models\Santri;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,24 +11,18 @@ class AchievementController extends Controller
 {
     public function index()
     {
-        $achievements = Achievement::with('santri')->paginate(5); // Menggunakan paginate untuk membatasi jumlah data yang ditampilkan per halaman
+        $achievements = Achievement::with('santri')->paginate(5);
 
         return Inertia::render('Achievement/Index', [
-            'achievements' => $achievements
+            'achievements' => $achievements,
         ]);
     }
 
     public function create(Request $request)
     {
         $santriId = $request->query('santri_id');
-        $santri = null;
-        $santris = [];
-
-        if ($santriId) {
-            $santri = Santri::findOrFail($santriId);
-        } else {
-            $santris = Santri::all();
-        }
+        $santri = $santriId ? Santri::findOrFail($santriId) : null;
+        $santris = Santri::all();
 
         return Inertia::render('Achievement/Create', [
             'santri' => $santri,
@@ -43,7 +37,7 @@ class AchievementController extends Controller
             'title' => 'required|string|max:255',
             'type' => 'required|string',
             'description' => 'required|string',
-            'date' => 'required|date', // Validasi untuk field date
+            'date' => 'required|date',
         ]);
 
         Achievement::create($request->all());
@@ -64,8 +58,6 @@ class AchievementController extends Controller
 
     public function update(Request $request, Achievement $achievement)
     {
-        \Log::info('Update Achievement Request:', $request->all());
-    
         $request->validate([
             'santri_id' => 'required|exists:santris,id',
             'title' => 'required|string|max:255',
@@ -73,9 +65,9 @@ class AchievementController extends Controller
             'description' => 'required|string',
             'date' => 'required|date',
         ]);
-    
+
         $achievement->update($request->all());
-    
+
         return redirect()->route('achievements.index')
             ->with('success', 'Pencapaian berhasil diperbarui.');
     }
@@ -84,7 +76,14 @@ class AchievementController extends Controller
     {
         $achievement = Achievement::findOrFail($id);
         $achievement->delete();
-    
+
         return response()->json(['success' => true, 'message' => 'Pencapaian berhasil dihapus.']);
+    }
+
+    public function getAchievements($santri_id)
+    {
+        // Mengambil data pencapaian berdasarkan santri_id
+        $achievements = Achievement::where('santri_id', $santri_id)->get();
+        return response()->json($achievements);
     }
 }

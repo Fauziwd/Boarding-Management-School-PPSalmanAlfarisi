@@ -16,7 +16,7 @@ export default function AchievementCreate({ auth, santri, santris }) {
             year: "",
             santri_id: santri ? santri.id : "",
             title: "",
-            type: "memorization", // Default value set to "memorization"
+            type: "Hafalan", // Default value set to "memorization"
             description: "",
             date: "", // Add date field
         });
@@ -179,8 +179,8 @@ export default function AchievementCreate({ auth, santri, santris }) {
                                             onChange={(e) => setData("type", e.target.value)}
                                             required
                                         >
-                                            <option value="memorization">Memorization</option>
-                                            <option value="academic">Academic</option>
+                                            <option value="Hafalan">Hafalan</option>
+                                            <option value="Akademik">Akademik</option>
                                         </select>
                                         <InputError className="mt-2" message={errors.type} />
                                     </div>
