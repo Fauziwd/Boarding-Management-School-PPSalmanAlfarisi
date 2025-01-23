@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SantriController;
-use App\Http\Controllers\AchievementController;
+// use App\Http\Controllers\AchievementController;
 use Inertia\Inertia;
 
 // Halaman Welcome
@@ -22,10 +22,10 @@ Route::get('/', function () {
 // Halaman Dashboard
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 // CRUD Users
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // CRUD Santri
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/santri', [SantriController::class, 'index'])->name('santri');
     Route::get('/santris/create', [SantriController::class, 'create'])->name('santris.create');
     Route::post('/santris/store', [SantriController::class, 'store'])->name('santris.store');
@@ -50,20 +50,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/santri/{id}', [SantriController::class, 'show']);
  // Route untuk mengambil data pencapaian santri berdasarkan santri_id
-    Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
+    // Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
 });
 
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
-    Route::get('/achievements/create', [AchievementController::class, 'create'])->name('achievements.create');
-    Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
-    Route::get('/achievements/edit/{achievement}', [AchievementController::class, 'edit'])->name('achievements.edit');
-    Route::patch('/achievements/update/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
-    Route::delete('/achievements/{id}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
+//     Route::get('/achievements/create', [AchievementController::class, 'create'])->name('achievements.create');
+//     Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
+//     Route::get('/achievements/edit/{achievement}', [AchievementController::class, 'edit'])->name('achievements.edit');
+//     Route::patch('/achievements/update/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
+//     Route::delete('/achievements/{id}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
 
-Route::get('/achievements/{santriId}', [AchievementController::class, 'index']);
-});
+// Route::get('/achievements/{santriId}', [AchievementController::class, 'index']);
+// });
 
 
 // Profil Pengguna

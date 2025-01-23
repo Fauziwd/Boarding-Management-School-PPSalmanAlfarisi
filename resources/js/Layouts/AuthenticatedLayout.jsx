@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 { name: "Dashboard", href: route("dashboard"), current: route().current("dashboard") },
                 { name: "Users", href: route("users"), current: route().current("users") },
                 { name: "Santri", href: route("santri"), current: route().current("santri") },
-                { name: "Capaian", href: route("achievements.index"), current: route().current("achievements.index") },
+                // { name: "Capaian", href: route("achievements.index"), current: route().current("achievements.index") },
                 { name: "Absensi", href: route("absensi"), current: route().current("absensi") },
             ];
         } else {

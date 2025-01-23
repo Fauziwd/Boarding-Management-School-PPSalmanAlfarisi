@@ -3,25 +3,9 @@ import { Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Datadiri from "@/Pages/ShowSantri/Datadiri";
-import axios from "axios";
+// import axios from "axios";
 
 export default function SantriShow({ auth, santri }) {
-    const [achievements, setAchievements] = useState([]);
-
-    useEffect(() => {
-        if (santri) {
-            fetchAchievements(santri.id);
-        }
-    }, [santri]);
-
-    const fetchAchievements = async (santriId) => {
-        try {
-            const response = await axios.get(`/api/achievements/${santriId}`);
-            setAchievements(response.data);
-        } catch (error) {
-            console.error("Error fetching achievements:", error);
-        }
-    };
 
     if (!santri) {
         return (
@@ -77,9 +61,40 @@ export default function SantriShow({ auth, santri }) {
                                 <div className="mb-6">
                                     <Datadiri santri={santri} />
                                 </div>
+                                                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}
 
-                                {/* Tabel Pencapaian */}
-                                <div>
+
+// Artefak Pencapaian
+    // const [achievements, setAchievements] = useState([]);
+
+    // useEffect(() => {
+    //     if (santri) {
+    //         fetchAchievements(santri.id);
+    //     }
+    // }, [santri]);
+
+    // const fetchAchievements = async (santriId) => {
+    //     try {
+    //         const response = await axios.get(`/api/achievements/${santriId}`);
+    //         setAchievements(response.data);
+    //     } catch (error) {
+    //         console.error("Error fetching achievements:", error);
+    //     }
+    // };
+
+
+
+
+     {/* Tabel Pencapaian */}
+                                {/* <div>
                                     <h2 className="text-lg font-semibold mb-4">
                                         Pencapaian
                                     </h2>
@@ -136,12 +151,4 @@ export default function SantriShow({ auth, santri }) {
                                             </tbody>
                                         </table>
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </AuthenticatedLayout>
-    );
-}
+                                </div> */}
