@@ -31,37 +31,37 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,user,muhafidz,mudaris,koperasi',
             'password' => 'required|min:8|confirmed',
         ]);
-
+    
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
-
+    
         return redirect()->route('users');
+    }    
+
+    public function update(Request $request, User $user){
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:admin,user,muhafidz,mudaris,koperasi',
+            'password' => 'nullable|min:8',
+            'password_confirmation' => 'nullable|same:password',
+        ]);
+    
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => $request->password ? bcrypt($request->password) : $user->password,
+        ]);
+    
+        return redirect()->route('users')->with('success', 'User updated successfully!');
     }
-
-    public function update(Request $request, User $user)
-{
-    $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:users,email,' . $user->id,
-        'role' => 'required|in:admin,user', // Pastikan role ada di antara pilihan yang valid
-        'password' => 'nullable|min:8',
-        'password_confirmation' => 'nullable|same:password',
-    ]);
-
-    $user->update([
-        'name' => $request->name,
-        'email' => $request->email,
-        'role' => $request->role, // Tambahkan role
-        'password' => $request->password ? bcrypt($request->password) : $user->password,
-    ]);
-
-    return redirect()->route('users')->with('success', 'User updated successfully!');
-}
+    
 }

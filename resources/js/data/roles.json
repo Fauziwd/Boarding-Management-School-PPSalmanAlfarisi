@@ -1,0 +1,22 @@
+[
+    {
+        "value": "admin",
+        "label": "Admin"
+    },
+    {
+        "value": "user",
+        "label": "User"
+    },
+    {
+        "value": "muhafidz",
+        "label": "Muhafidz"
+    },
+    {
+        "value": "mudaris",
+        "label": "Mudaris"
+    },
+    {
+        "value": "koperasi",
+        "label": "Koperasi"
+    }
+]

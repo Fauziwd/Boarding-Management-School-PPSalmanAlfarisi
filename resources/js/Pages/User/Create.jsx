@@ -8,6 +8,8 @@ import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 import { Link, useForm } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
+import Selectbox from "@/Components/Selectbox";
+import roles from "@/data/roles.json";
 
 export default function UserIndex({ auth }) {
     const { data, setData, post, errors, processing, recentlySuccessful } =
@@ -15,9 +17,9 @@ export default function UserIndex({ auth }) {
             name: "",
             email: "",
             password: "",
-            email_verified_at: new Date().toISOString(),
             password_confirmation: "",
             role: "user",
+            email_verified_at: new Date().toISOString(),
             remember_token: Math.random().toString(36).substring(2, 15),
         });
 
@@ -42,8 +44,7 @@ export default function UserIndex({ auth }) {
     ];
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}>
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Create User" />
 
             <div className="py-7">
@@ -58,7 +59,8 @@ export default function UserIndex({ auth }) {
                                     </h2>
 
                                     <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                        Create a new user account here to get started with the app!
+                                        Create a new user account here to get
+                                        started with the app!
                                     </p>
                                 </header>
 
@@ -174,24 +176,21 @@ export default function UserIndex({ auth }) {
                                             value="Role"
                                         />
 
-                                        <select
-                                            id="role"
-                                            value={data.role}
+                                        <Selectbox
                                             onChange={(e) =>
                                                 setData("role", e.target.value)
                                             }
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                                        >
-                                            <option value="user">User</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
+                                            currentValue="user"
+                                            id="role"
+                                            options={roles}
+                                        />
 
                                         <InputError
                                             className="mt-2"
                                             message={errors.role}
                                         />
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-4">
                                         <PrimaryButton disabled={processing}>
                                             Save
