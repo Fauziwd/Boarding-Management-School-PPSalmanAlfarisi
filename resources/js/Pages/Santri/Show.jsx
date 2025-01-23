@@ -53,18 +53,23 @@ export default function SantriShow({ auth, santri }) {
                             {/* Logo */}
                             <div className="flex-shrink-0 mr-6">
                                 <img
-                                    src="/path/to/logo.png"
-                                    alt="PP Santri"
-                                    className="w-32 h-auto"
+                                    src={
+                                      "/pp.jpeg"
+                                    }
+                                    alt={`Foto ${santri.nama}`}
+                                    className="w-12 h-12 rounded-full"
                                 />
                             </div>
 
                             {/* Content */}
                             <div className="flex-grow">
                                 <header className="mb-6">
-                                    <h1 className="text-2xl font-bold">Detail {santri.nama}</h1>
+                                    <h1 className="text-2xl font-bold">
+                                        Detail {santri.nama}
+                                    </h1>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Informasi mengenai data diri, capaian hafalan, dan capaian akademik.
+                                        Informasi mengenai data diri, capaian
+                                        hafalan, dan capaian akademik.
                                     </p>
                                 </header>
 
@@ -75,9 +80,13 @@ export default function SantriShow({ auth, santri }) {
 
                                 {/* Tabel Pencapaian */}
                                 <div>
-                                    <h2 className="text-lg font-semibold mb-4">Pencapaian</h2>
+                                    <h2 className="text-lg font-semibold mb-4">
+                                        Pencapaian
+                                    </h2>
                                     {achievements.length === 0 ? (
-                                        <p className="text-gray-500">Belum ada data pencapaian.</p>
+                                        <p className="text-gray-500">
+                                            Belum ada data pencapaian.
+                                        </p>
                                     ) : (
                                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             <thead>
@@ -97,24 +106,33 @@ export default function SantriShow({ auth, santri }) {
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                                {achievements.map((achievement, index) => (
-                                                    <tr key={index}>
-                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                            {achievement.type === "Hafalan"
-                                                                ? "Capaian Hafalan"
-                                                                : "Capaian Akademik"}
-                                                        </td>
-                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                            {achievement.title}
-                                                        </td>
-                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                            {achievement.description}
-                                                        </td>
-                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                            {achievement.date}
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                {achievements.map(
+                                                    (achievement, index) => (
+                                                        <tr key={index}>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {achievement.type ===
+                                                                "hafalan"
+                                                                    ? "Capaian Hafalan"
+                                                                    : "Capaian Akademik"}
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    achievement.title
+                                                                }
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    achievement.description
+                                                                }
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    achievement.date
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
                                             </tbody>
                                         </table>
                                     )}

@@ -1,6 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm } from "@inertiajs/react";
-
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -53,15 +52,29 @@ export default function SantriCreate({ auth }) {
         kabupaten_kota: "",
         provinsi: "",
         kode_pos: "",
+        foto: null,  // Tambahkan state untuk foto
     });
 
     const [currentStep, setCurrentStep] = useState(0);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
     const [showErrorToast, setShowErrorToast] = useState(false);
+    const [filePreview, setFilePreview] = useState(null);
 
     const handleNISChange = (e) => {
         const formattedNIS = formatNIS(e.target.value);
         setData("nis", formattedNIS);
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setData("foto", file);  // Set file foto
+
+        // Generate preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFilePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
 
     const submit = (e) => {
@@ -141,7 +154,7 @@ export default function SantriCreate({ auth }) {
                                                     fill="currentColor"
                                                     viewBox="0 0 20 16"
                                                 >
-                                                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Z" />
+                                                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a 2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Z" />
                                                 </svg>
                                             )}
                                         </span>
@@ -169,7 +182,7 @@ export default function SantriCreate({ auth }) {
                                     Create a new santri here by filling the form.
                                 </p>
 
-                                <form onSubmit={submit} className="space-y-6">
+                                <form onSubmit={submit} className="space-y-6" encType="multipart/form-data">
                                     {/* Alert section for displaying general form errors */}
                                     {Object.keys(errors).length > 0 && (
                                         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -284,6 +297,36 @@ export default function SantriCreate({ auth }) {
                                                     <option value="Tidak">Tidak</option>
                                                 </select>
                                                 <InputError className="mt-2" message={errors.status_yatim_piatu} />
+                                            </div>
+
+                                            {/* Input untuk Foto */}
+                                            <div>
+                                                <InputLabel htmlFor="foto" value="Foto" />
+                                                <input
+                                                    id="foto"
+                                                    name="foto"
+                                                    type="file"
+                                                    className="mt-1 block w-full text-sm text-gray-700 dark:text-gray-300
+                                                        file:mr-4 file:py-2 file:px-4
+                                                        file:rounded-full file:border-0
+                                                        file:text-sm file:font-semibold
+                                                        file:bg-indigo-50 file:text-indigo-700
+                                                        hover:file:bg-indigo-100"
+                                                    onChange={handleFileChange}
+                                                    required
+                                                    accept="image/*"
+                                                />
+                                                {filePreview && (
+                                                    <div className="mt-4">
+                                                        <img
+                                                            src={filePreview}
+                                                            alt="Preview"
+                                                            draggable="false"
+                                                            className="w-32 h-32 object-cover rounded-lg mx-auto"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <InputError className="mt-2" message={errors.foto} />
                                             </div>
                                         </div>
                                     )}

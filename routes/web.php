@@ -50,7 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/santri/{id}', [SantriController::class, 'show']);
  // Route untuk mengambil data pencapaian santri berdasarkan santri_id
- Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
+    Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
 });
 
 
