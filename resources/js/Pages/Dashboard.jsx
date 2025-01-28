@@ -24,7 +24,6 @@ export default function Dashboard({auth}) {
                         </div>
                         </section>
                     </div>
-
                 </div>
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 p-4">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">

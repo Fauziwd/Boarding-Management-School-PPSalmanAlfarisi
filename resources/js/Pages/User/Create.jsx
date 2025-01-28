@@ -36,7 +36,7 @@ export default function UserIndex({ auth }) {
             },
         });
     };
-
+ 
     const breadcrumbs = [
         { label: "Home", href: "/dashboard" },
         { label: "User", href: "/users" },

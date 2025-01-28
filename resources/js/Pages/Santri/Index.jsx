@@ -1,6 +1,5 @@
-import { Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Pagination from "@/Components/Pagination";  // Import the Pagination component
 

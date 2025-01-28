@@ -1,0 +1,150 @@
+[
+    {
+        "kitab": "A",
+        "bab": "Thoharoh"
+    },
+    {
+        "kitab": "A",
+        "bab": "Tayammum"
+    },
+    {
+        "kitab": "A",
+        "bab": "Zakat"
+    },
+    {
+        "kitab": "B",
+        "bab": "Islam"
+    },
+    {
+        "kitab": "B",
+        "bab": "Iman"
+    },
+    {
+        "kitab": "B",
+        "bab": "Ihsan"
+    },
+    {
+        "kitab": "C",
+        "bab": "Shalat"
+    },
+    {
+        "kitab": "C",
+        "bab": "Puasa"
+    },
+    {
+        "kitab": "C",
+        "bab": "Haji"
+    },
+    {
+        "kitab": "D",
+        "bab": "Nikah"
+    },
+    {
+        "kitab": "D",
+        "bab": "Talak"
+    },
+    {
+        "kitab": "D",
+        "bab": "Rajam"
+    },
+    {
+        "kitab": "E",
+        "bab": "Jinayat"
+    },
+    {
+        "kitab": "E",
+        "bab": "Hudud"
+    },
+    {
+        "kitab": "E",
+        "bab": "Qishash"
+    },
+    {
+        "kitab": "F",
+        "bab": "Jihad"
+    },
+    {
+        "kitab": "F",
+        "bab": "Khilafah"
+    },
+    {
+        "kitab": "F",
+        "bab": "Imamah"
+    },
+    {
+        "kitab": "G",
+        "bab": "Tasawuf"
+    },
+    {
+        "kitab": "G",
+        "bab": "Tarekat"
+    },
+    {
+        "kitab": "G",
+        "bab": "Ma'rifat"
+    },
+    {
+        "kitab": "H",
+        "bab": "Ilmu"
+    },
+    {
+        "kitab": "H",
+        "bab": "Fikih"
+    },
+    {
+        "kitab": "H",
+        "bab": "Hadits"
+    },
+    {
+        "kitab": "I",
+        "bab": "Tafsir"
+    },
+    {
+        "kitab": "I",
+        "bab": "Tajwid"
+    },
+    {
+        "kitab": "I",
+        "bab": "Nahwu"
+    },
+    {
+        "kitab": "J",
+        "bab": "Sejarah"
+    },
+    {
+        "kitab": "J",
+        "bab": "Biografi"
+    },
+    {
+        "kitab": "J",
+        "bab": "Kronologi"
+    },
+    {
+        "kitab": "K",
+        "bab": "Kisah"
+    },
+    {
+        "kitab": "K",
+        "bab": "Fabel"
+    },
+    {
+        "kitab": "K",
+        "bab": "Legenda"
+    },
+    {
+        "kitab": "L",
+        "bab": "Kumpulan"
+    },
+    {
+        "kitab": "L",
+        "bab": "Puisi"
+    },
+    {
+        "kitab": "L",
+        "bab": "Syair"
+    },
+    {
+        "kitab": "M",
+        "bab": "Kamus"
+    }
+]

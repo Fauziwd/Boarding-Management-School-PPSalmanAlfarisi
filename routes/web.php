@@ -8,6 +8,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\SantriController;
 use App\Http\Controllers\AttendanceController;
 // use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\AkademikController;
 use Inertia\Inertia;
 
 // Halaman Welcome
@@ -54,18 +55,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
 });
 
-
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
-//     Route::get('/achievements/create', [AchievementController::class, 'create'])->name('achievements.create');
-//     Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
-//     Route::get('/achievements/edit/{achievement}', [AchievementController::class, 'edit'])->name('achievements.edit');
-//     Route::patch('/achievements/update/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
-//     Route::delete('/achievements/{id}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
-
-// Route::get('/achievements/{santriId}', [AchievementController::class, 'index']);
-// });
-
+// CRUD Akademik
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/akademik', [AkademikController::class, 'index'])->name('akademik.index');
+    Route::get('/akademik/create', [AkademikController::class, 'create'])->name('akademik.create');
+    Route::post('/akademik/store', [AkademikController::class, 'store'])->name('akademik.store');
+    Route::get('/akademik/{akademik}', [AkademikController::class, 'show'])->name('akademik.show');
+    Route::get('/akademik/{akademik}/edit', [AkademikController::class, 'edit'])->name('akademik.edit');
+    Route::patch('/akademik/{akademik}', [AkademikController::class, 'update'])->name('akademik.update');
+    Route::delete('/akademik/{akademik}', [AkademikController::class, 'destroy'])->name('akademik.destroy');
+});
 
 // Profil Pengguna
 Route::middleware('auth')->group(function () {
@@ -78,3 +77,16 @@ Route::post('/attendances/submit', [AttendanceController::class, 'submit'])->nam
 
 // Otentikasi Laravel
 require __DIR__ . '/auth.php';
+
+
+// CRUD Achievements
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
+//     Route::get('/achievements/create', [AchievementController::class, 'create'])->name('achievements.create');
+//     Route::post('/achievements', [AchievementController::class, 'store'])->name('achievements.store');
+//     Route::get('/achievements/edit/{achievement}', [AchievementController::class, 'edit'])->name('achievements.edit');
+//     Route::patch('/achievements/update/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
+//     Route::delete('/achievements/{id}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
+
+// Route::get('/achievements/{santriId}', [AchievementController::class, 'index']);
+// });
