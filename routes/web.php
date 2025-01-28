@@ -9,6 +9,7 @@ use App\Http\Controllers\SantriController;
 use App\Http\Controllers\AttendanceController;
 // use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\AkademikController;
+use App\Http\Controllers\HafalanController;
 use Inertia\Inertia;
 
 // Halaman Welcome
@@ -64,6 +65,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/akademik/{akademik}/edit', [AkademikController::class, 'edit'])->name('akademik.edit');
     Route::patch('/akademik/{akademik}', [AkademikController::class, 'update'])->name('akademik.update');
     Route::delete('/akademik/{akademik}', [AkademikController::class, 'destroy'])->name('akademik.destroy');
+});
+
+// CRUD Hafalan
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/hafalan', [HafalanController::class, 'index'])->name('hafalan.index');
+    Route::get('/hafalan/create', [HafalanController::class, 'create'])->name('hafalan.create');
+    Route::post('/hafalan', [HafalanController::class, 'store'])->name('hafalan.store');
+    Route::get('/hafalan/{hafalan}/edit', [HafalanController::class, 'edit'])->name('hafalan.edit');
+    Route::patch('/hafalan/{hafalan}', [HafalanController::class, 'update'])->name('hafalan.update');
+    Route::delete('/hafalan/{hafalan}', [HafalanController::class, 'destroy'])->name('hafalan.destroy');
 });
 
 // Profil Pengguna

@@ -3,30 +3,29 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const menuItems = {
+    admin: [
+        { name: "Dashboard", href: "dashboard", current: "dashboard" },
+        { name: "Users", href: "users", current: "users" },
+        { name: "Santri", href: "santri", current: "santri" },
+        { name: "Absensi", href: "absensi", current: "absensi" },
+        { name: "Akademik", href: "akademik.index", current: "akademik.index" },
+        { name: "Hafalan", href: "hafalan.index", current: "hafalan.index" },
+    ],
+    default: [
+        { name: "Dashboard", href: "dashboard", current: "dashboard" },
+    ],
+};
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
-
+    const { auth: { user } } = usePage().props;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
-    // Menu berdasarkan role user
-    const menu = (role) => {
-        if (role === "admin") {
-            return [
-                { name: "Dashboard", href: route("dashboard"), current: route().current("dashboard") },
-                { name: "Users", href: route("users"), current: route().current("users") },
-                { name: "Santri", href: route("santri"), current: route().current("santri") },
-                { name: "Absensi", href: route("absensi"), current: route().current("absensi") },
-                // { name: "Hafalan", href: route("hafalan"), current: route().current("hafalan") },
-                { name: "Akademik", href: route("akademik.index"), current: route().current("akademik.index") },
-            ];
-        } else {
-            return [
-                { name: "Dashboard", href: route("dashboard"), current: route().current("dashboard") },
-            ];
-        }
-    };
+    const menu = useMemo(() => menuItems[user.role] || menuItems.default, [user.role]);
+
+    const toggleNavigationDropdown = () => setShowingNavigationDropdown(prev => !prev);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -41,8 +40,8 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {menu(user.role).map((item, index) => (
-                                    <NavLink key={index} href={item.href} active={item.current}>
+                                {menu.map((item, index) => (
+                                    <NavLink key={index} href={route(item.href)} active={route().current(item.current)}>
                                         {item.name}
                                     </NavLink>
                                 ))}
@@ -72,7 +71,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
+                                onClick={toggleNavigationDropdown}
                                 className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
                             >
                                 <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -87,8 +86,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 {/* MOBILE AREA */}
                 <div className={(showingNavigationDropdown ? "block" : "hidden") + " sm:hidden"}>
                     <div className="space-y-1 pb-3 pt-2">
-                        {menu(user.role).map((item, index) => (
-                            <ResponsiveNavLink key={index} href={item.href} active={item.current}>
+                        {menu.map((item, index) => (
+                            <ResponsiveNavLink key={index} href={route(item.href)} active={route().current(item.current)}>
                                 {item.name}
                             </ResponsiveNavLink>
                         ))}
