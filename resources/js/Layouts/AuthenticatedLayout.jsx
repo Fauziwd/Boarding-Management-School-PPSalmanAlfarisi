@@ -1,9 +1,10 @@
+import React, { useMemo, useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import Sidebar from "@/Layouts/Sidebar";
 import { Link, usePage } from "@inertiajs/react";
-import { useMemo, useState } from "react";
 
 const menuItems = {
     admin: [
@@ -34,20 +35,20 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/">
+                                <Link href="/" className="dark:bg-white h-auto rounded-xl">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                                 </Link>
                             </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <Sidebar menu={menu} />
+                            {/* <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 {menu.map((item, index) => (
                                     <NavLink key={index} href={route(item.href)} active={route().current(item.current)}>
                                         {item.name}
                                     </NavLink>
                                 ))}
-                            </div>
+                            </div> */}
                         </div>
-
+                       
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
                             <div className="relative ms-3">
                                 <Dropdown>
@@ -69,6 +70,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </div>
 
+                             
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
                                 onClick={toggleNavigationDropdown}
@@ -99,7 +101,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="text-sm font-medium text-gray-500">{user.email}</div>
                         </div>
 
-                        <div className="mt-3 space-y-1">
+                        <div className="mt-1 space-y-1">
                             <ResponsiveNavLink href={route("profile.edit")}>Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route("logout")} as="button">Log Out</ResponsiveNavLink>
                         </div>
