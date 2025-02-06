@@ -55,6 +55,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/santri/{id}', [SantriController::class, 'show']);
  // Route untuk mengambil data pencapaian santri berdasarkan santri_id
     // Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
+    Route::get('/api/akademiks/{santriId}', [AkademikController::class, 'getBySantriId']);
+    Route::get('/api/hafalans/{santriId}', [HafalanController::class, 'getBySantriId']);
 });
 
 // CRUD Akademik
@@ -66,6 +68,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/akademik/{akademik}/edit', [AkademikController::class, 'edit'])->name('akademik.edit');
     Route::patch('/akademik/{akademik}', [AkademikController::class, 'update'])->name('akademik.update');
     Route::delete('/akademik/{akademik}', [AkademikController::class, 'destroy'])->name('akademik.destroy');
+    
 });
 
 // CRUD Hafalan

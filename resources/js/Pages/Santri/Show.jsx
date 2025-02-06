@@ -3,23 +3,34 @@ import { Head } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Datadiri from "@/Pages/ShowSantri/Datadiri";
-// import axios from "axios";
+import axios from "axios"; // Tambahkan axios untuk fetching data
 
 export default function SantriShow({ auth, santri }) {
-    const [akademiks, setakademiks] = useState([]);
+    const [akademiks, setAkademiks] = useState([]);
+    const [hafalans, setHafalans] = useState([]); // State untuk hafalan
 
     useEffect(() => {
         if (santri) {
-            fetchakademiks(santri.id);
+            fetchAkademiks(santri.id);
+            fetchHafalans(santri.id); // Ambil data hafalan juga
         }
     }, [santri]);
 
-    const fetchakademiks = async (santriId) => {
+    const fetchAkademiks = async (santriId) => {
         try {
             const response = await axios.get(`/api/akademiks/${santriId}`);
-            setakademiks(response.data);
+            setAkademiks(response.data);
         } catch (error) {
             console.error("Error fetching akademiks:", error);
+        }
+    };
+
+    const fetchHafalans = async (santriId) => {
+        try {
+            const response = await axios.get(`/api/hafalans/${santriId}`);
+            setHafalans(response.data);
+        } catch (error) {
+            console.error("Error fetching hafalans:", error);
         }
     };
 
@@ -47,29 +58,24 @@ export default function SantriShow({ auth, santri }) {
                     {/* Breadcrumbs */}
                     <Breadcrumbs items={breadcrumbs} />
 
-                    {/* Letterhead Layout */}
+                    {/* Detail Santri */}
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 flex">
                         <div className="p-6 text-gray-900 dark:text-gray-100 flex w-full">
-                            {/* Logo */}
                             <div className="flex-shrink-0 mr-6">
                                 <img
-                                    src={
-                                      "/pp.jpeg"
-                                    }
+                                    src={"/pp.jpeg"}
                                     alt={`Foto ${santri.nama}`}
                                     className="w-12 h-12 rounded-full"
                                 />
                             </div>
 
-                            {/* Content */}
                             <div className="flex-grow">
                                 <header className="mb-6">
                                     <h1 className="text-2xl font-bold">
                                         Detail {santri.nama}
                                     </h1>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Informasi mengenai data diri, capaian
-                                        hafalan, dan capaian akademik.
+                                        Informasi mengenai data diri, capaian hafalan, dan capaian akademik.
                                     </p>
                                 </header>
 
@@ -77,63 +83,88 @@ export default function SantriShow({ auth, santri }) {
                                 <div className="mb-6">
                                     <Datadiri santri={santri} />
                                 </div>
-                                      {/* Tabel Pencapaian */}
-                                 <div>
+
+                                {/* Tabel Pencapaian Akademik */}
+                                <div className="mb-6">
                                     <h2 className="text-lg font-semibold mb-4">
                                         Pencapaian Akademik
                                     </h2>
                                     {akademiks.length === 0 ? (
-                                        <p className="text-gray-500">
-                                            Belum ada data pencapaian.
-                                        </p>
+                                        <p className="text-gray-500">Belum ada data pencapaian akademik.</p>
                                     ) : (
                                         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             <thead>
                                                 <tr>
-                                                    
-                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        Nama
-                                                    </th>
                                                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
                                                         Kitab
                                                     </th>
                                                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
                                                         Bab
                                                     </th>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Tanggal
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                                {akademiks.map(
-                                                    (akademik, index) => (
-                                                        <tr key={index}>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {akademik.type ===
-                                                                "hafalan"
-                                                                    ? "Capaian Hafalan"
-                                                                    : "Capaian Akademik"}
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    akademik.nama
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    akademik.kitab
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    akademik.bab
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                )}
+                                                {akademiks.map((akademik, index) => (
+                                                    <tr key={index}>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {akademik.kitab}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {akademik.bab}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {new Date(akademik.created_at).toLocaleDateString("id-ID")}
+                                                        </td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     )}
-                                </div>                          
+                                </div>
+
+                                {/* Tabel Hafalan */}
+                                <div>
+                                    <h2 className="text-lg font-semibold mb-4">
+                                        Pencapaian Hafalan
+                                    </h2>
+                                    {hafalans.length === 0 ? (
+                                        <p className="text-gray-500">Belum ada data hafalan.</p>
+                                    ) : (
+                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Juz
+                                                    </th>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Bulan
+                                                    </th>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Tanggal
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                                {hafalans.map((hafalan, index) => (
+                                                    <tr key={index}>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {hafalan.juz}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {hafalan.month}
+                                                        </td>
+                                                        <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                            {new Date(hafalan.created_at).toLocaleDateString("id-ID")}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -142,4 +173,3 @@ export default function SantriShow({ auth, santri }) {
         </AuthenticatedLayout>
     );
 }
-

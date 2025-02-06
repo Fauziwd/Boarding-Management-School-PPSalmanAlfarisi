@@ -18,6 +18,15 @@ class AkademikController extends Controller
         ]);
     }
 
+    public function getBySantriId($santriId)
+{
+    // Ambil semua data akademik berdasarkan santri_id
+    $akademiks = Akademik::where('santri_id', $santriId)->get();
+
+    return response()->json($akademiks);
+}
+
+
     public function show($id)
     {
         $akademik = Akademik::with('santri')->findOrFail($id);

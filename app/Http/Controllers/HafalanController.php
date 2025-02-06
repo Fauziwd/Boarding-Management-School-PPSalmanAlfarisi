@@ -15,6 +15,14 @@ class HafalanController extends Controller
         return Inertia::render('Hafalan/Index', ['hafalans' => $hafalans]);
     }
 
+    public function getBySantriId($santriId)
+    {
+        // Ambil semua data hafalan berdasarkan santri_id
+        $hafalans = Hafalan::where('santri_id', $santriId)->get();
+
+        return response()->json($hafalans);
+    }
+
     public function create()
     {
         $santris = Santri::all();
