@@ -6,6 +6,22 @@ import Datadiri from "@/Pages/ShowSantri/Datadiri";
 // import axios from "axios";
 
 export default function SantriShow({ auth, santri }) {
+    const [akademiks, setakademiks] = useState([]);
+
+    useEffect(() => {
+        if (santri) {
+            fetchakademiks(santri.id);
+        }
+    }, [santri]);
+
+    const fetchakademiks = async (santriId) => {
+        try {
+            const response = await axios.get(`/api/akademiks/${santriId}`);
+            setakademiks(response.data);
+        } catch (error) {
+            console.error("Error fetching akademiks:", error);
+        }
+    };
 
     if (!santri) {
         return (
@@ -61,7 +77,63 @@ export default function SantriShow({ auth, santri }) {
                                 <div className="mb-6">
                                     <Datadiri santri={santri} />
                                 </div>
-                                                               
+                                      {/* Tabel Pencapaian */}
+                                 <div>
+                                    <h2 className="text-lg font-semibold mb-4">
+                                        Pencapaian Akademik
+                                    </h2>
+                                    {akademiks.length === 0 ? (
+                                        <p className="text-gray-500">
+                                            Belum ada data pencapaian.
+                                        </p>
+                                    ) : (
+                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead>
+                                                <tr>
+                                                    
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Nama
+                                                    </th>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Kitab
+                                                    </th>
+                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                        Bab
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                                {akademiks.map(
+                                                    (akademik, index) => (
+                                                        <tr key={index}>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {akademik.type ===
+                                                                "hafalan"
+                                                                    ? "Capaian Hafalan"
+                                                                    : "Capaian Akademik"}
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    akademik.nama
+                                                                }
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    akademik.kitab
+                                                                }
+                                                            </td>
+                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                                {
+                                                                    akademik.bab
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    )}
+                                </div>                          
                             </div>
                         </div>
                     </div>
@@ -71,84 +143,3 @@ export default function SantriShow({ auth, santri }) {
     );
 }
 
-
-// Artefak Pencapaian
-    // const [achievements, setAchievements] = useState([]);
-
-    // useEffect(() => {
-    //     if (santri) {
-    //         fetchAchievements(santri.id);
-    //     }
-    // }, [santri]);
-
-    // const fetchAchievements = async (santriId) => {
-    //     try {
-    //         const response = await axios.get(`/api/achievements/${santriId}`);
-    //         setAchievements(response.data);
-    //     } catch (error) {
-    //         console.error("Error fetching achievements:", error);
-    //     }
-    // };
-
-
-
-
-     {/* Tabel Pencapaian */}
-                                {/* <div>
-                                    <h2 className="text-lg font-semibold mb-4">
-                                        Pencapaian
-                                    </h2>
-                                    {achievements.length === 0 ? (
-                                        <p className="text-gray-500">
-                                            Belum ada data pencapaian.
-                                        </p>
-                                    ) : (
-                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead>
-                                                <tr>
-                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        Jenis Pencapaian
-                                                    </th>
-                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        Judul
-                                                    </th>
-                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        Deskripsi
-                                                    </th>
-                                                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        Tanggal
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                                {achievements.map(
-                                                    (achievement, index) => (
-                                                        <tr key={index}>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {achievement.type ===
-                                                                "hafalan"
-                                                                    ? "Capaian Hafalan"
-                                                                    : "Capaian Akademik"}
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    achievement.title
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    achievement.description
-                                                                }
-                                                            </td>
-                                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                                                {
-                                                                    achievement.date
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    )}
-                                </div> */}

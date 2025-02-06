@@ -1,8 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import SubmitAttendance from '@/Components/Attendance/Submit';
+import DarkModeToggle from '@/Components/DarkModeToggle'; // Sesuaikan path-nya
 
 export default function Dashboard({auth}) {
+    
     return (
         <AuthenticatedLayout
             header={

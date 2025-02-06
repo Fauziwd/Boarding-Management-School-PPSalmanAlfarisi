@@ -26,9 +26,8 @@ class Attendance extends Model
         return (string) Uuid::uuid4();
     }
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
-
 }

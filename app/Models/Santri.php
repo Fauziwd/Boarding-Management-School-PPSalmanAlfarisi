@@ -19,9 +19,9 @@ class Santri extends Model
         'kecamatan', 'kabupaten_kota', 'provinsi', 'kode_pos', 'foto'
     ];
 
-    public function achievements()
+    public function akademiks()
     {
-        return $this->hasMany(Achievement::class);
+        return $this->hasMany(Akademik::class, 'santri_id');
     }
     
 }

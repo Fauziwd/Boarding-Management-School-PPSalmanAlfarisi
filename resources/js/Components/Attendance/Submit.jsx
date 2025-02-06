@@ -4,15 +4,16 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import { Link, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import Selectbox from "@/Components/Selectbox";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function SubmitAttendance() {
-    const [trasitioning, setTransitioning] = useState(false);
+    const [transitioning, setTransitioning] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
-    const { data, setData, post, transform, errors, processing, recentlySuccessful } =
+    const { data, setData, post, transform, errors, processing, reset, recentlySuccessful } =
         useForm({
             status: "attend",
             description: "",
@@ -33,38 +34,36 @@ export default function SubmitAttendance() {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                 };
-                setData("prepareData",objLocation);
+                setData("prepareData", objLocation);
             },
             function (error) {
                 alert("Anda berada di tempat tak dikenal");
             }
         );
-
-     
     };
 
-useEffect(() => {
-    if (data.prepareData.hasOwnProperty("latitude") &&
-    data.prepareData.hasOwnProperty("longitude")
-){
-    transform((data) => ({
-        ...data.prepareData,
-        status: data.status,
-        description: data.description,
-    }));
-  
-    post(route("attendances.submit"), {
-        preserveScroll: true,
-        onSuccess: () => {
-            alert("Absensi successfully!");
-        },
-        onError: (errors) => {
-           console.log(errors);
-        },
-    });      
-}
-}, [data.prepareData]);
+    useEffect(() => {
+        if (data.prepareData.hasOwnProperty("latitude") &&
+            data.prepareData.hasOwnProperty("longitude")
+        ) {
+            transform((data) => ({
+                ...data.prepareData,
+                status: data.status,
+                description: data.description,
+            }));
 
+            post(route("attendances.submit"), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    reset(); // Reset form fields
+                    setSubmitted(true); // Set submitted to true
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            });
+        }
+    }, [data.prepareData]);
 
     useEffect(() => {
         if (data.status === "attend") {
@@ -76,6 +75,12 @@ useEffect(() => {
 
     return (
         <form onSubmit={submit} className="mt-6 space-y-6">
+            {submitted && (
+                <div className="alert alert-success">
+                    Anda telah melakukan absensi.
+                </div>
+            )}
+
             <div>
                 <InputLabel htmlFor="info" value="Silahkan lakukan absensi" />
 
@@ -95,7 +100,7 @@ useEffect(() => {
                 <InputError className="mt-2" message={errors.status} />
             </div>
             <Transition
-                show={trasitioning}
+                show={transitioning}
                 enter="transition ease-in-out"
                 enterFrom="opacity-0"
                 leave="transition ease-in-out"
@@ -105,6 +110,7 @@ useEffect(() => {
                     <InputLabel htmlFor="description" value="Penjelasan" />
 
                     <TextInput
+                        value={data.description}
                         onChange={(e) => setData("description", e.target.value)}
                         className="w-full"
                     />

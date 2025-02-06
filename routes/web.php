@@ -37,8 +37,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // Absensi
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
 });
 
 // CRUD Santri

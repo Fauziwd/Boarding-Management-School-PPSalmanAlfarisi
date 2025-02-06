@@ -1,4 +1,5 @@
 import { Head, Link, useForm } from '@inertiajs/react';
+import DarkModeToggle from '@/Components/DarkModeToggle'; // Sesuaikan path-nya
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -16,10 +17,12 @@ export default function Login({ status, canResetPassword }) {
     return (
         <>
             <Head title="Log in" />
-            <div className="min-h-screen flex items-center justify-center bg-gray-200">
+            
+            <div className="min-h-screen flex items-center justify-center dark:bg-gray-800 bg-gray-200">
                 <div className="bg-white shadow-lg rounded-lg flex overflow-hidden w-full max-w-4xl">
                     {/* Left Side - Illustration */}
                     <div className="hidden md:block w-1/2">
+                    <DarkModeToggle />
                         <img
                             src="login.png"
                             alt="Login Illustration"
@@ -33,7 +36,7 @@ export default function Login({ status, canResetPassword }) {
                         <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
                             Masuk ke Akun Anda
                         </h2>
-
+   
                         {status && (
                             <div className="mb-4 text-sm text-emerald-600 text-center">
                                 {status}

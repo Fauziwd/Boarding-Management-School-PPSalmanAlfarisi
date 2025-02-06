@@ -1,6 +1,5 @@
 <?php
 
-// app/Models/Achievement.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,3 +18,4 @@ class Achievement extends Model
         return $this->belongsTo(Santri::class);
     }
 }
+ 

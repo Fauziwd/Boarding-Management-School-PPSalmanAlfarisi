@@ -32,7 +32,7 @@ export default function Sidebar({ menu }) {
         <div>
             <div className="text-center">
                 <button
-                    className="mt-3 mr-5 rounded-md text-white font-bold p-2"
+                    className="mt-3 mr-5 rounded-md dark:text-white text-emerald-700 font-bold p-2"
                     type="button"
                     onClick={() =>
                         document
@@ -66,7 +66,7 @@ export default function Sidebar({ menu }) {
             >
                 <h5
                     id="drawer-navigation-label"
-                    className="text-base mb-8 font-semibold text-gray-200 uppercase dark:text-white"
+                    className="text-base mb-8 mt-5 font-semibold text-gray-800 uppercase dark:text-white"
                 >
                     Menu
                 </h5>
@@ -77,7 +77,7 @@ export default function Sidebar({ menu }) {
                             .getElementById("drawer-navigation")
                             .classList.add("-translate-x-full")
                     }
-                    className="text-white bg-transparent dark:hover:text-yellow-300 rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 mr-5 inline-flex items-center"
+                    className="text-gray-800 dark:text-white mt-5 bg-transparent rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 mr-5 inline-flex items-center"
                     aria-label="Close navigation"
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
