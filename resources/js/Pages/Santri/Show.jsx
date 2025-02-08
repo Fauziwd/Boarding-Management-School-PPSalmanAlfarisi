@@ -5,7 +5,7 @@ import Breadcrumbs from "@/Components/Breadcrumbs";
 import Datadiri from "@/Pages/ShowSantri/Datadiri";
 import Akademik from "@/Pages/ShowSantri/Akademik";
 import Hafalan from "@/Pages/ShowSantri/Hafalan";
-import axios from "axios";
+import axios from "axios"; 
 import { Tab } from "@headlessui/react";
 import { exportToExcel } from "@/utils/exportToExcel";
 
@@ -61,53 +61,50 @@ export default function SantriShow({ auth, santri }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <Breadcrumbs items={breadcrumbs} />
 
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 scrollbar-gutter-stable">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <div className="flex items-center mb-6">
                                 <div className="flex-shrink-0 mr-6">
-                                    <img
-                                        src={"/pp.jpeg"}
+                                    {santri.foto ? (
+                                       <img
+                                       src={`/storage/${santri.foto}`}
+                                       alt={`Foto ${santri.nama}`}
+                                       draggable="false"
+                                       className="w-32 h-32 shadow-xl border-2 border-indigo-500 dark:border-white rounded-full object-cover"
+                                   />                                   
+                                    ) : (
+                                        <img
+                                        src={"/pp.jpg"}
                                         alt={`Foto ${santri.nama}`}
-                                        className="w-12 h-12 rounded-full"
-                                    />
+                                       draggable="false"
+                                        className="w-32 h-32 shadow-xl border-2 border-indigo-500 dark:border-white rounded-full object-cover"
+                                    />                                    
+                                    )}
                                 </div>
                                 <div>
                                     <h1 className="text-2xl font-bold">
                                         Detail {santri.nama}
                                     </h1>
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Informasi mengenai data diri, capaian
-                                        hafalan, dan capaian akademik.
+                                        Informasi mengenai data diri, capaian hafalan, dan capaian akademik.
                                     </p>
                                 </div>
                             </div>
 
                             <button
-                                onClick={() =>
-                                    exportToExcel(santri, akademiks, hafalans)
-                                }
-                                className="mb-4 flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-md hover:bg-blue-600 transition"
+                                onClick={() => exportToExcel(santri, akademiks, hafalans)}
+                                className="mb-4 px-4 py-2 bg-white hover:bg-indigo-200 dark:bg-gray-800 border border-indigo-700 dark:border-gray-600 dark:hover:border-emerald-200 text-indigo-800 dark:text-gray-100 dark:hover:text-emerald-200 dark:hover:bg-emerald-900 hover:text-indigo-900 rounded-md"
                             >
-                                Export
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-file-earmark-spreadsheet"
-                                    viewBox="0 0 16 16"
-                                >
-                                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5zM3 12v-2h2v2zm0 1h2v2H4a1 1 0 0 1-1-1zm3 2v-2h3v2zm4 0v-2h3v1a1 1 0 0 1-1 1zm3-3h-3v-2h3zm-7 0v-2h3v2z" />
-                                </svg>
+                                Export Excel
                             </button>
 
-                            <Tab.Group>
-                                <Tab.List className="flex p-1 space-x-1 bg-gray-200/5 rounded-md">
+                            <Tab.Group className={"z-50"}>
+                                <Tab.List className="flex p-1 space-x-1 dark:bg-gray-600 bg-indigo-700 rounded-md shadow-xl">
                                     <Tab
-                                        className={({ selected }) =>
+                                        className={({ selected })  =>
                                             selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-blue-700 bg-white dark:bg-gray-200 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-blue-100 bg-blue-900/20 rounded-lg"
+                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Data Diri
@@ -115,8 +112,8 @@ export default function SantriShow({ auth, santri }) {
                                     <Tab
                                         className={({ selected }) =>
                                             selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-blue-700 bg-white dark:bg-gray-200 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-blue-100 bg-blue-900/20 rounded-lg"
+                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Pencapaian Akademik
@@ -124,8 +121,8 @@ export default function SantriShow({ auth, santri }) {
                                     <Tab
                                         className={({ selected }) =>
                                             selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-blue-700 bg-white dark:bg-gray-200 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-blue-100 bg-blue-900/20 rounded-lg"
+                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Pencapaian Hafalan

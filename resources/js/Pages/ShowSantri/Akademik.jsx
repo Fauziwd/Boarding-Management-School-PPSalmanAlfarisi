@@ -20,31 +20,39 @@ export default function Akademik({ akademiks }) {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
+        <div className="bg-white dark:bg-gray-700 p-3 rounded-md">
             <h2 className="text-lg font-semibold mb-4">
                 Pencapaian Akademik
             </h2>
             {sortedAkademiks.length === 0 ? (
-                <p className="text-gray-500">Belum ada data pencapaian akademik.</p>
+                <div className="text-center">
+                    <img
+                        src="/img/empty.png" // Ganti dengan URL ilustrasi Anda
+                        alt="Ilustrasi Sekolah"
+                        className="w-70 h-64 mx-auto mt-4"
+                        draggable="false"
+                    />
+                    <p className="text-gray-500">Belum ada data pencapaian akademik.</p>
+                </div>
             ) : (
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 shadow-lg rounded-md overflow-hidden">
                     <thead>
                         <tr>
-                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <th className="px-4 py-2 text-left text-sm font-medium rounded-tl-xl bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                 Kitab
                             </th>
-                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                 Bab
                             </th>
-                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                 Tanggal
                             </th>
-                            <th className="px-4 py-2 text-left text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <th className="px-4 py-2 text-left text-sm font-medium rounded-tr-xl bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                 Waktu
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                    <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-700">
                         {sortedAkademiks.map((akademik, index) => (
                             <tr key={index}>
                                 <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">

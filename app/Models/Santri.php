@@ -23,5 +23,4 @@ class Santri extends Model
     {
         return $this->hasMany(Akademik::class, 'santri_id');
     }
-    
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -73,7 +73,7 @@ class SantriController extends Controller
         $santri->save();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('santri.index')->with('success', 'Santri berhasil ditambahkan');
+        return redirect()->route('santris.index')->with('success', 'Santri berhasil ditambahkan');
     }
 
     // Form untuk mengedit data santri
