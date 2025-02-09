@@ -27,16 +27,16 @@ export default function AttendanceIndex({ auth }) {
     const getStatusBadge = (status) => {
         switch (status) {
             case "attend":
-                return <span className="bg-green-500 text-white px-2 py-1 rounded">Hadir</span>;
+                return <span className="border border-emerald-900 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100 dark:border-emerald-100 px-2 py-1 rounded-full">Hadir</span>;
             case "leave":
-                return <span className="bg-gray-500 text-white px-2 py-1 rounded">Cuti</span>;
+                return <span className="border border-gray-900 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-100 px-2 py-1 rounded-full">Cuti</span>;
             case "sick":
             case "permit":
             case "business_trip":
             case "remote":
-                return <span className="bg-yellow-500 text-white px-2 py-1 rounded">{status}</span>;
+                return <span className="border border-yellow-900 bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 dark:border-yellow-100 px-2 py-1 rounded-full">{status}</span>;
             default:
-                return <span className="bg-yellow-500 text-white px-2 py-1 rounded">{status}</span>;
+                return <span className="border border-yellow-900 bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 dark:border-yellow-100 px-2 py-1 rounded-full">{status}</span>;
         }
     };
 
@@ -63,6 +63,7 @@ export default function AttendanceIndex({ auth }) {
                     "rgba(255, 159, 64, 1)",
                 ],
                 borderWidth: 1,
+                borderRadius: 15,
             },
         ],
     };
@@ -94,7 +95,7 @@ export default function AttendanceIndex({ auth }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 p-4 space-y-6">
-                    <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
+                    <div className="bg-white dark:bg-gray-800/50 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
                         <h2 className="text-xl font-bold mb-4">Data Absensi Hari Ini</h2>
                         {todayAttendances?.length === 0 ? (
                             <div className="text-center">
@@ -146,7 +147,7 @@ export default function AttendanceIndex({ auth }) {
                         )}
                     </div>
 
-                    <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
+                    <div className="bg-white dark:bg-gray-800/50 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
                         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
                             <h1 className="text-xl font-bold">Data Kehadiran Keluarga Salman Al-Farisi</h1>
                             <h2 className="text-xl font-bold">Jumlah Absensi per Status</h2>
@@ -203,7 +204,7 @@ export default function AttendanceIndex({ auth }) {
                                 )}
                                 <Pagination links={attendances.links} />
                             </div>
-                            <div className="w-full md:w-1/2">
+                            <div className="w-auto md:w-1/2 p-4 shadow-xl rounded-md dark:bg-gray-800">
                                 <Bar data={chartData} options={chartOptions} />
                             </div>
                         </div>
