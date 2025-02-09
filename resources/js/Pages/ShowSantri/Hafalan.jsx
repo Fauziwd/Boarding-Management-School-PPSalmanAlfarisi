@@ -1,4 +1,5 @@
 import React from "react";
+import { Head, Link } from "@inertiajs/react";
 
 export default function Hafalan({ hafalans }) {
     // Urutkan data hafalan berdasarkan tanggal terbaru
@@ -26,8 +27,16 @@ export default function Hafalan({ hafalans }) {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
-            <h2 className="text-lg font-semibold mb-4">Pencapaian Hafalan</h2>
+               <div className="bg-white dark:bg-gray-700 p-3 rounded-md">
+                  <div className="flex items-center justify-between mb-4">
+           <h2 className="text-lg font-semibold">Pencapaian Hafalan</h2>
+           <Link
+               href={route("hafalan.create")}
+               className="dark:hover:bg-gray-800 hover:bg-indigo-100 border rounded-md border-gray-500 text-indigo-800 dark:text-white font-bold py-2 px-4"
+           >
+               Tambah Hafalan
+           </Link>
+       </div>
             {sortedHafalans.length === 0 ? (
                 <div className="text-center">
                     <img
@@ -36,7 +45,7 @@ export default function Hafalan({ hafalans }) {
                         className="w-70 h-64 mx-auto mt-4"
                         draggable="false"
                     />
-                    <p className="text-gray-500">
+                    <p className="text-gray-500 dark:text-white">
                         Belum ada data pencapaian akademik.
                     </p>
                 </div>

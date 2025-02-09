@@ -1,42 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, usePage } from "@inertiajs/react";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
-import Pagination from "@/Components/Pagination"; // Import the Pagination component
+import Pagination from "@/Components/Pagination";
 
 export default function AttendanceIndex({ auth }) {
     const { attendances, todayAttendances, statusData } = usePage().props;
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const handleDarkModeChange = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
+
+        handleDarkModeChange(); // Initial check
+        window.addEventListener('DOMContentLoaded', handleDarkModeChange);
+        window.addEventListener('change', handleDarkModeChange);
+
+        return () => {
+            window.removeEventListener('DOMContentLoaded', handleDarkModeChange);
+            window.removeEventListener('change', handleDarkModeChange);
+        };
+    }, []);
 
     const getStatusBadge = (status) => {
         switch (status) {
             case "attend":
-                return (
-                    <span className="bg-green-500 text-white px-2 py-1 rounded">
-                        Hadir
-                    </span>
-                );
+                return <span className="bg-green-500 text-white px-2 py-1 rounded">Hadir</span>;
             case "leave":
-                return (
-                    <span className="bg-gray-500 text-white px-2 py-1 rounded">
-                        Cuti
-                    </span>
-                );
+                return <span className="bg-gray-500 text-white px-2 py-1 rounded">Cuti</span>;
             case "sick":
             case "permit":
             case "business_trip":
             case "remote":
-                return (
-                    <span className="bg-yellow-500 text-white px-2 py-1 rounded">
-                        {status}
-                    </span>
-                );
+                return <span className="bg-yellow-500 text-white px-2 py-1 rounded">{status}</span>;
             default:
-                return (
-                    <span className="bg-yellow-500 text-white px-2 py-1 rounded">
-                        {status}
-                    </span>
-                );
+                return <span className="bg-yellow-500 text-white px-2 py-1 rounded">{status}</span>;
         }
     };
 
@@ -69,36 +69,22 @@ export default function AttendanceIndex({ auth }) {
 
     const chartOptions = {
         plugins: {
-            legend: {
-                labels: {
-                    color: 'white' // Change legend text color
-                }
-            },
+            legend: { labels: { color: isDarkMode ? 'white' : 'black' } },
             title: {
-                display: true,
+                display: false,
                 text: 'Jumlah Absensi per Status',
-                color: 'white', // Change title text color
-                font: {
-                    size: 18
-                }
+                color: isDarkMode ? 'white' : 'black',
+                font: { size: 18 }
             },
             tooltip: {
-                titleColor: 'white', // Change tooltip title color
-                bodyColor: 'white', // Change tooltip body color
-                backgroundColor: 'rgba(0, 0, 0, 0.7)', // Change tooltip background color
+                titleColor: isDarkMode ? 'white' : 'black',
+                bodyColor: isDarkMode ? 'white' : 'black',
+                backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)',
             }
         },
         scales: {
-            x: {
-                ticks: {
-                    color: 'white' // Change x-axis text color
-                }
-            },
-            y: {
-                ticks: {
-                    color: 'white' // Change y-axis text color
-                }
-            }
+            x: { ticks: { color: isDarkMode ? 'white' : 'black' } },
+            y: { ticks: { color: isDarkMode ? 'white' : 'black' } }
         }
     };
 
@@ -106,161 +92,120 @@ export default function AttendanceIndex({ auth }) {
         <AuthenticatedLayout auth={auth}>
             <Head title="Dashboard Absensi" />
 
-            <div className="py-1">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 p-4">
-                    {/* Today's Attendance */}
-                    <div className="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg dark:text-gray-800 dark:bg-gray-800">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <h2 className="text-xl mb-5">
-                                Data Absensi Hari Ini
-                            </h2>
-                            <div className="flex">
-                                <div className="w-1/2 max-h-96 overflow-auto pr-4">
-                                    <table className="border-b-2 border-gray-200 min-w-full">
-                                        <thead>
-                                            <tr className="bg-gray-700 dark:text-gray-200 dark:bg-gray-200">
-                                                <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
-                                                    Nama
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
-                                                    Deskripsi
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
-                                                    Waktu
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {todayAttendances?.length > 0 ? (
-                                                todayAttendances.map(
-                                                    ({
-                                                        id,
-                                                        user,
-                                                        status,
-                                                        description,
-                                                        created_at,
-                                                    }) => (
-                                                        <tr
-                                                            key={id}
-                                                            className="border-b-2"
-                                                        >
-                                                            <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                                {user?.name ||
-                                                                    "Unknown"}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                                {getStatusBadge(
-                                                                    status
-                                                                )}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                                {description ||
-                                                                    "Hadir"}
-                                                            </td>
-                                                            <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                                {created_at
-                                                                    ? new Date(
-                                                                          created_at
-                                                                      ).toLocaleString()
-                                                                    : "-"}
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                )
-                                            ) : (
-                                                <tr>
-                                                    <td
-                                                        colSpan="4"
-                                                        className="text-center py-4"
-                                                    >
-                                                        Belum ada data masuk.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="w-1/2">
-                                    <Bar data={chartData} options={chartOptions} />
-                                </div>
+            <div className="py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 p-4 space-y-6">
+                    <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Data Absensi Hari Ini</h2>
+                        {todayAttendances?.length === 0 ? (
+                            <div className="text-center">
+                                <img
+                                    src="/img/empty.png"
+                                    alt="No Data"
+                                    className="w-70 h-64 mx-auto mt-4"
+                                    draggable="false"
+                                />
+                                <p className="text-gray-500 dark:text-white">Belum ada data masuk.</p>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Main Attendance Table */}
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <h1 className="text-xl mb-5">
-                                Data Kehadiran Keluarga Salman Al-Farisi
-                            </h1>
-                            <table className="border-b-2 border-gray-200 min-w-full overflow-auto">
+                        ) : (
+                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 shadow-lg rounded-md overflow-hidden">
                                 <thead>
-                                    <tr className="bg-gray-700 dark:bg-gray-200">
-                                        <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                             Nama
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
+                                        <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                             Status
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
+                                        <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                             Deskripsi
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium dark:text-gray-800 text-gray-200">
-                                            Tanggal
+                                        <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                            Waktu
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {attendances?.data.length > 0 ? (
-                                        attendances.data.map(
-                                            ({
-                                                id,
-                                                user,
-                                                status,
-                                                description,
-                                                created_at,
-                                            }) => (
-                                                <tr
-                                                    key={id}
-                                                    className="border-b-2"
-                                                >
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                        {user?.name ||
-                                                            "Unknown"}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                        {getStatusBadge(status)}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                        {description || "Hadir"}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
-                                                        {created_at
-                                                            ? new Date(
-                                                                  created_at
-                                                              ).toLocaleString()
-                                                            : "-"}
-                                                    </td>
-                                                </tr>
-                                            )
-                                        )
-                                    ) : (
-                                        <tr>
-                                            <td
-                                                colSpan="4"
-                                                className="text-center py-4"
-                                            >
-                                                Tidak ada data absensi.
+                                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-700">
+                                    {todayAttendances.map(({ id, user, status, description, created_at }) => (
+                                        <tr key={id}>
+                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                {user?.name || "Unknown"}
+                                            </td>
+                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                {getStatusBadge(status)}
+                                            </td>
+                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                {description || "Hadir"}
+                                            </td>
+                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                {created_at ? new Date(created_at).toLocaleString() : "-"}
                                             </td>
                                         </tr>
-                                    )}
+                                    ))}
                                 </tbody>
                             </table>
-                            <Pagination links={attendances.links} />{" "}
-                            {/* Add Pagination component here */}
+                        )}
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
+                        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                            <h1 className="text-xl font-bold">Data Kehadiran Keluarga Salman Al-Farisi</h1>
+                            <h2 className="text-xl font-bold">Jumlah Absensi per Status</h2>
+                        </div>
+                        <div className="flex flex-col md:flex-row">
+                            <div className="w-full md:w-1/2 mb-4 md:mb-0 pr-7">
+                                {attendances?.data.length === 0 ? (
+                                    <div className="text-center">
+                                        <img
+                                            src="/img/empty.png"
+                                            alt="No Data"
+                                            className="w-70 h-64 mx-auto mt-4"
+                                            draggable="false"
+                                        />
+                                        <p className="text-gray-500 dark:text-white">Tidak ada data absensi.</p>
+                                    </div>
+                                ) : (
+                                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 shadow-lg rounded-md overflow-hidden">
+                                        <thead>
+                                            <tr>
+                                                <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                                    Nama
+                                                </th>
+                                                <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                                    Status
+                                                </th>
+                                                <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                                    Deskripsi
+                                                </th>
+                                                <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                                    Tanggal
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-700">
+                                            {attendances.data.map(({ id, user, status, description, created_at }) => (
+                                                <tr key={id}>
+                                                    <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                        {user?.name || "Unknown"}
+                                                    </td>
+                                                    <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                        {getStatusBadge(status)}
+                                                    </td>
+                                                    <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                        {description || "Hadir"}
+                                                    </td>
+                                                    <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                        {created_at ? new Date(created_at).toLocaleString() : "-"}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                                <Pagination links={attendances.links} />
+                            </div>
+                            <div className="w-full md:w-1/2">
+                                <Bar data={chartData} options={chartOptions} />
+                            </div>
                         </div>
                     </div>
                 </div>

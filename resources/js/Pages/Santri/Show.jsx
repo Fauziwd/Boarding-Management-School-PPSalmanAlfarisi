@@ -104,7 +104,7 @@ export default function SantriShow({ auth, santri }) {
                                         className={({ selected })  =>
                                             selected
                                                 ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Data Diri
@@ -113,7 +113,7 @@ export default function SantriShow({ auth, santri }) {
                                         className={({ selected }) =>
                                             selected
                                                 ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Pencapaian Akademik
@@ -122,7 +122,7 @@ export default function SantriShow({ auth, santri }) {
                                         className={({ selected }) =>
                                             selected
                                                 ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-indigo-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
+                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
                                         }
                                     >
                                         Pencapaian Hafalan

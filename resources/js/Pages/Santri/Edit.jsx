@@ -6,7 +6,6 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import TextareaInput from "@/Components/TextareaInput";
 
 const Edit = ({ auth, santri, hafalan, akademik }) => {
     const { data, setData, patch, processing, errors } = useForm({
@@ -84,9 +83,9 @@ const Edit = ({ auth, santri, hafalan, akademik }) => {
                                     />
                                     <InputError message={errors.tahun_lulus} className="mt-2" />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <InputLabel htmlFor="hafalan" value="Capaian Hafalan" />
-                                    <TextareaInput
+                                    <TextInput
                                         id="hafalan"
                                         name="hafalan"
                                         className="mt-1 block w-full"
@@ -97,7 +96,7 @@ const Edit = ({ auth, santri, hafalan, akademik }) => {
                                 </div>
                                 <div>
                                     <InputLabel htmlFor="akademik" value="Capaian Akademik" />
-                                    <TextareaInput
+                                    <TextInput
                                         id="akademik"
                                         name="akademik"
                                         className="mt-1 block w-full"
@@ -105,7 +104,7 @@ const Edit = ({ auth, santri, hafalan, akademik }) => {
                                         onChange={(e) => setData("akademik", e.target.value)}
                                     />
                                     <InputError message={errors.akademik} className="mt-2" />
-                                </div>
+                                </div> */}
                                 <div className="flex items-center gap-4">
                                     <PrimaryButton disabled={processing}>Update</PrimaryButton>
                                     <Link href="/santris" className="ml-3 text-gray-600 dark:text-gray-400">

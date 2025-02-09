@@ -48,7 +48,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/santris/create', [SantriController::class, 'create'])->name('santris.create');
     Route::post('/santris/store', [SantriController::class, 'store'])->name('santris.store');
     Route::get('/santris', [SantriController::class, 'index'])->name('santris.index');
-    Route::get('/santris/create', [SantriController::class, 'create'])->name('santris.create');
+    Route::get('/santris/{santri}/edit', [SantriController::class, 'edit'])->name('santris.edit');
     Route::post('/santris', [SantriController::class, 'store'])->name('santris.store');
     Route::get('/santris/{santri}', [SantriController::class, 'show'])->name('santris.show');
     

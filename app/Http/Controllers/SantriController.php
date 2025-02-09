@@ -129,7 +129,7 @@ class SantriController extends Controller
         $santri->save();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('santri.index')->with('success', 'Santri berhasil diupdate');
+        return redirect()->route('santris.index')->with('success', 'Santri berhasil diupdate');
     }
 
     // Menghapus data santri
@@ -144,6 +144,6 @@ class SantriController extends Controller
         $santri->delete();
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('santri.index')->with('success', 'Santri berhasil dihapus');
+        return redirect()->route('santris.index')->with('success', 'Santri berhasil dihapus');
     }
 }

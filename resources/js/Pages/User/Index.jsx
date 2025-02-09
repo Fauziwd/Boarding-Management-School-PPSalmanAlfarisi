@@ -25,7 +25,7 @@ export default function UserIndex({ auth, users }) {
 
                         <Link
                             href={route("users.create")}
-                            className="hover:bg-indigo-600 border rounded-md border-indigo-500 text-white font-bold py-2 px-4"
+                            className="dark:hover:bg-indigo-900 hover:bg-indigo-100 border rounded-md border-indigo-500 text-indigo-700 hover:text-indigo-900 dark:text-white font-bold py-2 px-4"
                         >
                             Create User
                         </Link>
@@ -42,19 +42,19 @@ export default function UserIndex({ auth, users }) {
                             <table className="border-b-2 mt-3 border-gray-200 min-w-full overflow-auto">
                                 <thead>
                                     <tr className="border-b-2">
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-white">
+                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
                                             Id
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-white">
+                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
                                             Name
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-white">
+                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
                                             Email
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-white">
+                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
                                             Role
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-white">
+                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
                                             Action
                                         </th>
                                     </tr>
@@ -63,19 +63,19 @@ export default function UserIndex({ auth, users }) {
                                     {users.data.map(
                                         ({ id, name, email, role }) => (
                                             <tr key={id} className="border-b-2">
-                                                <td className="px-6 py-4 text-lg text-white">
+                                                <td className="px-6 py-4 text-lg text-gray-800 dark:text-white">
                                                     {id}
                                                 </td>
-                                                <td className="px-6 py-4 text-lg text-white">
+                                                <td className="px-6 py-4 text-lg text-gray-800 dark:text-white">
                                                     {name}
                                                 </td>
-                                                <td className="px-6 py-4 text-lg text-white">
+                                                <td className="px-6 py-4 text-lg text-gray-800 dark:text-white">
                                                     {email}
                                                 </td>
-                                                <td className="px-6 py-4 text-lg text-white">
+                                                <td className="px-6 py-4 text-lg text-gray-800 dark:text-white">
                                                     {role}
                                                 </td>
-                                                <td className="px-6 py-4 text-lg text-white">
+                                                <td className="px-6 py-4 text-lg text-gray-800 dark:text-white">
                                                     <Link
                                                     className="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
                                                         href={route(

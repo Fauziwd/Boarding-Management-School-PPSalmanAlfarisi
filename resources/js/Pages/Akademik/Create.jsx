@@ -11,7 +11,7 @@ export default function Create({ auth, santris }) {
     const breadcrumbs = [
         { label: "Home", href: "/" },
         { label: "Akademik", href: "/akademik" },
-        { label: "Tambah Akademik" }
+        { label: "Data Baru" }
     ];
 
     const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
