@@ -20,7 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'role_id', // Menggunakan role_id untuk relasi
+        'role', // Menggunakan role_id untuk relasi (udh kuubah ntar klo ada bug role coba disini yaa :D)
         'password',
     ];
 

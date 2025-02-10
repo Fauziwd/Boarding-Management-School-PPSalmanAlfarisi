@@ -27,33 +27,33 @@ export default function SantriIndex({ auth, santris }) {
                     </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 dark:text-gray-100">
-                            <table className="border-b-2 border-gray-200 min-w-full overflow-auto">
+                            <table className="border-b-1 border-gray-200 min-w-full overflow-auto shadow-xl">
                                 <thead>
-                                    <tr className="border-b-2">
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                    <tr className="border-b-2 border-indigo-200 dark:border-gray-900">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             No
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             NIS
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Nama
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tempat Lahir
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tanggal Lahir
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tahun Lulus
                                         </th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Aksi
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="bg-white divide-y divide-indigo-500 dark:bg-gray-600 dark:divide-gray-900">
                                     {santris.data.length > 0 ? (
                                         santris.data.map(
                                             ({
@@ -66,33 +66,33 @@ export default function SantriIndex({ auth, santris }) {
                                             }) => (
                                                 <tr
                                                     key={id}
-                                                    className="border-b-2"
+                                                    className=""
                                                 >
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {id}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {nis}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {nama}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {tempat_lahir}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {tanggal_lahir}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {tahun_lulus}
                                                     </td>
-                                                    <td className="px-6 py-4 text-lg text-gray-700 dark:text-gray-200">
+                                                    <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         <Link
                                                             href={route(
                                                                 "santris.show",
                                                                 id
                                                             )}
-                                                            className="text-indigo-400 hover:text-indigo-200"
+                                                            className="text-indigo-400 dark:text-gray-900 hover:text-indigo-200"
                                                         >
                                                             Detail
                                                         </Link>

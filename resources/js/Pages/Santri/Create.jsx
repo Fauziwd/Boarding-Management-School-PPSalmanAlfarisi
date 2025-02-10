@@ -116,7 +116,7 @@ export default function SantriCreate({ auth }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex gap-8">
                     <aside className="w-1/4">
-                        <div className="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-8">
+                        <div className="bg-white border border-indigo-800 dark:bg-gray-800 shadow-xl sm:rounded-lg p-8">
                             <h2 className="text-xl dark:text-white font-bold mb-6 text-center">Data Santri</h2>
                             <ol className="relative border-l ml-6 border-gray-200 dark:border-gray-700">
                                 {steps.map((step, index) => (
@@ -124,9 +124,9 @@ export default function SantriCreate({ auth }) {
                                         <span
                                             className={`absolute flex items-center justify-center w-8 h-8 rounded-full -left-4 ring-4 ring-white dark:ring-gray-800 ${
                                                 index < currentStep
-                                                    ? 'bg-green-200 dark:bg-green-600'
+                                                    ? 'border border-emerald-500 dark:border-emerald-300 bg-green-200 dark:bg-green-600'
                                                     : index === currentStep
-                                                    ? 'bg-indigo-500 text-white dark:bg-indigo-700'
+                                                    ? 'border border-indigo-600 dark:border-indigo-400 bg-indigo-500 text-white dark:bg-indigo-700'
                                                     : 'bg-gray-100 dark:bg-gray-700'
                                             }`}
                                         >
@@ -148,7 +148,7 @@ export default function SantriCreate({ auth }) {
                                                 </svg>
                                             ) : (
                                                 <svg
-                                                    className="w-3.5 h-3.5 text-gray-500 dark:text-gray-200"
+                                                    className="w-3.5 h-3.5 text-white dark:text-gray-200"
                                                     aria-hidden="true"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     fill="currentColor"
@@ -175,7 +175,7 @@ export default function SantriCreate({ auth }) {
                     </aside>
 
                     <div className="w-3/4">
-                        <div className="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
+                        <div className="bg-white dark:bg-gray-800 border border-indigo-800 shadow-xl sm:rounded-lg">
                             <div className="p-6 sm:p-10 text-gray-900 dark:text-gray-100">
                                 <h2 className="text-2xl font-bold mb-4">Create Santri</h2>
                                 <p className="mb-8 text-gray-600 dark:text-gray-400">
