@@ -8,10 +8,12 @@ import { useForm } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import Selectbox from "@/Components/Selectbox";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function SubmitAttendance() {
     const [transitioning, setTransitioning] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [alreadyAttended, setAlreadyAttended] = useState(false);
 
     const { data, setData, post, transform, errors, processing, reset, recentlySuccessful } =
         useForm({
@@ -41,6 +43,16 @@ export default function SubmitAttendance() {
             }
         );
     };
+
+    useEffect(() => {
+        axios.get(route('attendances.checkToday'))
+            .then(response => {
+                setAlreadyAttended(response.data.attended);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, []);
 
     useEffect(() => {
         if (data.prepareData.hasOwnProperty("latitude") &&
@@ -75,53 +87,61 @@ export default function SubmitAttendance() {
 
     return (
         <form onSubmit={submit} className="mt-6 space-y-6">
-            {submitted && (
+            {alreadyAttended ? (
                 <div className="alert alert-success">
-                    Anda telah melakukan absensi.
+                    Anda telah melakukan absensi hari ini.
                 </div>
+            ) : (
+                <>
+                    {submitted && (
+                        <div className="alert alert-success">
+                            Anda telah melakukan absensi.
+                        </div>
+                    )}
+
+                    <div>
+                        <InputLabel htmlFor="info" value="Silahkan lakukan absensi" />
+
+                        <Selectbox
+                            onChange={(e) => setData("status", e.target.value)}
+                            className="border border-gray-300 rounded-md"
+                            options={[
+                                { value: "attend", label: "Hadir" },
+                                { value: "leave", label: "Cuti" },
+                                { value: "sick", label: "Sakit" },
+                                { value: "permit", label: "Izin" },
+                                { value: "business_trip", label: "Perjalanan Dinas" },
+                                { value: "remote", label: "Hybrid/WFH" },
+                            ]}
+                        />
+
+                        <InputError className="mt-2" message={errors.status} />
+                    </div>
+                    <Transition
+                        show={transitioning}
+                        enter="transition ease-in-out"
+                        enterFrom="opacity-0"
+                        leave="transition ease-in-out"
+                        leaveTo="opacity-0"
+                    >
+                        <div>
+                            <InputLabel htmlFor="description" value="Penjelasan" />
+
+                            <TextInput
+                                value={data.description}
+                                onChange={(e) => setData("description", e.target.value)}
+                                className="w-full"
+                            />
+
+                            <InputError className="mt-2" message={errors.description} />
+                        </div>
+                    </Transition>
+
+                    <div className="flex items-center gap-4">
+                        <PrimaryButton disabled={processing}>Absensi</PrimaryButton>
+                    </div>
+                </>
             )}
-
-            <div>
-                <InputLabel htmlFor="info" value="Silahkan lakukan absensi" />
-
-                <Selectbox
-                    onChange={(e) => setData("status", e.target.value)}
-                    className="border border-gray-300 rounded-md"
-                    options={[
-                        { value: "attend", label: "Hadir" },
-                        { value: "leave", label: "Cuti" },
-                        { value: "sick", label: "Sakit" },
-                        { value: "permit", label: "Izin" },
-                        { value: "business_trip", label: "Perjalanan Dinas" },
-                        { value: "remote", label: "Hybrid/WFH" },
-                    ]}
-                />
-
-                <InputError className="mt-2" message={errors.status} />
-            </div>
-            <Transition
-                show={transitioning}
-                enter="transition ease-in-out"
-                enterFrom="opacity-0"
-                leave="transition ease-in-out"
-                leaveTo="opacity-0"
-            >
-                <div>
-                    <InputLabel htmlFor="description" value="Penjelasan" />
-
-                    <TextInput
-                        value={data.description}
-                        onChange={(e) => setData("description", e.target.value)}
-                        className="w-full"
-                    />
-
-                    <InputError className="mt-2" message={errors.description} />
-                </div>
-            </Transition>
-
-            <div className="flex items-center gap-4">
-                <PrimaryButton disabled={processing}>Absensi</PrimaryButton>
-            </div>
         </form>
     );
 }

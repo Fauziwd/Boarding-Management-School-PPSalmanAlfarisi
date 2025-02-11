@@ -9,9 +9,7 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-   // app/Http/Controllers/AttendanceController.php
-
-   public function index()
+    public function index()
     {
         // Retrieve all attendances with their associated users
         $attendances = Attendance::with('user')->latest()->paginate(5);
@@ -52,5 +50,15 @@ class AttendanceController extends Controller
         ]);
 
         return back()->with('success', 'Absensi berhasil disubmit');
+    }
+
+    public function checkTodayAttendance(Request $request)
+    {
+        $user = $request->user();
+        $todayAttendance = Attendance::where('user_id', $user->id)
+            ->whereDate('created_at', Carbon::today())
+            ->exists();
+
+        return response()->json(['attended' => $todayAttendance]);
     }
 }
