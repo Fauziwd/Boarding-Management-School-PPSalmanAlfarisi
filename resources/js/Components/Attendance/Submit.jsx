@@ -69,6 +69,7 @@ export default function SubmitAttendance() {
                 onSuccess: () => {
                     reset(); // Reset form fields
                     setSubmitted(true); // Set submitted to true
+                    setTimeout(() => setSubmitted(false), 3000); // Hide success message after 3 seconds
                 },
                 onError: (errors) => {
                     console.log(errors);
@@ -99,47 +100,51 @@ export default function SubmitAttendance() {
                         </div>
                     )}
 
-                    <div>
-                        <InputLabel htmlFor="info" value="Silahkan lakukan absensi" />
+                    {!submitted && (
+                        <>
+                            <div>
+                                <InputLabel htmlFor="info" value="Silahkan lakukan absensi" />
 
-                        <Selectbox
-                            onChange={(e) => setData("status", e.target.value)}
-                            className="border border-gray-300 rounded-md"
-                            options={[
-                                { value: "attend", label: "Hadir" },
-                                { value: "leave", label: "Cuti" },
-                                { value: "sick", label: "Sakit" },
-                                { value: "permit", label: "Izin" },
-                                { value: "business_trip", label: "Perjalanan Dinas" },
-                                { value: "remote", label: "Hybrid/WFH" },
-                            ]}
-                        />
+                                <Selectbox
+                                    onChange={(e) => setData("status", e.target.value)}
+                                    className="border border-gray-300 rounded-md"
+                                    options={[
+                                        { value: "attend", label: "Hadir" },
+                                        { value: "leave", label: "Cuti" },
+                                        { value: "sick", label: "Sakit" },
+                                        { value: "permit", label: "Izin" },
+                                        { value: "business_trip", label: "Perjalanan Dinas" },
+                                        { value: "remote", label: "Hybrid/WFH" },
+                                    ]}
+                                />
 
-                        <InputError className="mt-2" message={errors.status} />
-                    </div>
-                    <Transition
-                        show={transitioning}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <div>
-                            <InputLabel htmlFor="description" value="Penjelasan" />
+                                <InputError className="mt-2" message={errors.status} />
+                            </div>
+                            <Transition
+                                show={transitioning}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
+                                <div>
+                                    <InputLabel htmlFor="description" value="Penjelasan" />
 
-                            <TextInput
-                                value={data.description}
-                                onChange={(e) => setData("description", e.target.value)}
-                                className="w-full"
-                            />
+                                    <TextInput
+                                        value={data.description}
+                                        onChange={(e) => setData("description", e.target.value)}
+                                        className="w-full"
+                                    />
 
-                            <InputError className="mt-2" message={errors.description} />
-                        </div>
-                    </Transition>
+                                    <InputError className="mt-2" message={errors.description} />
+                                </div>
+                            </Transition>
 
-                    <div className="flex items-center gap-4">
-                        <PrimaryButton disabled={processing}>Absensi</PrimaryButton>
-                    </div>
+                            <div className="flex items-center gap-4">
+                                <PrimaryButton disabled={processing}>Absensi</PrimaryButton>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
         </form>

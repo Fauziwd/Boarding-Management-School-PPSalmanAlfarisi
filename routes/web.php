@@ -23,9 +23,10 @@ Route::get('/', function () {
 });
 
 // Halaman Dashboard
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [AttendanceController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
 // CRUD Users
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -41,8 +42,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi');
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/attendances/submit', [AttendanceController::class, 'submit'])->name('attendances.submit');
-    Route::get('/attendances/check-today', [AttendanceController::class, 'checkTodayAttendance'])->name('attendances.checkToday');
 });
+Route::get('/attendances/check-today', [AttendanceController::class, 'checkTodayAttendance'])->name('attendances.checkToday');
+
 
 // CRUD Santri
 Route::middleware(['auth', 'admin'])->group(function () {

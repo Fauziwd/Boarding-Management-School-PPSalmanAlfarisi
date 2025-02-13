@@ -9,8 +9,10 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+
         // Retrieve all attendances with their associated users
         $attendances = Attendance::with('user')->latest()->paginate(5);
 
@@ -31,7 +33,30 @@ class AttendanceController extends Controller
             'statusData' => $statusData,
         ]);
     }
-    
+
+    public function dashboard(Request $request)
+    {
+        $user = $request->user();
+
+        // Get attendance statistics for the user
+        $attendanceStats = Attendance::where('user_id', $user->id)
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->get()
+            ->toArray(); 
+
+        $totalAttendances = Attendance::where('user_id', $user->id)->count();
+
+        return Inertia::render('Dashboard', [
+            'auth' => [
+                'user' => $user,
+                'role' => $user->role,
+            ],
+            'attendanceStats' => $attendanceStats,
+            'totalAttendances' => $totalAttendances,
+        ]);
+    }
+
     public function submit(Request $request)
     {
         $request->validate([

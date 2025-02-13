@@ -115,6 +115,9 @@ export default function AttendanceIndex({ auth }) {
                                             Nama
                                         </th>
                                         <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                                    Role
+                                                </th>
+                                        <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                             Status
                                         </th>
                                         <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
@@ -126,11 +129,14 @@ export default function AttendanceIndex({ auth }) {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-700">
-                                    {todayAttendances.map(({ id, user, status, description, created_at }) => (
+                                    {todayAttendances.map(({ id, user, role, status, description, created_at }) => (
                                         <tr key={id}>
                                             <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
                                                 {user?.name || "Unknown"}
                                             </td>
+                                            <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
+                                                        {user.role}
+                                                    </td>
                                             <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
                                                 {getStatusBadge(status)}
                                             </td>
@@ -150,7 +156,7 @@ export default function AttendanceIndex({ auth }) {
                     <div className="bg-white dark:bg-gray-800/50 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
                         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
                             <h1 className="text-xl font-bold">Data Kehadiran Keluarga Salman Al-Farisi</h1>
-                            <h2 className="text-xl font-bold">Jumlah Absensi per Status</h2>
+                            <h2 className="text-xl font-bold">Data Absensi per Status Hari Ini</h2>
                         </div>
                         <div className="flex flex-col md:flex-row">
                             <div className="w-full md:w-1/2 mb-4 md:mb-0 pr-7">
@@ -183,11 +189,12 @@ export default function AttendanceIndex({ auth }) {
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-600 dark:divide-gray-700">
-                                            {attendances.data.map(({ id, user, status, description, created_at }) => (
+                                            {attendances.data.map(({ id, user,role, status, description, created_at }) => (
                                                 <tr key={id}>
                                                     <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
                                                         {user?.name || "Unknown"}
                                                     </td>
+                                                   
                                                     <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
                                                         {getStatusBadge(status)}
                                                     </td>
