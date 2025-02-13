@@ -37,7 +37,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/" className="h-auto rounded-xl">
+                                <Link href="/dashboard" className="h-auto rounded-xl">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                                 </Link>
                             </div>
@@ -48,7 +48,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         {item.name}
                                     </NavLink>
                                 ))}
-                            </div> */}
+                            </div> */} 
                         </div>
                        
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">

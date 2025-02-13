@@ -64,7 +64,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // CRUD Akademik
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin', 'mudaris'])->group(function () {
     Route::get('/akademik', [AkademikController::class, 'index'])->name('akademik.index');
     Route::get('/akademik/create', [AkademikController::class, 'create'])->name('akademik.create');
     Route::post('/akademik/store', [AkademikController::class, 'store'])->name('akademik.store');
