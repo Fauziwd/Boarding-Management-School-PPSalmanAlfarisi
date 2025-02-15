@@ -46,7 +46,7 @@ export default function Index({ auth, hafalans }) {
                                         Aksi</th>
                                     </tr>
                                 </thead> 
-                                <tbody className="bg-white divide-y divide-indigo-500 dark:bg-gray-600 dark:divide-gray-900">
+                                <tbody>
                                     {hafalans.data.length > 0 ? (
                                         hafalans.data.map(({ id, santri, juz, month }, index) => (
                                             <tr key={id} className="border-b-2">

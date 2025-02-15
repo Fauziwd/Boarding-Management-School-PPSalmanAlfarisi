@@ -32,23 +32,24 @@ export default function AkademikIndex({ auth, akademiks }) {
                         <Breadcrumbs items={breadcrumbs} />
                         <Link
                             href={route("akademik.create")}
-                            className="hover:bg-indigo-100 border rounded-md border-indigo-500 text-indigo-800 dark:text-white font-bold py-2 px-4"
+                            className="dark:hover:bg-indigo-900 hover:bg-indigo-100 border rounded-md border-indigo-500 text-indigo-700 hover:text-indigo-900 dark:text-white font-bold py-2 px-4"
                         >
                             Tambah Akademik
                         </Link>
                     </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <table className="border-b-2 border-gray-200 min-w-full overflow-auto">
+                        <table className="border-b-1 border-gray-200 min-w-full overflow-auto shadow-xl mt-3">
                                 <thead>
-                                    <tr className="border-b-2">
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">No</th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">Nama Santri</th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">Kitab</th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">Bab</th>
-                                        <th className="px-6 py-3 text-left text-lg font-medium text-gray-800 dark:text-white">Aksi</th>
+                                <tr className="border-b-2 border-indigo-200 dark:border-gray-900">
+                                <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">No</th>
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">Nama Santri</th>
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">Kitab</th>
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">Bab</th>
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        Aksi</th>
                                     </tr>
-                                </thead>
+                                </thead> 
                                 <tbody>
                                     {data.length > 0 ? (
                                         data.map(({ id, santri, kitab, bab }, index) => (

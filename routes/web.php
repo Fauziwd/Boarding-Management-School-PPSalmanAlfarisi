@@ -64,7 +64,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // CRUD Akademik
-Route::middleware(['auth', 'admin', 'mudaris'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/akademik', [AkademikController::class, 'index'])->name('akademik.index');
     Route::get('/akademik/create', [AkademikController::class, 'create'])->name('akademik.create');
     Route::post('/akademik/store', [AkademikController::class, 'store'])->name('akademik.store');
@@ -72,11 +72,10 @@ Route::middleware(['auth', 'admin', 'mudaris'])->group(function () {
     Route::get('/akademik/{akademik}/edit', [AkademikController::class, 'edit'])->name('akademik.edit');
     Route::patch('/akademik/{akademik}', [AkademikController::class, 'update'])->name('akademik.update');
     Route::delete('/akademik/{akademik}', [AkademikController::class, 'destroy'])->name('akademik.destroy');
-    
 });
 
 // CRUD Hafalan
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin', 'muhafidz'])->group(function () {
     Route::get('/hafalan', [HafalanController::class, 'index'])->name('hafalan.index');
     Route::get('/hafalan/create', [HafalanController::class, 'create'])->name('hafalan.create');
     Route::post('/hafalan', [HafalanController::class, 'store'])->name('hafalan.store');

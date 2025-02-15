@@ -17,6 +17,10 @@ const menuItems = {
         { name: "Akademik", href: "akademik.index", current: "akademik.index" },
         { name: "Hafalan", href: "hafalan.index", current: "hafalan.index" },
     ],
+    muhafidz: [
+        { name: "Dashboard", href: "dashboard", current: "dashboard" },
+        { name: "Hafalan", href: "hafalan.index", current: "hafalan.index" },
+    ],
     default: [
         { name: "Dashboard", href: "dashboard", current: "dashboard" },
     ],
@@ -25,14 +29,13 @@ const menuItems = {
 export default function AuthenticatedLayout({ header, children }) {
     const { auth: { user } } = usePage().props;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-
     const menu = useMemo(() => menuItems[user.role] || menuItems.default, [user.role]);
 
     const toggleNavigationDropdown = () => setShowingNavigationDropdown(prev => !prev);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <nav className="border-b sticky top-0 z-10 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">

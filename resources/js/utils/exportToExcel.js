@@ -42,7 +42,7 @@ export const exportToExcel = (santri, akademiks, hafalans) => {
 
     akademiks.forEach((akademik, index) => {
         const previous = akademiks[index + 1];
-        const timeDiff = previous ? calculateTimeDifference(akademik.created_at, previous.created_at) : 'N/A';
+        const timeDiff = previous ? calculateTimeDifference(akademik.created_at, previous.created_at) : 'Bidayah';
         akademikSheet.push([akademik.kitab, akademik.bab, new Date(akademik.created_at).toLocaleDateString("id-ID"), timeDiff]);
     });
 
