@@ -21,6 +21,7 @@
         "vite": "^6.0"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "apexcharts": "^4.4.0",
         "chart.js": "^4.4.7",
         "lottie-react": "^2.4.1",

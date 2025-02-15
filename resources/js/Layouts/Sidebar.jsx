@@ -116,7 +116,7 @@ export default function Sidebar({ menu }) {
                                 <li key={index}>
                                     <button
                                         type="button"
-                                        className="flex items-center p-2 w-full text-gray-900 dark:text-white rounded-lg hover:bg-indigo-700 hover:text-white dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200"
+                                        className="flex items-center p-2 w-full shadow-lg text-gray-900 dark:text-white rounded-lg hover:bg-indigo-700 hover:text-white dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200"
                                         onClick={() =>
                                             setIsPencapaianOpen(
                                                 !isPencapaianOpen

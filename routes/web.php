@@ -75,7 +75,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 // CRUD Hafalan
-Route::middleware(['auth', 'admin', 'muhafidz'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/hafalan', [HafalanController::class, 'index'])->name('hafalan.index');
     Route::get('/hafalan/create', [HafalanController::class, 'create'])->name('hafalan.create');
     Route::post('/hafalan', [HafalanController::class, 'store'])->name('hafalan.store');

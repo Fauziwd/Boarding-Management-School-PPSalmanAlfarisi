@@ -10,12 +10,24 @@ use Illuminate\Support\Facades\Storage;
 class SantriController extends Controller
 {
     // Menampilkan daftar santri
-    public function index()
+    public function index(Request $request)
     {
-        $santris = Santri::paginate(5); // Pastikan tabel 'santris' memiliki data
-    
+        $query = Santri::query();
+
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nis', 'like', "%{$search}%")
+                  ->orWhere('tempat_lahir', 'like', "%{$search}%")
+                  ->orWhere('tanggal_lahir', 'like', "%{$search}%")
+                  ->orWhere('tahun_lulus', 'like', "%{$search}%");
+        }
+
+        $santris = $query->paginate(5);
+
         return Inertia::render('Santri/Index', [
             'santris' => $santris,
+            'filters' => $request->only(['search', 'page']),
         ]);
     }   
     

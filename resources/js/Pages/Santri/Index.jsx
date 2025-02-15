@@ -1,8 +1,55 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Pagination from "@/Components/Pagination";
-export default function SantriIndex({ auth, santris }) {
+import { useEffect, useState } from "react";
+import { debounce } from "lodash";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"; // Import the icon
+
+export default function SantriIndex({ auth, santris, filters }) {
+    const { data, setData, get } = useForm({
+        search: filters.search || '',
+        page: filters.page || 1,
+    });
+
+    const [searchTerm, setSearchTerm] = useState(data.search);
+
+    useEffect(() => {
+        const debouncedSearch = debounce(() => {
+            get(route('santris.index'), {
+                preserveState: true,
+                replace: true,
+                data: {
+                    search: searchTerm,
+                    page: data.page,
+                },
+            });
+        }, 300);
+
+        debouncedSearch();
+
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [searchTerm, data.page]);
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+        setData('search', e.target.value);
+    };
+
+    const handlePageChange = (page) => {
+        setData('page', page);
+        get(route('santris.index'), {
+            preserveState: true,
+            replace: true,
+            data: {
+                search: searchTerm,
+                page: page,
+            },
+        });
+    };
+
     // Data untuk breadcrumbs
     const breadcrumbs = [
         { label: "Home", href: "/dashboard" },
@@ -18,12 +65,24 @@ export default function SantriIndex({ auth, santris }) {
                     <div className="p-7 flex justify-between items-center">
                         <Breadcrumbs items={breadcrumbs} />
 
-                        <Link
-                            href={route("santris.create")}
-                            className="hover:bg-indigo-600 hover:text-white border rounded-md border-indigo-500 text-indigo-600 dark:text-white font-bold py-2 px-4"
-                        >
-                            Tambah Santri
-                        </Link>
+                        <div className="flex items-center space-x-4">
+                            <Link
+                                href={route("santris.create")}
+                                className="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-200"
+                            >
+                                Tambah Santri
+                            </Link>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={handleSearch}
+                                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                                    placeholder="Cari santri..."
+                                />
+                                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                            </div>
+                        </div>
                     </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 dark:text-gray-100">
@@ -96,16 +155,6 @@ export default function SantriIndex({ auth, santris }) {
                                                         >
                                                             Detail
                                                         </Link>
-
-                                                        {/* <Link
-                                                            href={route(
-                                                                "santris.edit",
-                                                                id
-                                                            )}
-                                                            className="inline-block px-4 py-2 bg-gray-100 text-gray-700 rounded-md"
-                                                        >
-                                                            Edit
-                                                        </Link> */}
                                                     </td>
                                                 </tr>
                                             )
@@ -122,8 +171,10 @@ export default function SantriIndex({ auth, santris }) {
                                     )}
                                 </tbody>
                             </table>
-                            <Pagination links={santris.links} />{" "}
-                            {/* Add Pagination component here */}
+                            <Pagination 
+                                links={santris.links} 
+                                onPageChange={handlePageChange}
+                            />
                         </div>
                     </div>
                 </div>
