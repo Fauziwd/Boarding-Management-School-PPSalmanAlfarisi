@@ -82,6 +82,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/hafalan/{hafalan}/edit', [HafalanController::class, 'edit'])->name('hafalan.edit');
     Route::patch('/hafalan/{hafalan}', [HafalanController::class, 'update'])->name('hafalan.update');
     Route::delete('/hafalan/{hafalan}', [HafalanController::class, 'destroy'])->name('hafalan.destroy');
+    
+    Route::get('/hafalans/monthly-summary', [HafalanController::class, 'monthlySummary'])->name('hafalan.monthlySummary');
 });
 
 // Profil Pengguna

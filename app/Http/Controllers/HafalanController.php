@@ -9,10 +9,23 @@ use Inertia\Inertia;
 
 class HafalanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $hafalans = Hafalan::with('santri')->paginate(5);
-        return Inertia::render('Hafalan/Index', ['hafalans' => $hafalans]);
+        $currentMonth = date('Y-m');
+        $juzCount = Hafalan::select('juz', \DB::raw('count(*) as total'))
+            ->where('month', 'like', $currentMonth . '%')
+            ->groupBy('juz')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        $topJuz = $juzCount->first();
+
+        return Inertia::render('Hafalan/Index', [
+            'hafalans' => $hafalans,
+            'juzCount' => $juzCount,
+            'topJuz' => $topJuz,
+        ]);
     }
 
     public function getBySantriId($santriId)
@@ -63,5 +76,24 @@ class HafalanController extends Controller
     {
         $hafalan->delete();
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil dihapus.');
+    }
+
+    public function monthlySummary(Request $request)
+    {
+        $month = $request->input('month');
+
+        $summary = Hafalan::where('month', 'like', $month . '%')
+            ->get()
+            ->groupBy('juz')
+            ->map(function ($group) {
+                return $group->map(function ($hafalan) {
+                    return [
+                        'nama' => $hafalan->santri->nama,
+                        'created_at' => $hafalan->created_at->format('Y-m-d H:i:s'),
+                    ];
+                });
+            });
+
+        return response()->json($summary);
     }
 }
