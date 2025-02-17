@@ -1,20 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
-import ApexCharts from 'apexcharts';
+import ApexCharts from "apexcharts";
 
 export default function Hafalan({ hafalans }) {
     const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         const updateDarkMode = () => {
-            setIsDarkMode(document.documentElement.classList.contains('dark'));
+            setIsDarkMode(document.documentElement.classList.contains("dark"));
         };
         updateDarkMode();
-        window.addEventListener('DOMContentLoaded', updateDarkMode);
-        window.addEventListener('change', updateDarkMode);
+        window.addEventListener("DOMContentLoaded", updateDarkMode);
+        window.addEventListener("change", updateDarkMode);
         return () => {
-            window.removeEventListener('DOMContentLoaded', updateDarkMode);
-            window.removeEventListener('change', updateDarkMode);
+            window.removeEventListener("DOMContentLoaded", updateDarkMode);
+            window.removeEventListener("change", updateDarkMode);
         };
     }, []);
 
@@ -46,24 +46,27 @@ export default function Hafalan({ hafalans }) {
 
     useEffect(() => {
         if (chartRef.current) {
-            const seriesData = sortedHafalans.map(hafalan => ({
-                x: new Date(hafalan.created_at).toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
-                y: hafalan.juz
+            const seriesData = sortedHafalans.map((hafalan) => ({
+                x: new Date(hafalan.created_at).toLocaleDateString("id-ID", {
+                    month: "long",
+                    year: "numeric",
+                }),
+                y: hafalan.juz,
             }));
 
             const options = {
                 chart: {
-                    type: 'area',
+                    type: "area",
                     height: 350,
                     toolbar: { show: false },
                     animations: {
                         enabled: true,
-                        easing: 'easeinout',
+                        easing: "easeinout",
                         speed: 800,
                         animateGradually: {
                             enabled: true,
-                            delay: 150
-                        }
+                            delay: 150,
+                        },
                     },
                 },
                 series: [
@@ -73,24 +76,28 @@ export default function Hafalan({ hafalans }) {
                     },
                 ],
                 xaxis: {
-                    type: 'category',
-                    labels: { style: { colors: isDarkMode ? '#ffffff' : '#333' } },
+                    type: "category",
+                    labels: {
+                        style: { colors: isDarkMode ? "#ffffff" : "#333" },
+                    },
                 },
                 yaxis: {
-                    labels: { style: { colors: isDarkMode ? '#ffffff' : '#333' } },
+                    labels: {
+                        style: { colors: isDarkMode ? "#ffffff" : "#333" },
+                    },
                 },
                 tooltip: {
-                    theme: isDarkMode ? 'dark' : 'light',
+                    theme: isDarkMode ? "dark" : "light",
                 },
                 stroke: { width: 2 },
                 dataLabels: { enabled: false },
                 grid: {
-                    borderColor: isDarkMode ? '#444444' : '#e7e7e7',
+                    borderColor: isDarkMode ? "#444444" : "#e7e7e7",
                 },
                 fill: {
-                    type: 'gradient',
+                    type: "gradient",
                     gradient: {
-                        shade: isDarkMode ? 'dark' : 'light',
+                        shade: isDarkMode ? "dark" : "light",
                         shadeIntensity: 0.4,
                         opacityFrom: 0.4,
                         opacityTo: 0.5,
@@ -112,10 +119,12 @@ export default function Hafalan({ hafalans }) {
         <div className="bg-white dark:bg-gray-700 p-3 rounded-md">
             <Head title="Pencapaian Hafalan" />
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Pencapaian Hafalan</h2>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Grafik Hafalan
+                </h2>
                 <Link
                     href={route("hafalan.create")}
-                    className="dark:hover:bg-gray-800 hover:bg-indigo-100 border rounded-md border-gray-500 text-indigo-800 dark:text-white font-bold py-2 px-4"
+                    className="dark:hover:bg-gray-800 hover:bg-teal-100 border rounded-md border-gray-500 text-teal-800 dark:text-white font-bold py-2 px-4"
                 >
                     Tambah Hafalan
                 </Link>
@@ -134,21 +143,25 @@ export default function Hafalan({ hafalans }) {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="chart" ref={chartRef} className="shadow-lg rounded-md overflow-hidden"></div>
+                    <div
+                        id="chart"
+                        ref={chartRef}
+                        className="shadow-lg rounded-md overflow-hidden"
+                    ></div>
                     <div className="rounded-md overflow-hidden p-4">
                         <table className="min-w-full shadow-lg divide-y divide-gray-200 dark:divide-gray-700">
                             <thead>
                                 <tr>
-                                    <th className="px-4 py-2 text-left text-sm font-medium rounded-tl-xl bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                    <th className="px-4 py-2 text-left text-sm font-medium rounded-tl-xl bg-teal-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                         Juz
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                    <th className="px-4 py-2 text-left text-sm font-medium bg-teal-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                         Bulan
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-medium bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                    <th className="px-4 py-2 text-left text-sm font-medium bg-teal-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                         Tanggal
                                     </th>
-                                    <th className="px-4 py-2 text-left text-sm font-medium rounded-tr-xl bg-indigo-600 dark:bg-gray-800 text-white dark:text-gray-100">
+                                    <th className="px-4 py-2 text-left text-sm font-medium rounded-tr-xl bg-teal-600 dark:bg-gray-800 text-white dark:text-gray-100">
                                         Waktu
                                     </th>
                                 </tr>
@@ -160,15 +173,26 @@ export default function Hafalan({ hafalans }) {
                                             {hafalan.juz}
                                         </td>
                                         <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                            {new Date(hafalan.created_at).toLocaleDateString("id-ID", { month: "long", year: "numeric" })}
+                                            {new Date(
+                                                hafalan.created_at
+                                            ).toLocaleDateString("id-ID", {
+                                                month: "long",
+                                                year: "numeric",
+                                            })}
                                         </td>
                                         <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                                            {new Date(hafalan.created_at).toLocaleDateString("id-ID")}
+                                            {new Date(
+                                                hafalan.created_at
+                                            ).toLocaleDateString("id-ID")}
                                         </td>
                                         <td className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
                                             {index === 0
                                                 ? "Bidayah"
-                                                : calculateTimeDifference(hafalan.created_at, sortedHafalans[index - 1].created_at)}
+                                                : calculateTimeDifference(
+                                                      hafalan.created_at,
+                                                      sortedHafalans[index - 1]
+                                                          .created_at
+                                                  )}
                                         </td>
                                     </tr>
                                 ))}

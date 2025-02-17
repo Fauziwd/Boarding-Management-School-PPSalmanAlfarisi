@@ -71,7 +71,7 @@ export default function Create({ auth, santris }) {
                                     <select
                                         id="year"
                                         name="year"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.year}
                                         onChange={(e) =>
                                             setData("year", e.target.value)
@@ -101,7 +101,7 @@ export default function Create({ auth, santris }) {
                                     <select
                                         id="santri_id"
                                         name="santri_id"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.santri_id}
                                         onChange={(e) =>
                                             setData("santri_id", e.target.value)

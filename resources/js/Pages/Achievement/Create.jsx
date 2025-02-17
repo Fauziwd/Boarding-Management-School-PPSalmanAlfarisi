@@ -92,7 +92,7 @@ export default function AchievementCreate({ auth, santri, santris }) {
                                         <select
                                             id="year"
                                             name="year"
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                             value={data.year}
                                             onChange={(e) =>
                                                 setData("year", e.target.value)
@@ -123,7 +123,7 @@ export default function AchievementCreate({ auth, santri, santris }) {
                                         <select
                                             id="santri_id"
                                             name="santri_id"
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                             value={data.santri_id}
                                             onChange={(e) =>
                                                 setData(
@@ -155,65 +155,104 @@ export default function AchievementCreate({ auth, santri, santris }) {
 
                                     {/* Judul Pencapaian */}
                                     <div>
-                                        <InputLabel htmlFor="title" value="Judul Pencapaian" />
+                                        <InputLabel
+                                            htmlFor="title"
+                                            value="Judul Pencapaian"
+                                        />
                                         <TextInput
                                             id="title"
                                             name="title"
                                             className="mt-1 block w-full"
                                             value={data.title}
-                                            onChange={(e) => setData("title", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("title", e.target.value)
+                                            }
                                             required
                                             autoComplete="title"
                                         />
-                                        <InputError className="mt-2" message={errors.title} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.title}
+                                        />
                                     </div>
 
                                     {/* Jenis */}
                                     <div>
-                                        <InputLabel htmlFor="type" value="Jenis" />
+                                        <InputLabel
+                                            htmlFor="type"
+                                            value="Jenis"
+                                        />
                                         <select
                                             id="type"
                                             name="type"
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                             value={data.type}
-                                            onChange={(e) => setData("type", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("type", e.target.value)
+                                            }
                                             required
                                         >
-                                            <option value="Hafalan">Hafalan</option>
-                                            <option value="Akademik">Akademik</option>
+                                            <option value="Hafalan">
+                                                Hafalan
+                                            </option>
+                                            <option value="Akademik">
+                                                Akademik
+                                            </option>
                                         </select>
-                                        <InputError className="mt-2" message={errors.type} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.type}
+                                        />
                                     </div>
 
                                     {/* Deskripsi */}
                                     <div>
-                                        <InputLabel htmlFor="description" value="Deskripsi" />
+                                        <InputLabel
+                                            htmlFor="description"
+                                            value="Deskripsi"
+                                        />
                                         <textarea
                                             id="description"
                                             name="description"
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                             value={data.description}
-                                            onChange={(e) => setData("description", e.target.value)}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "description",
+                                                    e.target.value
+                                                )
+                                            }
                                             required
                                             autoComplete="description"
                                         />
-                                        <InputError className="mt-2" message={errors.description} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.description}
+                                        />
                                     </div>
 
                                     {/* Tanggal */}
                                     <div>
-                                        <InputLabel htmlFor="date" value="Tanggal" />
+                                        <InputLabel
+                                            htmlFor="date"
+                                            value="Tanggal"
+                                        />
                                         <TextInput
                                             id="date"
                                             name="date"
                                             type="date"
                                             className="mt-1 block w-full"
                                             value={data.date}
-                                            onChange={(e) => setData("date", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("date", e.target.value)
+                                            }
                                             required
                                             autoComplete="date"
                                         />
-                                        <InputError className="mt-2" message={errors.date} />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.date}
+                                        />
                                     </div>
 
                                     <div className="flex items-center gap-4 mt-8">

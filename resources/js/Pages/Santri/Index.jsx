@@ -8,7 +8,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"; // Import the
 
 export default function SantriIndex({ auth, santris, filters }) {
     const { data, setData, get } = useForm({
-        search: filters.search || '',
+        search: filters.search || "",
         page: filters.page || 1,
     });
 
@@ -16,7 +16,7 @@ export default function SantriIndex({ auth, santris, filters }) {
 
     useEffect(() => {
         const debouncedSearch = debounce(() => {
-            get(route('santris.index'), {
+            get(route("santris.index"), {
                 preserveState: true,
                 replace: true,
                 data: {
@@ -35,12 +35,12 @@ export default function SantriIndex({ auth, santris, filters }) {
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
-        setData('search', e.target.value);
+        setData("search", e.target.value);
     };
 
     const handlePageChange = (page) => {
-        setData('page', page);
-        get(route('santris.index'), {
+        setData("page", page);
+        get(route("santris.index"), {
             preserveState: true,
             replace: true,
             data: {
@@ -68,7 +68,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                         <div className="flex items-center space-x-4">
                             <Link
                                 href={route("santris.create")}
-                                className="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-200"
+                                className="bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-all duration-200"
                             >
                                 Tambah Santri
                             </Link>
@@ -77,7 +77,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                     type="text"
                                     value={searchTerm}
                                     onChange={handleSearch}
-                                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
                                     placeholder="Cari santri..."
                                 />
                                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -88,31 +88,31 @@ export default function SantriIndex({ auth, santris, filters }) {
                         <div className="p-6 dark:text-gray-100">
                             <table className="border-b-1 border-gray-200 min-w-full overflow-auto shadow-xl">
                                 <thead>
-                                    <tr className="border-b-2 border-indigo-200 dark:border-gray-900">
-                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                    <tr className="border-b-2 border-teal-200 dark:border-gray-900">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             No
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             NIS
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Nama
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tempat Lahir
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tanggal Lahir
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Tahun Lulus
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Aksi
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-indigo-500 dark:bg-gray-600 dark:divide-gray-900">
+                                <tbody className="bg-white divide-y divide-teal-500 dark:bg-gray-600 dark:divide-gray-900">
                                     {santris.data.length > 0 ? (
                                         santris.data.map(
                                             ({
@@ -123,10 +123,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                 tanggal_lahir,
                                                 tahun_lulus,
                                             }) => (
-                                                <tr
-                                                    key={id}
-                                                    className=""
-                                                >
+                                                <tr key={id} className="">
                                                     <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {id}
                                                     </td>
@@ -151,7 +148,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                                 "santris.show",
                                                                 id
                                                             )}
-                                                            className="text-indigo-400 dark:text-gray-900 hover:text-indigo-200"
+                                                            className="text-teal-400 dark:text-gray-900 hover:text-teal-200"
                                                         >
                                                             Detail
                                                         </Link>
@@ -171,8 +168,8 @@ export default function SantriIndex({ auth, santris, filters }) {
                                     )}
                                 </tbody>
                             </table>
-                            <Pagination 
-                                links={santris.links} 
+                            <Pagination
+                                links={santris.links}
                                 onPageChange={handlePageChange}
                             />
                         </div>

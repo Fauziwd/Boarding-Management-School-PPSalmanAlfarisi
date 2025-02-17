@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
@@ -11,14 +11,15 @@ export default function Create({ auth, santris }) {
     const breadcrumbs = [
         { label: "Home", href: "/" },
         { label: "Akademik", href: "/akademik" },
-        { label: "Data Baru" }
+        { label: "Data Baru" },
     ];
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
-        santri_id: "",
-        kitab: "",
-        bab: ""
-    });
+    const { data, setData, post, errors, processing, recentlySuccessful } =
+        useForm({
+            santri_id: "",
+            kitab: "",
+            bab: "",
+        });
 
     const [uniqueYears, setUniqueYears] = useState([]); // Tahun unik dari NIS
     const [filteredSantris, setFilteredSantris] = useState([]); // Santri yang difilter berdasarkan tahun
@@ -59,7 +60,7 @@ export default function Create({ auth, santris }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Konversi nilai bab menjadi integer sebelum mengirim form
-        post(route('akademik.store'), {
+        post(route("akademik.store"), {
             ...data,
             bab: parseInt(data.bab, 10),
         });
@@ -82,9 +83,11 @@ export default function Create({ auth, santris }) {
                                     <select
                                         id="year"
                                         name="year"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.year}
-                                        onChange={(e) => setData('year', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("year", e.target.value)
+                                        }
                                         required
                                     >
                                         <option value="">Pilih Tahun</option>
@@ -94,18 +97,26 @@ export default function Create({ auth, santris }) {
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.year} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.year}
+                                    />
                                 </div>
 
                                 {/* Pilih Santri */}
                                 <div>
-                                    <InputLabel htmlFor="santri_id" value="Santri" />
+                                    <InputLabel
+                                        htmlFor="santri_id"
+                                        value="Santri"
+                                    />
                                     <select
                                         id="santri_id"
                                         name="santri_id"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.santri_id}
-                                        onChange={(e) => setData('santri_id', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("santri_id", e.target.value)
+                                        }
                                         disabled={!data.year}
                                         required
                                     >
@@ -116,7 +127,10 @@ export default function Create({ auth, santris }) {
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.santri_id} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.santri_id}
+                                    />
                                 </div>
 
                                 {/* Kitab */}
@@ -125,19 +139,28 @@ export default function Create({ auth, santris }) {
                                     <select
                                         id="kitab"
                                         name="kitab"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.kitab}
-                                        onChange={(e) => setData('kitab', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("kitab", e.target.value)
+                                        }
                                         required
                                     >
                                         <option value="">Pilih Kitab</option>
-                                        {[...new Set(kutubs.map((k) => k.kitab))].map((kitab) => (
+                                        {[
+                                            ...new Set(
+                                                kutubs.map((k) => k.kitab)
+                                            ),
+                                        ].map((kitab) => (
                                             <option key={kitab} value={kitab}>
                                                 {kitab}
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.kitab} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.kitab}
+                                    />
                                 </div>
 
                                 {/* Bab */}
@@ -146,9 +169,11 @@ export default function Create({ auth, santris }) {
                                     <select
                                         id="bab"
                                         name="bab"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.bab}
-                                        onChange={(e) => setData('bab', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("bab", e.target.value)
+                                        }
                                         disabled={!data.kitab}
                                         required
                                     >
@@ -159,7 +184,10 @@ export default function Create({ auth, santris }) {
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.bab} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.bab}
+                                    />
                                 </div>
 
                                 <div className="flex justify-end mt-4">

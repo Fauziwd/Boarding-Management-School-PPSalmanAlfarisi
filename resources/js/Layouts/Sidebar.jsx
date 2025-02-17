@@ -32,7 +32,7 @@ export default function Sidebar({ menu }) {
         <div>
             <div className="text-center">
                 <button
-                    className="mt-3 mr-5 rounded-md text-indigo-700 dark:text-indigo-400 font-bold p-2 dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200"
+                    className="mt-3 mr-5 rounded-md text-teal-700 dark:text-emerald-500 font-bold p-2 dark:hover:text-teal-800 transition-colors duration-200"
                     type="button"
                     onClick={() =>
                         document
@@ -66,7 +66,7 @@ export default function Sidebar({ menu }) {
             >
                 <h5
                     id="drawer-navigation-label"
-                    className="text-base mb-8 mt-5 font-semibold text-indigo-700 dark:text-indigo-400 uppercase"
+                    className="text-base mb-8 mt-5 font-semibold text-teal-700 dark:text-teal-400 uppercase"
                 >
                     Menu
                 </h5>
@@ -77,7 +77,7 @@ export default function Sidebar({ menu }) {
                             .getElementById("drawer-navigation")
                             .classList.add("-translate-x-full")
                     }
-                    className="text-indigo-700 dark:text-indigo-400 mt-5 bg-transparent rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 mr-5 inline-flex items-center  dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200"
+                    className="text-teal-700 dark:text-teal-400 mt-5 bg-transparent rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 mr-5 inline-flex items-center transition-colors duration-200"
                     aria-label="Close navigation"
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
@@ -116,7 +116,7 @@ export default function Sidebar({ menu }) {
                                 <li key={index}>
                                     <button
                                         type="button"
-                                        className="flex items-center p-2 w-full shadow-lg text-gray-900 dark:text-white rounded-lg hover:bg-indigo-700 hover:text-white dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200"
+                                        className="flex items-center p-2 w-full shadow-lg text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200"
                                         onClick={() =>
                                             setIsPencapaianOpen(
                                                 !isPencapaianOpen
@@ -154,11 +154,11 @@ export default function Sidebar({ menu }) {
                                                             href={route(
                                                                 subItem.href
                                                             )}
-                                                            className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-indigo-700 hover:text-white dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200 ${
+                                                            className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
                                                                 route().current(
                                                                     subItem.current
                                                                 )
-                                                                    ? "bg-indigo-700 text-white dark:bg-indigo-400 dark:text-gray-800"
+                                                                    ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800"
                                                                     : ""
                                                             }`}
                                                         >
@@ -176,9 +176,9 @@ export default function Sidebar({ menu }) {
                                 <li key={index}>
                                     <Link
                                         href={route(item.href)}
-                                        className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-indigo-700 hover:text-white dark:hover:bg-indigo-400 dark:hover:text-gray-800 transition-colors duration-200 ${
+                                        className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
                                             route().current(item.current)
-                                                ? "bg-indigo-700 text-white dark:bg-indigo-400 dark:text-gray-800 shadow-lg"
+                                                ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800 shadow-lg"
                                                 : ""
                                         }`}
                                     >

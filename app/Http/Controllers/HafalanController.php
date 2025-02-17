@@ -21,10 +21,35 @@ class HafalanController extends Controller
 
         $topJuz = $juzCount->first();
 
+        $santriCount = Hafalan::select('santri_id', \DB::raw('count(*) as total'))
+            ->where('month', 'like', $currentMonth . '%')
+            ->groupBy('santri_id')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        $topSantri = null;
+        $topSantriNames = [];
+        if ($santriCount->count() > 0) {
+            $maxCount = $santriCount->first()->total;
+            foreach ($santriCount as $santri) {
+                if ($santri->total == $maxCount) {
+                    $topSantriNames[] = Santri::find($santri->santri_id)->nama;
+                } else {
+                    break;
+                }
+            }
+            if (count($topSantriNames) > 3) {
+                $topSantri = '-';
+            } else {
+                $topSantri = implode(', ', $topSantriNames);
+            }
+        }
+
         return Inertia::render('Hafalan/Index', [
             'hafalans' => $hafalans,
             'juzCount' => $juzCount,
             'topJuz' => $topJuz,
+            'topSantri' => $topSantri,
         ]);
     }
 

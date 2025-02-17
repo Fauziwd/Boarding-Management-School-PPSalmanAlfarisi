@@ -5,15 +5,13 @@ import { Head } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 
 export default function UserIndex({ auth, users }) {
-
     const breadcrumbs = [
         { label: "Home", href: "/dashboard" },
-        { label: "Daftar User" }
+        { label: "Daftar User" },
     ];
 
     return (
-        <AuthenticatedLayout
-            user={auth.user} >
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Daftar User" />
 
             <div className="py-1">
@@ -23,7 +21,7 @@ export default function UserIndex({ auth, users }) {
                         <div className="p-7 flex justify-between items-center">
                             <Link
                                 href={route("users.create")}
-                                className="dark:hover:bg-indigo-900 hover:bg-indigo-100 border rounded-md border-indigo-500 text-indigo-700 hover:text-indigo-900 dark:text-white font-bold py-2 px-4"
+                                className="dark:hover:bg-teal-900 hover:bg-teal-100 border rounded-md border-teal-500 text-teal-700 hover:text-teal-900 dark:text-white font-bold py-2 px-4"
                             >
                                 Create User
                             </Link>
@@ -39,25 +37,25 @@ export default function UserIndex({ auth, users }) {
                             </label>
                             <table className="border-b-1 border-gray-200 min-w-full overflow-auto shadow-xl mt-3">
                                 <thead>
-                                    <tr className="border-b-2 border-indigo-200 dark:border-gray-900">
-                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                    <tr className="border-b-2 border-teal-200 dark:border-gray-900">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Id
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Name
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Email
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Role
                                         </th>
-                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-indigo-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                        <th className="px-3 py-3 text-left text-xl font-bold rounded-tr-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-indigo-500 dark:bg-gray-600 dark:divide-gray-900">
+                                <tbody className="bg-white divide-y divide-teal-500 dark:bg-gray-600 dark:divide-gray-900">
                                     {users.data.map(
                                         ({ id, name, email, role }) => (
                                             <tr key={id}>
@@ -75,7 +73,7 @@ export default function UserIndex({ auth, users }) {
                                                 </td>
                                                 <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                     <Link
-                                                        className="inline-flex items-center rounded-md border border-transparent bg-indigo-700 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-white hover:border-indigo-700 hover:text-indigo-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:active:bg-gray-300"
+                                                        className="inline-flex items-center rounded-md border border-transparent bg-teal-700 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-white hover:border-teal-700 hover:text-teal-800 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:active:bg-gray-300"
                                                         href={route(
                                                             "users.edit",
                                                             id

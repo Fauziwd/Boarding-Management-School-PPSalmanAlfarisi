@@ -10,28 +10,31 @@ import { Transition } from "@headlessui/react";
 
 export default function Edit({ auth }) {
     const { achievement, santris = [] } = usePage().props;
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        santri_id: achievement.santri_id || '',
-        type: achievement.type || '',
-        title: achievement.title || '',
-        description: achievement.description || '',
-        date: achievement.date || '', // Pastikan field date ada di form
-    });
+    const { data, setData, patch, errors, processing, recentlySuccessful } =
+        useForm({
+            santri_id: achievement.santri_id || "",
+            type: achievement.type || "",
+            title: achievement.title || "",
+            description: achievement.description || "",
+            date: achievement.date || "", // Pastikan field date ada di form
+        });
 
     const submit = (e) => {
-      e.preventDefault();
-  
-      patch(route("achievements.update", achievement.id), {
-          preserveScroll: true,
-          onSuccess: () => {
-              alert("Pencapaian berhasil diperbarui!");
-          },
-          onError: (errors) => {
-              console.log(errors); // Log error to console for debugging
-              alert("Terjadi kesalahan, periksa notifikasi untuk detail lebih lanjut.");
-          },
-      });
-  };
+        e.preventDefault();
+
+        patch(route("achievements.update", achievement.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                alert("Pencapaian berhasil diperbarui!");
+            },
+            onError: (errors) => {
+                console.log(errors); // Log error to console for debugging
+                alert(
+                    "Terjadi kesalahan, periksa notifikasi untuk detail lebih lanjut."
+                );
+            },
+        });
+    };
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -52,76 +55,136 @@ export default function Edit({ auth }) {
                                     </p>
                                 </header>
 
-                                <form onSubmit={submit} className="mt-6 space-y-6">
+                                <form
+                                    onSubmit={submit}
+                                    className="mt-6 space-y-6"
+                                >
                                     <div>
-                                        <InputLabel htmlFor="santri_id" value="Nama Santri" />
+                                        <InputLabel
+                                            htmlFor="santri_id"
+                                            value="Nama Santri"
+                                        />
                                         <select
                                             id="santri_id"
                                             value={data.santri_id}
-                                            onChange={(e) => setData("santri_id", e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "santri_id",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         >
-                                            <option value="">Pilih Santri</option>
+                                            <option value="">
+                                                Pilih Santri
+                                            </option>
                                             {santris.map((santri) => (
-                                                <option key={santri.id} value={santri.id}>
+                                                <option
+                                                    key={santri.id}
+                                                    value={santri.id}
+                                                >
                                                     {santri.nama}
                                                 </option>
                                             ))}
                                         </select>
-                                        <InputError message={errors.santri_id} className="mt-2" />
+                                        <InputError
+                                            message={errors.santri_id}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="type" value="Tipe" />
+                                        <InputLabel
+                                            htmlFor="type"
+                                            value="Tipe"
+                                        />
                                         <select
                                             id="type"
                                             value={data.type}
-                                            onChange={(e) => setData("type", e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            onChange={(e) =>
+                                                setData("type", e.target.value)
+                                            }
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         >
-                                            <option value="Hafalan">Hafalan</option>
-                                            <option value="Akademik">Akademik</option>
+                                            <option value="Hafalan">
+                                                Hafalan
+                                            </option>
+                                            <option value="Akademik">
+                                                Akademik
+                                            </option>
                                         </select>
-                                        <InputError message={errors.type} className="mt-2" />
+                                        <InputError
+                                            message={errors.type}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="title" value="Judul" />
+                                        <InputLabel
+                                            htmlFor="title"
+                                            value="Judul"
+                                        />
                                         <TextInput
                                             id="title"
                                             type="text"
                                             value={data.title}
-                                            onChange={(e) => setData("title", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("title", e.target.value)
+                                            }
                                             className="mt-1 block w-full"
                                         />
-                                        <InputError message={errors.title} className="mt-2" />
+                                        <InputError
+                                            message={errors.title}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="description" value="Deskripsi" />
+                                        <InputLabel
+                                            htmlFor="description"
+                                            value="Deskripsi"
+                                        />
                                         <textarea
                                             id="description"
                                             value={data.description}
-                                            onChange={(e) => setData("description", e.target.value)}
-                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "description",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         ></textarea>
-                                        <InputError message={errors.description} className="mt-2" />
+                                        <InputError
+                                            message={errors.description}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div>
-                                        <InputLabel htmlFor="date" value="Tanggal" />
+                                        <InputLabel
+                                            htmlFor="date"
+                                            value="Tanggal"
+                                        />
                                         <TextInput
                                             id="date"
                                             type="date"
                                             value={data.date}
-                                            onChange={(e) => setData("date", e.target.value)}
+                                            onChange={(e) =>
+                                                setData("date", e.target.value)
+                                            }
                                             className="mt-1 block w-full"
                                         />
-                                        <InputError message={errors.date} className="mt-2" />
+                                        <InputError
+                                            message={errors.date}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <PrimaryButton disabled={processing}>Simpan</PrimaryButton>
+                                        <PrimaryButton disabled={processing}>
+                                            Simpan
+                                        </PrimaryButton>
 
                                         <Transition
                                             show={recentlySuccessful}
@@ -130,7 +193,9 @@ export default function Edit({ auth }) {
                                             leave="transition ease-in-out"
                                             leaveTo="opacity-0"
                                         >
-                                            <p className="text-sm text-gray-600 dark:text-gray-400">Tersimpan.</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                Tersimpan.
+                                            </p>
                                         </Transition>
                                     </div>
                                 </form>

@@ -24,7 +24,7 @@ export default function Login({ status, canResetPassword }) {
                     <div className="hidden md:block w-1/2">
                     <DarkModeToggle />
                         <img
-                            src="login.png"
+                            src="./img/Login.jpg"
                             alt="Login Illustration"
                             draggable="false"
                             className="h-full w-full object-cover"

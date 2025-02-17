@@ -20,7 +20,7 @@ export default function Edit({ auth, akademik, santris }) {
         bab: akademik.bab || "",
     });
 
-    const [filteredBab, setFilteredBab] = useState([]); 
+    const [filteredBab, setFilteredBab] = useState([]);
 
     // Filter bab berdasarkan kitab yang dipilih
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function Edit({ auth, akademik, santris }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Konversi nilai bab menjadi integer sebelum mengirim form
-        patch(route('akademik.update', akademik.id), {
+        patch(route("akademik.update", akademik.id), {
             ...data,
             bab: parseInt(data.bab, 10),
         });
@@ -53,21 +53,32 @@ export default function Edit({ auth, akademik, santris }) {
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             <form onSubmit={handleSubmit}>
                                 <div>
-                                    <InputLabel htmlFor="santri_id" value="Santri" />
+                                    <InputLabel
+                                        htmlFor="santri_id"
+                                        value="Santri"
+                                    />
                                     <select
                                         id="santri_id"
                                         name="santri_id"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.santri_id}
-                                        onChange={(e) => setData("santri_id", e.target.value)}
+                                        onChange={(e) =>
+                                            setData("santri_id", e.target.value)
+                                        }
                                     >
                                         {santris.map((santri) => (
-                                            <option key={santri.id} value={santri.id}>
+                                            <option
+                                                key={santri.id}
+                                                value={santri.id}
+                                            >
                                                 {santri.nama}
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.santri_id} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.santri_id}
+                                    />
                                 </div>
 
                                 <div>
@@ -75,19 +86,28 @@ export default function Edit({ auth, akademik, santris }) {
                                     <select
                                         id="kitab"
                                         name="kitab"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.kitab}
-                                        onChange={(e) => setData("kitab", e.target.value)}
+                                        onChange={(e) =>
+                                            setData("kitab", e.target.value)
+                                        }
                                         required
                                     >
                                         <option value="">Pilih Kitab</option>
-                                        {[...new Set(kutubs.map((k) => k.kitab))].map((kitab) => (
+                                        {[
+                                            ...new Set(
+                                                kutubs.map((k) => k.kitab)
+                                            ),
+                                        ].map((kitab) => (
                                             <option key={kitab} value={kitab}>
                                                 {kitab}
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.kitab} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.kitab}
+                                    />
                                 </div>
 
                                 <div>
@@ -95,9 +115,11 @@ export default function Edit({ auth, akademik, santris }) {
                                     <select
                                         id="bab"
                                         name="bab"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.bab}
-                                        onChange={(e) => setData("bab", e.target.value)}
+                                        onChange={(e) =>
+                                            setData("bab", e.target.value)
+                                        }
                                         disabled={!data.kitab}
                                         required
                                     >
@@ -108,7 +130,10 @@ export default function Edit({ auth, akademik, santris }) {
                                             </option>
                                         ))}
                                     </select>
-                                    <InputError className="mt-2" message={errors.bab} />
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.bab}
+                                    />
                                 </div>
 
                                 <div className="flex justify-end mt-4">

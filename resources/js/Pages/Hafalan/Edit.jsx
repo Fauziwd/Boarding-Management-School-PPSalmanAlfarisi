@@ -24,7 +24,7 @@ export default function Edit({ auth, hafalan, santris }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form Data:', data); // Debug log
+        console.log("Form Data:", data); // Debug log
         patch(route("hafalan.update", hafalan.id));
     };
 
@@ -47,7 +47,7 @@ export default function Edit({ auth, hafalan, santris }) {
                                     <select
                                         id="santri_id"
                                         name="santri_id"
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 focus:ring-teal-500 focus:border-teal-500"
                                         value={data.santri_id}
                                         onChange={(e) =>
                                             setData("santri_id", e.target.value)
