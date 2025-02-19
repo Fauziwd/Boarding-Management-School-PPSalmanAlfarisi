@@ -34,8 +34,18 @@ export default function SantriIndex({ auth, santris, filters }) {
     }, [searchTerm, data.page]);
 
     const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
-        setData("search", e.target.value);
+        const searchValue = e.target.value;
+        setSearchTerm(searchValue);
+        setData("search", searchValue);
+        setData("page", 1); // Reset halaman ke halaman pertama saat melakukan pencarian
+        get(route("santris.index"), {
+            preserveState: true,
+            replace: true,
+            data: {
+                search: searchValue,
+                page: 1,
+            },
+        });
     };
 
     const handlePageChange = (page) => {
@@ -90,7 +100,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                 <thead>
                                     <tr className="border-b-2 border-teal-200 dark:border-gray-900">
                                         <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
-                                            No
+                                            ID
                                         </th>
                                         <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             NIS

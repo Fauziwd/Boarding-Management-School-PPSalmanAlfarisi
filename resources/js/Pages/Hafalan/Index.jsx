@@ -56,9 +56,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                         document.documentElement.classList.contains("dark")
                             ? "#ffffff"
                             : "#000000";
-                    const innerText = `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; text-align: center; color: ${textColor};">
-                        Juz of the Month<br>${topJuzName}
-                    </div>`;
+                  
                     chartContext.el.insertAdjacentHTML("beforeend", innerText);
                 },
             },
@@ -278,7 +276,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                                 />
                                 <div className="mt-2 mb-4 text-left">
                                     <h3 className="text-xl font-light dark:text-gray-100">
-                                        Man of the Month:
+                                        Setoran Terbanyak:
                                         <span className="font-bold">
                                             {" "}
                                             {topSantri ? topSantri : "N/A"}
@@ -286,7 +284,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                                     </h3>
                                     <div className="text-left">
                                         <h3 className="text-xl font-light dark:text-gray-100">
-                                            Juz of the Month:
+                                            Juz Terbanyak:
                                             <span className="font-bold">
                                                 {" "}
                                                 {topJuz

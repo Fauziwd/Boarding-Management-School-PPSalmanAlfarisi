@@ -114,11 +114,11 @@ export default function AttendanceIndex({ auth }) {
         <AuthenticatedLayout auth={auth}>
             <Head title="Dashboard Absensi" />
 
-            <div className="py-12">
+            <div className="py-1">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 p-4 space-y-6">
                     <div className="bg-white dark:bg-gray-800/50 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
                         <h2 className="text-xl font-bold mb-4">
-                            Data Absensi Hari Ini
+                            Absensi Hari Ini
                         </h2>
                         {todayAttendances?.length === 0 ? (
                             <div className="text-center">
@@ -194,10 +194,10 @@ export default function AttendanceIndex({ auth }) {
                     <div className="bg-white dark:bg-gray-800/50 text-gray-800 dark:text-white p-6 rounded-md shadow-lg">
                         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
                             <h1 className="text-xl font-bold">
-                                Data Kehadiran Keluarga Salman Al-Farisi
+                               History Absensi
                             </h1>
                             <h2 className="text-xl font-bold">
-                                Data Absensi per Status Hari Ini
+                                Grafik Absensi Hari Ini
                             </h2>
                         </div>
                         <div className="flex flex-col md:flex-row">

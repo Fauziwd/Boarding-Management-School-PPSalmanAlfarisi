@@ -94,7 +94,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div className={(showingNavigationDropdown ? "block" : "hidden") + " sm:hidden"}>
                     <div className="space-y-1 pb-3 pt-2">
                         {menu.map((item, index) => (
-                            <ResponsiveNavLink key={index} href={route(item.href)} active={route().current(item.current)}>
+                            <ResponsiveNavLink key={index} href={route(item.href)} active={route().current(item.href)}>
                                 {item.name}
                             </ResponsiveNavLink>
                         ))}

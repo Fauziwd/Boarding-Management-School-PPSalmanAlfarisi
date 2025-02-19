@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 
 export default function Sidebar({ menu }) {
-    const [isPencapaianOpen, setIsPencapaianOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const sidebarRef = useRef(null);
+    const { url } = usePage();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -32,7 +32,7 @@ export default function Sidebar({ menu }) {
         <div>
             <div className="text-center">
                 <button
-                    className="mt-3 mr-5 rounded-md text-teal-700 dark:text-emerald-500 font-bold p-2 dark:hover:text-teal-800 transition-colors duration-200"
+                    className="mt-3 mr-5 rounded-md text-teal-700 dark:text-gray-400 font-bold p-2 dark:hover:text-gray-100 transition-colors duration-200"
                     type="button"
                     onClick={() =>
                         document
@@ -109,86 +109,23 @@ export default function Sidebar({ menu }) {
                     )}
                     <span className="sr-only">Close menu</span>
                 </button>
+
                 <div className="py-4 overflow-y-auto">
                     <ul className="space-y-2 font-medium">
-                        {menu.map((item, index) =>
-                            item.children ? (
-                                <li key={index}>
-                                    <button
-                                        type="button"
-                                        className="flex items-center p-2 w-full shadow-lg text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200"
-                                        onClick={() =>
-                                            setIsPencapaianOpen(
-                                                !isPencapaianOpen
-                                            )
-                                        }
-                                    >
-                                        <span className="ms-3">
-                                            {item.name}
-                                        </span>
-                                        <svg
-                                            className={`w-5 h-5 ml-auto transition-transform ${
-                                                isPencapaianOpen
-                                                    ? "rotate-180"
-                                                    : ""
-                                            }`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M19 9l-7 7-7-7"
-                                            />
-                                        </svg>
-                                    </button>
-                                    {isPencapaianOpen && (
-                                        <ul className="pl-5 mt-1 space-y-1">
-                                            {item.children.map(
-                                                (subItem, subIndex) => (
-                                                    <li key={subIndex}>
-                                                        <Link
-                                                            href={route(
-                                                                subItem.href
-                                                            )}
-                                                            className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
-                                                                route().current(
-                                                                    subItem.current
-                                                                )
-                                                                    ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800"
-                                                                    : ""
-                                                            }`}
-                                                        >
-                                                            <span className="ms-3">
-                                                                {subItem.name}
-                                                            </span>
-                                                        </Link>
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-                                    )}
-                                </li>
-                            ) : (
-                                <li key={index}>
-                                    <Link
-                                        href={route(item.href)}
-                                        className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
-                                            route().current(item.current)
-                                                ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800 shadow-lg"
-                                                : ""
-                                        }`}
-                                    >
-                                        <span className="ms-3">
-                                            {item.name}
-                                        </span>
-                                    </Link>
-                                </li>
-                            )
-                        )}
+                        {menu.map((item, index) => (
+                            <li key={index}>
+                                <Link
+                                    href={route(item.href)}
+                                    className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
+                                        route().current(item.current)
+                                            ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800 shadow-lg"
+                                            : ""
+                                    }`}
+                                >
+                                    <span className="ms-3">{item.name}</span>
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>

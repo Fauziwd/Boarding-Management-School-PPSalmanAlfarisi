@@ -113,6 +113,7 @@ export default function UserEdit({ user, auth }) {
                                         />
 
                                         <Selectbox
+                                            value={data.role}
                                             onChange={(e) =>
                                                 setData("role", e.target.value)
                                             }

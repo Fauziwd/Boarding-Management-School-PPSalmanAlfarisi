@@ -58,7 +58,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'password' => $request->password ? bcrypt($request->password) : $user->password,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);
     
         return redirect()->route('users')->with('success', 'User updated successfully!');

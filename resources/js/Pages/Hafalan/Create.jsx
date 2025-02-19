@@ -135,8 +135,8 @@ export default function Create({ auth, santris }) {
                                         className="mt-1 block w-full"
                                         value={data.juz}
                                         onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (/^\d{0,2}$/.test(value)) {
+                                            const value = parseInt(e.target.value, 10);
+                                            if (value >= 0 && value <= 30) {
                                                 setData("juz", value);
                                             }
                                         }}
