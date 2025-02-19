@@ -23,11 +23,14 @@ class SantriController extends Controller
                   ->orWhere('tahun_lulus', 'like', "%{$search}%");
         }
 
-        $santris = $query->paginate(5);
+        $query->orderBy('nis', 'asc'); // Urutkan berdasarkan NIS
+
+        $perPage = $request->input('perPage', 5);
+        $santris = $query->paginate($perPage);
 
         return Inertia::render('Santri/Index', [
             'santris' => $santris,
-            'filters' => $request->only(['search', 'page']),
+            'filters' => $request->only(['search', 'page', 'perPage']),
         ]);
     }   
     

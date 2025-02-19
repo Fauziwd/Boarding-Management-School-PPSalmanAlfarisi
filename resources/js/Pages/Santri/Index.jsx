@@ -10,6 +10,7 @@ export default function SantriIndex({ auth, santris, filters }) {
     const { data, setData, get } = useForm({
         search: filters.search || "",
         page: filters.page || 1,
+        perPage: filters.perPage || 5,
     });
 
     const [searchTerm, setSearchTerm] = useState(data.search);
@@ -22,6 +23,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                 data: {
                     search: searchTerm,
                     page: data.page,
+                    perPage: data.perPage,
                 },
             });
         }, 300);
@@ -31,7 +33,7 @@ export default function SantriIndex({ auth, santris, filters }) {
         return () => {
             debouncedSearch.cancel();
         };
-    }, [searchTerm, data.page]);
+    }, [searchTerm, data.page, data.perPage]);
 
     const handleSearch = (e) => {
         const searchValue = e.target.value;
@@ -44,6 +46,7 @@ export default function SantriIndex({ auth, santris, filters }) {
             data: {
                 search: searchValue,
                 page: 1,
+                perPage: data.perPage,
             },
         });
     };
@@ -56,6 +59,21 @@ export default function SantriIndex({ auth, santris, filters }) {
             data: {
                 search: searchTerm,
                 page: page,
+                perPage: data.perPage,
+            },
+        });
+    };
+
+    const handlePerPageChange = (e) => {
+        setData("perPage", e.target.value);
+        setData("page", 1); // Reset halaman ke halaman pertama saat mengubah jumlah data per halaman
+        get(route("santris.index"), {
+            preserveState: true,
+            replace: true,
+            data: {
+                search: searchTerm,
+                page: 1,
+                perPage: e.target.value,
             },
         });
     };
@@ -78,7 +96,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                         <div className="flex items-center space-x-4">
                             <Link
                                 href={route("santris.create")}
-                                className="bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-all duration-200"
+                                className="bg-teal-600 text-white hover:bg-gray-100 border hover:border-teal-500 hover:text-teal-700 font-bold py-2 px-4 rounded-lg transition-all duration-300"
                             >
                                 Tambah Santri
                             </Link>
@@ -87,7 +105,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                     type="text"
                                     value={searchTerm}
                                     onChange={handleSearch}
-                                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
+                                    className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-200 transition-all duration-200"
                                     placeholder="Cari santri..."
                                 />
                                 <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
@@ -100,8 +118,11 @@ export default function SantriIndex({ auth, santris, filters }) {
                                 <thead>
                                     <tr className="border-b-2 border-teal-200 dark:border-gray-900">
                                         <th className="px-3 py-3 text-left text-xl font-bold rounded-tl-xl bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
-                                            ID
+                                            No
                                         </th>
+                                        {/* <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
+                                            ID
+                                        </th> */}
                                         <th className="px-3 py-3 text-left text-xl font-bold bg-teal-600 dark:bg-gray-900 text-white dark:text-gray-100">
                                             NIS
                                         </th>
@@ -132,11 +153,14 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                 tempat_lahir,
                                                 tanggal_lahir,
                                                 tahun_lulus,
-                                            }) => (
+                                            }, index) => (
                                                 <tr key={id} className="">
                                                     <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
-                                                        {id}
+                                                        {(data.page - 1) * data.perPage + index + 1}
                                                     </td>
+                                                    {/* <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
+                                                        {id}
+                                                    </td> */}
                                                     <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                         {nis}
                                                     </td>
@@ -158,9 +182,20 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                                 "santris.show",
                                                                 id
                                                             )}
-                                                            className="text-teal-400 dark:text-gray-900 hover:text-teal-200"
-                                                        >
+                                                            className="inline-block px-4 py-1 border bg-teal-700 text-white  hover:bg-white hover:border-teal-500 hover:shadow-sm dark:hover:bg-gray-600 hover:text-teal-700 
+                                                            dark:hover:border-gray-900 dark:hover:text-gray-100 mr-3 rounded-md duration-300"
+                                                            >
                                                             Detail
+                                                        </Link>
+                                                        <Link
+                                                            href={route(
+                                                                "santris.edit",
+                                                                id
+                                                            )}
+                                                            className="inline-block px-4 py-1 border bg-indigo-100 text-indigo-700 hover:bg-white hover:border-indigo-500 hover:shadow-sm dark:hover:bg-gray-600 hover:text-indigo-400 
+                                                            dark:hover:border-gray-900 dark:hover:text-gray-100  rounded-md duration-300"
+                                                            >
+                                                            Edit
                                                         </Link>
                                                     </td>
                                                 </tr>
@@ -172,7 +207,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                 colSpan="7"
                                                 className="text-center py-4"
                                             >
-                                                Tidak ada data santri.
+                                              Tidak ada data santri.
                                             </td>
                                         </tr>
                                     )}
@@ -182,6 +217,16 @@ export default function SantriIndex({ auth, santris, filters }) {
                                 links={santris.links}
                                 onPageChange={handlePageChange}
                             />
+                                                <select
+                                value={data.perPage}
+                                onChange={handlePerPageChange}
+                                className="border border-gray-300 dark:bg-gray-800 dark:text-white rounded-lg px-8"
+                            >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="30">30</option>
+                                <option value="50">50</option>
+                            </select>
                         </div>
                     </div>
                 </div>

@@ -48,20 +48,18 @@ Route::get('/attendances/check-today', [AttendanceController::class, 'checkToday
 
 // CRUD Santri
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/santri', [SantriController::class, 'index'])->name('santri');
-    Route::get('/santris/create', [SantriController::class, 'create'])->name('santris.create');
-    Route::post('/santris/store', [SantriController::class, 'store'])->name('santris.store');
-    Route::get('/santris', [SantriController::class, 'index'])->name('santris.index');
-    Route::get('/santris/{santri}/edit', [SantriController::class, 'edit'])->name('santris.edit');
-    Route::post('/santris', [SantriController::class, 'store'])->name('santris.store');
-    Route::get('/santris/{santri}', [SantriController::class, 'show'])->name('santris.show');
-    
-    Route::get('/santri/{id}', [SantriController::class, 'show']);
- // Route untuk mengambil data pencapaian santri berdasarkan santri_id
-    // Route::get('/api/achievements/{santri_id}', [AchievementController::class, 'getAchievements'])->name('achievements.get');
-    Route::get('/api/akademiks/{santriId}', [AkademikController::class, 'getBySantriId']);
-    Route::get('/api/hafalans/{santriId}', [HafalanController::class, 'getBySantriId']);
-});
+        Route::get('/santri', [SantriController::class, 'index'])->name('santri');
+        Route::get('/santris/create', [SantriController::class, 'create'])->name('santris.create');
+        Route::post('/santris/store', [SantriController::class, 'store'])->name('santris.store');
+        Route::get('/santris', [SantriController::class, 'index'])->name('santris.index');
+        Route::get('/santris/{santri}/edit', [SantriController::class, 'edit'])->name('santris.edit');
+        Route::patch('/santris/{santri}', [SantriController::class, 'update'])->name('santris.update');
+        Route::get('/santris/{santri}', [SantriController::class, 'show'])->name('santris.show');
+        Route::delete('/santris/{santri}', [SantriController::class, 'destroy'])->name('santris.destroy');
+        Route::get('/santri/{id}', [SantriController::class, 'show']);
+        Route::get('/api/akademiks/{santriId}', [AkademikController::class, 'getBySantriId']);
+        Route::get('/api/hafalans/{santriId}', [HafalanController::class, 'getBySantriId']);
+    });
 
 // CRUD Akademik
 Route::middleware(['auth', 'admin'])->group(function () {
