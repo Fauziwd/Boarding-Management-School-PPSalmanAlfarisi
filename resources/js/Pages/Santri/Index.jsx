@@ -192,7 +192,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                                 "santris.edit",
                                                                 id
                                                             )}
-                                                            className="inline-block px-4 py-1 border bg-indigo-100 text-indigo-700 hover:bg-white hover:border-indigo-500 hover:shadow-sm dark:hover:bg-gray-600 hover:text-indigo-400 
+                                                            className="inline-block px-4 py-1 border bg-teal-100 text-teal-700 hover:bg-white hover:border-teal-500 hover:shadow-sm dark:hover:bg-gray-600 hover:text-teal-800 
                                                             dark:hover:border-gray-900 dark:hover:text-gray-100  rounded-md duration-300"
                                                             >
                                                             Edit

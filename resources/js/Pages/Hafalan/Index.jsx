@@ -279,7 +279,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                                         Setoran Terbanyak:
                                         <span className="font-bold">
                                             {" "}
-                                            {topSantri ? topSantri : "N/A"}
+                                            {topSantri ? topSantri : "-"}
                                         </span>
                                     </h3>
                                     <div className="text-left">
@@ -289,7 +289,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                                                 {" "}
                                                 {topJuz
                                                     ? `Juz ${topJuz.juz}`
-                                                    : "Ada Kesalahan"}
+                                                    : "-"}
                                             </span>
                                         </h3>
                                     </div>
