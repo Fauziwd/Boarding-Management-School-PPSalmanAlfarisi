@@ -46,7 +46,7 @@ class HafalanController extends Controller
         }
 
         return Inertia::render('Hafalan/Index', [
-            'hafalans' => $hafalans,
+            'hafalans' => $hafalans, 
             'juzCount' => $juzCount,
             'topJuz' => $topJuz,
             'topSantri' => $topSantri,
@@ -75,6 +75,7 @@ class HafalanController extends Controller
             'month' => 'required|date_format:Y-m',
         ]);
 
+        // Mengizinkan input data di bulan manapun
         Hafalan::create($request->all());
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil ditambahkan.');
     }
@@ -92,7 +93,8 @@ class HafalanController extends Controller
             'juz' => 'required|integer',
             'month' => 'required|date_format:Y-m',
         ]);
-    
+
+        // Mengizinkan update data di bulan manapun
         $hafalan->update($request->all());
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil diperbarui.');
     }
@@ -114,7 +116,7 @@ class HafalanController extends Controller
                 return $group->map(function ($hafalan) {
                     return [
                         'nama' => $hafalan->santri->nama,
-                        'created_at' => $hafalan->created_at->format('Y-m-d H:i:s'),
+                        'created_at' => $hafalan->created_at->format('Y-m-d H:i:s'), b  
                     ];
                 });
             });
@@ -122,3 +124,4 @@ class HafalanController extends Controller
         return response()->json($summary);
     }
 }
+

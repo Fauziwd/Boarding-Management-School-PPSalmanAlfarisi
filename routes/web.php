@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,7 @@ use App\Http\Controllers\AttendanceController;
 // use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\AkademikController;
 use App\Http\Controllers\HafalanController;
+use App\Http\Controllers\HomeController;
 use Inertia\Inertia;
 
 // Halaman Welcome
@@ -26,8 +28,10 @@ Route::get('/', function () {
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');
+
 Route::get('/dashboard', [AttendanceController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
+Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware('auth');
 // CRUD Users
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users');

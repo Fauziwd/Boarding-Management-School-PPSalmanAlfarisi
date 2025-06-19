@@ -5,7 +5,7 @@ import Breadcrumbs from "@/Components/Breadcrumbs";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import kutubs from "@/data/kutubs.json"; // Import JSON data
+import dataKitabDurus from "@/data/dataKitabDurus.json"; // Import JSON data
 
 export default function Edit({ auth, akademik, santris }) {
     const breadcrumbs = [
@@ -25,7 +25,7 @@ export default function Edit({ auth, akademik, santris }) {
     // Filter bab berdasarkan kitab yang dipilih
     useEffect(() => {
         if (data.kitab) {
-            const filtered = kutubs.filter((k) => k.kitab === data.kitab);
+            const filtered = dataKitabDurus.filter((k) => k.kitab === data.kitab);
             setFilteredBab(filtered);
         } else {
             setFilteredBab([]);
@@ -96,7 +96,7 @@ export default function Edit({ auth, akademik, santris }) {
                                         <option value="">Pilih Kitab</option>
                                         {[
                                             ...new Set(
-                                                kutubs.map((k) => k.kitab)
+                                                dataKitabDurus.map((k) => k.kitab)
                                             ),
                                         ].map((kitab) => (
                                             <option key={kitab} value={kitab}>

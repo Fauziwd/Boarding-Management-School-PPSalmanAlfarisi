@@ -1,25 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 export default function Sidebar({ menu }) {
     const [isHovered, setIsHovered] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isAcademicOpen, setIsAcademicOpen] = useState(false);
     const sidebarRef = useRef(null);
     const { url } = usePage();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                sidebarRef.current &&
-                !sidebarRef.current.contains(event.target)
-            ) {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
                 closeSidebar();
             }
         };
 
         const closeSidebar = () => {
-            document
-                .getElementById("drawer-navigation")
-                .classList.add("-translate-x-full");
+            document.getElementById("drawer-navigation").classList.add("-translate-x-full");
+            setIsOpen(false);
         };
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -28,17 +27,32 @@ export default function Sidebar({ menu }) {
         };
     }, []);
 
+    const toggleSidebar = () => {
+        document.getElementById("drawer-navigation").classList.toggle("-translate-x-full");
+        setIsOpen(!isOpen);
+    };
+
+    // Group menu items by category
+    const groupedMenu = menu.reduce((acc, item) => {
+        if (item.name === "Akademik" || item.name === "Hafalan") {
+            if (!acc['Pendidikan']) {
+                acc['Pendidikan'] = [];
+            }
+            acc['Pendidikan'].push(item);
+        } else {
+            acc[item.name] = [item];
+        }
+        return acc;
+    }, {});
+
     return (
         <div>
+            {/* Hamburger Button */}
             <div className="text-center">
                 <button
-                    className="mt-3 mr-5 rounded-md text-teal-700 dark:text-gray-400 font-bold p-2 dark:hover:text-gray-100 transition-colors duration-200"
+                    className="mt-3 mr-5 rounded-lg text-teal-700 dark:text-gray-300 font-bold p-2 dark:hover:text-gray-100 transition-all duration-300 dark:hover:bg-gray-700"
                     type="button"
-                    onClick={() =>
-                        document
-                            .getElementById("drawer-navigation")
-                            .classList.toggle("-translate-x-full")
-                    }
+                    onClick={toggleSidebar}
                     aria-label="Open navigation"
                 >
                     <svg
@@ -46,7 +60,7 @@ export default function Sidebar({ menu }) {
                         width="30"
                         height="30"
                         fill="currentColor"
-                        className="bi bi-list"
+                        className="bi bi-list transition-transform duration-300 hover:scale-110"
                         viewBox="0 0 16 16"
                     >
                         <path
@@ -57,78 +71,132 @@ export default function Sidebar({ menu }) {
                 </button>
             </div>
 
+            {/* Sidebar */}
             <div
                 id="drawer-navigation"
                 ref={sidebarRef}
-                className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800 shadow-2xl"
+                className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform duration-300 ease-in-out -translate-x-full bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border-r border-gray-200 dark:border-gray-700"
                 tabIndex="-1"
                 aria-labelledby="drawer-navigation-label"
             >
-                <h5
-                    id="drawer-navigation-label"
-                    className="text-base mb-8 mt-5 font-semibold text-teal-700 dark:text-teal-400 uppercase"
-                >
-                    Menu
-                </h5>
-                <button
-                    type="button"
-                    onClick={() =>
-                        document
-                            .getElementById("drawer-navigation")
-                            .classList.add("-translate-x-full")
-                    }
-                    className="text-teal-700 dark:text-teal-400 mt-5 bg-transparent rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 mr-5 inline-flex items-center transition-colors duration-200"
-                    aria-label="Close navigation"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    {isHovered ? (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="25"
-                            height="25"
-                            fill="currentColor"
-                            className="bi bi-layout-sidebar-inset-reverse"
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M2 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm12-1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" />
-                            <path d="M13 4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z" />
-                        </svg>
-                    ) : (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="25"
-                            height="25"
-                            fill="currentColor"
-                            className="bi bi-layout-sidebar-inset"
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M14 2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" />
-                            <path d="M3 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
-                        </svg>
-                    )}
-                    <span className="sr-only">Close menu</span>
-                </button>
+                {/* Sidebar Header */}
+                <div className="flex items-center justify-between mb-8 mt-5 px-2">
+                    <h5
+                        id="drawer-navigation-label"
+                        className="text-lg font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider"
+                    >
+                        Menu
+                    </h5>
+                    <button
+                        type="button"
+                        onClick={toggleSidebar}
+                        className="text-teal-600 dark:text-teal-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex items-center transition-all duration-300 dark:hover:bg-gray-700"
+                        aria-label="Close navigation"
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                    >
+                        {isHovered ? (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="25"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
+                                viewBox="0 0 16 16"
+                            >
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                            </svg>
+                        ) : (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="25"
+                                height="25"
+                                fill="currentColor"
+                                className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
+                                viewBox="0 0 16 16"
+                            >
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                            </svg>
+                        )}
+                        <span className="sr-only">Close menu</span>
+                    </button>
+                </div>
 
+                {/* Menu Items */}
                 <div className="py-4 overflow-y-auto">
                     <ul className="space-y-2 font-medium">
-                        {menu.map((item, index) => (
-                            <li key={index}>
-                                <Link
-                                    href={route(item.href)}
-                                    className={`flex items-center p-2 text-gray-900 dark:text-white rounded-lg hover:bg-teal-700 hover:text-white dark:hover:bg-teal-400 dark:hover:text-gray-800 transition-colors duration-200 ${
-                                        route().current(item.current)
-                                            ? "bg-teal-700 text-white dark:bg-teal-400 dark:text-gray-800 shadow-lg"
-                                            : ""
-                                    }`}
-                                >
-                                    <span className="ms-3">{item.name}</span>
-                                </Link>
+                        {Object.entries(groupedMenu).map(([category, items]) => (
+                            <li key={category}>
+                                {category === 'Pendidikan' ? (
+                                    <>
+                                        <button
+                                            onClick={() => setIsAcademicOpen(!isAcademicOpen)}
+                                            className="flex items-center justify-between w-full p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        >
+                                            <span className="font-medium">Pendidikan</span>
+                                            {isAcademicOpen ? (
+                                                <ChevronUpIcon className="h-5 w-5" />
+                                            ) : (
+                                                <ChevronDownIcon className="h-5 w-5" />
+                                            )}
+                                        </button>
+                                        {isAcademicOpen && (
+                                            <ul className="ml-4 mt-2 space-y-2">
+                                                {items.map((item, index) => (
+                                                    <li key={index}>
+                                                        <Link
+                                                            href={route(item.href)}
+                                                            className={`flex items-center p-2 pl-4 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
+                                                                route().current(item.current)
+                                                                    ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
+                                                                    : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                                                            }`}
+                                                        >
+                                                            <span className="font-medium">{item.name}</span>
+                                                            {route().current(item.current) && (
+                                                                <span className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                                                            )}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </>
+                                ) : (
+                                    <Link
+                                        href={route(items[0].href)}
+                                        className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
+                                            route().current(items[0].current)
+                                                ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
+                                                : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        }`}
+                                    >
+                                        <span className="font-medium">{items[0].name}</span>
+                                        {route().current(items[0].current) && (
+                                            <span className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                                        )}
+                                    </Link>
+                                )}
                             </li>
                         ))}
                     </ul>
                 </div>
+
+                {/* Sidebar Footer */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+                    <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                        © {new Date().getFullYear()} Sistem Manajemen Sekolah
+                    </div>
+                </div>
             </div>
+
+            {/* Overlay when sidebar is open */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 z-30 bg-black/20 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+                    onClick={toggleSidebar}
+                />
+            )}
         </div>
     );
 }

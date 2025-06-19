@@ -4,7 +4,7 @@ export default function ApplicationLogo(props) {
             {...props}
             src="/Logo/logo1.png"
             alt="Salman Logo"
-            className="h-12 w-auto" 
+            className="h-28 w-auto" 
             draggable="false"
             />
     );

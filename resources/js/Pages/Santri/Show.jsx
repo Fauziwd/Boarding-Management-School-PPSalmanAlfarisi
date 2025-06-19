@@ -12,11 +12,14 @@ import { exportToExcel } from "@/utils/exportToExcel";
 export default function SantriShow({ auth, santri }) {
     const [akademiks, setAkademiks] = useState([]);
     const [hafalans, setHafalans] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (santri) {
-            fetchAkademiks(santri.id);
-            fetchHafalans(santri.id);
+            Promise.all([
+                fetchAkademiks(santri.id),
+                fetchHafalans(santri.id)
+            ]).finally(() => setIsLoading(false));
         }
     }, [santri]);
 
@@ -61,85 +64,100 @@ export default function SantriShow({ auth, santri }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <Breadcrumbs items={breadcrumbs} />
 
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800 scrollbar-gutter-stable">
+                    <div className="overflow-hidden bg-white shadow-xl sm:rounded-2xl dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <div className="flex items-center mb-6">
-                                <div className="flex-shrink-0 mr-6">
+                            {/* Profile Header Section */}
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                                <div className="relative">
                                     {santri.foto ? (
                                         <img
                                             src={`/storage/${santri.foto}`}
                                             alt={`Foto ${santri.nama}`}
                                             draggable="false"
-                                            className="w-32 h-32 shadow-xl border-2 border-teal-500 dark:border-white rounded-full object-cover"
+                                            className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
                                         />
                                     ) : (
                                         <img
-                                            src={"/pp.jpg"}
+                                            src="/pp.jpg"
                                             alt={`Foto ${santri.nama}`}
                                             draggable="false"
-                                            className="w-32 h-32 shadow-xl border-2 border-teal-500 dark:border-white rounded-full object-cover"
+                                            className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
                                         />
                                     )}
+                                    <div className="absolute -bottom-2 -right-2 bg-teal-500 dark:bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                                        {santri.nis}
+                                    </div>
                                 </div>
-                                <div>
-                                    <h1 className="text-2xl font-bold">
-                                        Detail {santri.nama}
+                                <div className="flex-1">
+                                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+                                        {santri.nama}
                                     </h1>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Informasi mengenai data diri, capaian
-                                        hafalan, dan capaian akademik.
+                                    <p className="text-gray-600 dark:text-gray-300 mt-2">
+                                        Informasi lengkap mengenai data diri, capaian hafalan, dan prestasi akademik
                                     </p>
+                                    <div className="mt-4 flex gap-3">
+                                        <button
+                                            onClick={() => exportToExcel(santri, akademiks, hafalans)}
+                                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 dark:from-gray-700 dark:to-gray-800 dark:hover:from-gray-600 dark:hover:to-gray-700 text-white rounded-lg shadow-md transition-all duration-300"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Export Excel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() =>
-                                    exportToExcel(santri, akademiks, hafalans)
-                                }
-                                className="mb-4 px-4 py-2 bg-white hover:bg-teal-200 dark:bg-gray-800 border border-teal-700 dark:border-gray-600 dark:hover:border-emerald-200 text-teal-800 dark:text-gray-100 dark:hover:text-emerald-200 dark:hover:bg-emerald-900 hover:text-teal-900 rounded-md"
-                            >
-                                Export Excel
-                            </button>
-
-                            <Tab.Group className={"z-50"}>
-                                <Tab.List className="flex p-1 space-x-1 dark:bg-gray-600 bg-teal-700 rounded-md shadow-xl">
-                                    <Tab
-                                        className={({ selected }) =>
-                                            selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-teal-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
-                                        }
-                                    >
-                                        Data Diri
-                                    </Tab>
-                                    <Tab
-                                        className={({ selected }) =>
-                                            selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-teal-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
-                                        }
-                                    >
-                                        Pencapaian Akademik
-                                    </Tab>
-                                    <Tab
-                                        className={({ selected }) =>
-                                            selected
-                                                ? "w-full py-2.5 text-sm leading-5 font-medium text-white bg-teal-700 dark:bg-gray-600 rounded-lg"
-                                                : "w-full py-2.5 text-sm leading-5 font-medium text-gray-500 hover:text-gray-800 dark:hover:text-white dark:text-gray-500 dark:bg-blue-900/20 bg-white dark:bg-gray-800 rounded shadow-xl"
-                                        }
-                                    >
-                                        Pencapaian Hafalan
-                                    </Tab>
+                            {/* Tab Navigation */}
+                            <Tab.Group>
+                                <Tab.List className="flex space-x-1 rounded-xl bg-teal-900/20 dark:bg-gray-700 p-1">
+                                    {["Data Diri", "Pencapaian Akademik", "Pencapaian Hafalan"].map((tab) => (
+                                        <Tab
+                                            key={tab}
+                                            className={({ selected }) =>
+                                                `w-full py-3 text-sm font-medium leading-5 rounded-lg transition-all duration-300 ${
+                                                    selected
+                                                        ? 'bg-white text-teal-700 shadow-lg dark:bg-gray-600 dark:text-white'
+                                                        : 'text-teal-600 hover:bg-white/[0.12] hover:text-teal-800 dark:text-gray-300 dark:hover:text-white'
+                                                }`
+                                            }
+                                        >
+                                            {tab}
+                                        </Tab>
+                                    ))}
                                 </Tab.List>
-                                <Tab.Panels className="mt-2">
-                                    <Tab.Panel className="rounded shadow-sm">
-                                        <Datadiri santri={santri} />
+                                
+                                {/* Tab Content */}
+                                <Tab.Panels className="mt-4">
+                                    <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
+                                        {isLoading ? (
+                                            <div className="flex justify-center items-center h-64">
+                                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+                                            </div>
+                                        ) : (
+                                            <Datadiri santri={santri} />
+                                        )}
                                     </Tab.Panel>
-                                    <Tab.Panel className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
-                                        <Akademik akademiks={akademiks} />
+                                    
+                                    <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
+                                        {isLoading ? (
+                                            <div className="flex justify-center items-center h-64">
+                                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+                                            </div>
+                                        ) : (
+                                            <Akademik akademiks={akademiks} />
+                                        )}
                                     </Tab.Panel>
-                                    <Tab.Panel className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm">
-                                        <Hafalan hafalans={hafalans} />
+                                    
+                                    <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
+                                        {isLoading ? (
+                                            <div className="flex justify-center items-center h-64">
+                                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+                                            </div>
+                                        ) : (
+                                            <Hafalan hafalans={hafalans} />
+                                        )}
                                     </Tab.Panel>
                                 </Tab.Panels>
                             </Tab.Group>
