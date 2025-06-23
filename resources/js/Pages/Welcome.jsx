@@ -304,7 +304,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
               viewport={{ once: true }}
               className="bg-gradient-to-r from-emerald-600 to-blue-500 text-white rounded-3xl p-8 shadow-2xl"
             >
-              <h2 className="text-3xl font-bold mb-4">Siap Transformasi Lembaga Pendidikan Anda?</h2>
+              <h2 className="text-3xl font-bold mb-4">Siap Transformasi Lembaga Anda Dengan Pesment?</h2>
               <p className="text-lg mb-8 max-w-2xl mx-auto text-emerald-100">
                 Bergabunglah dengan ratusan sekolah yang telah menggunakan Pesment untuk manajemen yang lebih baik.
               </p>

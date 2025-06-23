@@ -1,56 +1,52 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, useForm } from "@inertiajs/react";
-import PrimaryButton from "@/Components/PrimaryButton";
+import { Head, useForm, Link } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
-import { useState } from "react";
+import { useState, Fragment } from "react"; // [MODIFIKASI] Import Fragment
 import ToastSuccess from "@/Components/ToastSuccess";
 import ToastError from "@/Components/ToastError";
 import PersonalInfoForm from "@/CreateSantri/PersonalInfoForm";
 import ParentInfoForm from "@/CreateSantri/ParentInfoForm";
 import AddressInfoForm from "@/CreateSantri/AddressInfoForm";
+import { FiArrowLeft, FiCheck, FiFileText, FiHome, FiUsers, FiUpload, FiUser } from "react-icons/fi";
 
+// Fungsi formatNIS tetap sama
 const formatNIS = (value) => {
     value = value.replace(/\D/g, "");
-
-    if (value.length > 4) {
-        value = value.slice(0, 4) + "." + value.slice(4);
-    }
-    if (value.length > 7) {
-        value = value.slice(0, 7) + "." + value.slice(7);
-    }
-    if (value.length > 11) {
-        value = value.slice(0, 11);
-    }
-
+    if (value.length > 4) value = value.slice(0, 4) + "." + value.slice(4);
+    if (value.length > 7) value = value.slice(0, 7) + "." + value.slice(7);
+    if (value.length > 11) value = value.slice(0, 11);
     return value;
 };
 
-const steps = ["Informasi Pribadi", "Informasi Orang Tua", "Informasi Alamat"];
+const steps = [
+    { title: "Informasi Pribadi", icon: <FiUser className="w-5 h-5" /> },
+    { title: "Informasi Orang Tua", icon: <FiUsers className="w-5 h-5" /> },
+    { title: "Informasi Alamat", icon: <FiHome className="w-5 h-5" /> }
+];
 
 export default function SantriCreate({ auth }) {
-    const { data, setData, post, errors, processing, recentlySuccessful } =
-        useForm({
-            nis: "",
-            nama: "",
-            tahun_lulus: "",
-            tempat_lahir: "",
-            tanggal_lahir: "",
-            anak_ke: "",
-            status_yatim_piatu: "",
-            nama_bapak: "",
-            pekerjaan_bapak: "",
-            no_telpon_bapak: "",
-            nama_ibu: "",
-            pekerjaan_ibu: "",
-            no_telpon_ibu: "",
-            alamat: "",
-            kelurahan: "",
-            kecamatan: "",
-            kabupaten_kota: "",
-            provinsi: "",
-            kode_pos: "",
-            foto: null, // Tambahkan state untuk foto
-        });
+    const { data, setData, post, errors, processing, recentlySuccessful, reset } = useForm({
+        nis: "",
+        nama: "",
+        tahun_lulus: "",
+        tempat_lahir: "",
+        tanggal_lahir: "",
+        anak_ke: "",
+        status_yatim_piatu: "",
+        nama_bapak: "",
+        pekerjaan_bapak: "",
+        no_telpon_bapak: "",
+        nama_ibu: "",
+        pekerjaan_ibu: "",
+        no_telpon_ibu: "",
+        alamat: "",
+        kelurahan: "",
+        kecamatan: "",
+        kabupaten_kota: "",
+        provinsi: "",
+        kode_pos: "",
+        foto: null,
+    });
 
     const [currentStep, setCurrentStep] = useState(0);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
@@ -64,32 +60,31 @@ export default function SantriCreate({ auth }) {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setData("foto", file); // Set file foto
-
-        // Generate preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setFilePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
+        setData("foto", file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setFilePreview(reader.result);
+            reader.readAsDataURL(file);
+        } else {
+            setFilePreview(null);
+        }
     };
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route("santris.store"), {
             preserveScroll: true,
             onSuccess: () => {
                 setShowSuccessToast(true);
-                setTimeout(() => {
-                    setShowSuccessToast(false);
-                }, 3000); // Toast akan hilang setelah 3 detik
+                setTimeout(() => setShowSuccessToast(false), 3000);
+                // Opsi: reset form setelah berhasil
+                // reset(); 
+                // setFilePreview(null);
+                // setCurrentStep(0);
             },
             onError: () => {
                 setShowErrorToast(true);
-                setTimeout(() => {
-                    setShowErrorToast(false);
-                }, 3000); // Toast akan hilang setelah 3 detik
+                setTimeout(() => setShowErrorToast(false), 3000);
             },
         });
     };
@@ -108,186 +103,176 @@ export default function SantriCreate({ auth }) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Create Santri" />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 flex gap-8">
-                    <aside className="w-1/4">
-                        <div className="bg-white border border-teal-800 dark:bg-gray-800 shadow-xl sm:rounded-lg p-8">
-                            <h2 className="text-xl dark:text-white font-bold mb-6 text-center">
-                                Data Santri
-                            </h2>
-                            <ol className="relative border-l ml-6 border-gray-200 dark:border-gray-700">
-                                {steps.map((step, index) => (
-                                    <li key={index} className="mb-10 ml-6">
-                                        <span
-                                            className={`absolute flex items-center justify-center w-8 h-8 rounded-full -left-4 ring-4 ring-white dark:ring-gray-800 ${
-                                                index < currentStep
-                                                    ? "border border-emerald-500 dark:border-emerald-300 bg-green-200 dark:bg-green-600"
-                                                    : index === currentStep
-                                                    ? "border border-teal-600 dark:border-teal-400 bg-teal-500 text-white dark:bg-teal-700"
-                                                    : "bg-gray-100 dark:bg-gray-700"
-                                            }`}
-                                        >
-                                            {index < currentStep ? (
-                                                <svg
-                                                    className="w-3.5 h-3.5 text-green-500 dark:text-green-200"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 16 12"
-                                                >
-                                                    <path
-                                                        stroke="currentColor"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M1 5.917 5.724 10.5 15 1.5"
-                                                    />
-                                                </svg>
-                                            ) : (
-                                                <svg
-                                                    className="w-3.5 h-3.5 text-white dark:text-gray-200"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 16"
-                                                >
-                                                    <path d="M18 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM6.5 3a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3.014 13.021l.157-.625A3.427 3.427 0 0 1 6.5 9.571a3.426 3.426 0 0 1 3.322 2.805l.159.622-6.967.023ZM16 12h-3a1 1 0 0 1 0-2h3a1 1 0 0 1 0 2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Zm0-3h-3a1 1 0 1 1 0-2h3a1 1 0 1 1 0-2Z" />
-                                                </svg>
-                                            )}
-                                        </span>
-                                        <h3
-                                            className={`font-bold ml-2 leading-tight ${
-                                                index === currentStep
-                                                    ? "text-gray-800 dark:text-white"
-                                                    : "text-gray-500 dark:text-gray-400"
-                                            }`}
-                                        >
-                                            {step}
-                                        </h3>
-                                        <p className="text-sm ml-2 dark:text-gray-400 font-light italic">
-                                            {index === currentStep
-                                                ? "Lengkapi Data"
-                                                : ""}
-                                        </p>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                    </aside>
-
-                    <div className="w-3/4">
-                        <div className="bg-white dark:bg-gray-800 border border-teal-800 shadow-xl sm:rounded-lg">
-                            <div className="p-6 sm:p-10 text-gray-900 dark:text-gray-100">
-                                <h2 className="text-2xl font-bold mb-4">
-                                    Create Santri
+            <Head title="Tambah Santri Baru" />
+            
+            <div className="bg-gradient-to-br from-gray-50 to-teal-50 dark:from-gray-900 dark:to-gray-800 min-h-screen py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        {/* [MODIFIKASI] Sidebar Navigasi dengan Garis Step-by-Step */}
+                        <div className="w-full lg:w-1/4">
+                            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-lg rounded-2xl p-6 transition-all duration-300">
+                                <div className="flex items-center mb-8">
+                                    <Link href={route('santris.index')} className="flex items-center text-gray-500 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors duration-200">
+                                        <FiArrowLeft className="mr-2" />
+                                        Kembali ke Daftar
+                                    </Link>
+                                </div>
+                                
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-8 flex items-center">
+                                    <FiFileText className="mr-3 text-teal-500" />
+                                    Proses Pendaftaran
                                 </h2>
-                                <p className="mb-8 text-gray-600 dark:text-gray-400">
-                                    Create a new santri here by filling the
-                                    form.
-                                </p>
+                                
+                                <div className="relative">
+                                    {steps.map((step, index) => (
+                                        <div key={index} className="relative pb-10 last:pb-0">
+                                            {/* [BARU] Garis penghubung antar step */}
+                                            {index < steps.length - 1 && (
+                                                <div 
+                                                    className={`absolute top-5 left-5 -ml-px w-0.5 h-full ${
+                                                        index < currentStep ? 'bg-teal-500' : 'bg-gray-200 dark:bg-gray-700'
+                                                    }`} 
+                                                    aria-hidden="true"
+                                                />
+                                            )}
 
-                                <form
-                                    onSubmit={submit}
-                                    className="space-y-6"
-                                    encType="multipart/form-data"
-                                >
-                                    {/* Alert section for displaying general form errors */}
-                                    {Object.keys(errors).length > 0 && (
-                                        <div
-                                            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-                                            role="alert"
-                                        >
-                                            <strong className="font-bold">
-                                                There were some errors with your
-                                                submission:
-                                            </strong>
-                                            <ul className="mt-2 list-disc list-inside">
-                                                {Object.keys(errors).map(
-                                                    (key) => (
-                                                        <li key={key}>
-                                                            {errors[key]}
-                                                        </li>
-                                                    )
-                                                )}
-                                            </ul>
+                                            <div 
+                                                onClick={() => setCurrentStep(index)} 
+                                                className="relative flex items-start group cursor-pointer"
+                                            >
+                                                <span className="h-10 flex items-center">
+                                                    <span className={`relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ring-8 ring-white dark:ring-gray-800 ${
+                                                        index < currentStep 
+                                                            ? "bg-teal-500 text-white"
+                                                            : index === currentStep
+                                                            ? "bg-teal-600 text-white border-2 border-white dark:border-gray-900"
+                                                            : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                                                    }`}>
+                                                        {index < currentStep ? <FiCheck className="w-5 h-5" /> : step.icon}
+                                                    </span>
+                                                </span>
+                                                <span className="ml-4 min-w-0">
+                                                    <span className={`text-sm font-semibold tracking-wide uppercase ${
+                                                        index === currentStep ? "text-teal-600 dark:text-teal-300" : "text-gray-500 dark:text-gray-400"
+                                                    }`}>
+                                                        Step {index + 1}
+                                                    </span>
+                                                    <span className="block text-base font-medium text-gray-900 dark:text-white">{step.title}</span>
+                                                </span>
+                                            </div>
                                         </div>
-                                    )}
+                                    ))}
+                                </div>
 
-                                    {currentStep === 0 && (
-                                        <PersonalInfoForm
-                                            data={data}
-                                            setData={setData}
-                                            errors={errors}
-                                            handleNISChange={handleNISChange}
-                                            handleFileChange={handleFileChange}
-                                            filePreview={filePreview}
-                                        />
-                                    )}
-
-                                    {currentStep === 1 && (
-                                        <ParentInfoForm
-                                            data={data}
-                                            setData={setData}
-                                            errors={errors}
-                                        />
-                                    )}
-
-                                    {currentStep === 2 && (
-                                        <AddressInfoForm
-                                            data={data}
-                                            setData={setData}
-                                            errors={errors}
-                                        />
-                                    )}
-
-                                    <div className="flex items-center gap-4 mt-8">
-                                        {currentStep > 0 && (
-                                            <PrimaryButton
-                                                type="button"
-                                                onClick={prevStep}
-                                            >
-                                                Previous
-                                            </PrimaryButton>
-                                        )}
-
-                                        {currentStep < steps.length - 1 ? (
-                                            <PrimaryButton
-                                                type="button"
-                                                onClick={nextStep}
-                                            >
-                                                Next
-                                            </PrimaryButton>
-                                        ) : (
-                                            <PrimaryButton
-                                                disabled={processing}
-                                            >
-                                                Save
-                                            </PrimaryButton>
-                                        )}
+                                {filePreview && (
+                                    <div className="mt-8">
+                                        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Pratinjau Foto</h3>
+                                        <div className="w-full h-40 rounded-lg overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-700">
+                                            <img src={filePreview} alt="Preview Foto Santri" className="w-full h-full object-cover" />
+                                        </div>
                                     </div>
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                                            Saved.
-                                        </p>
-                                    </Transition>
-                                </form>
-                                {showSuccessToast && (
-                                    <ToastSuccess message="Santri created successfully!" />
-                                )}
-                                {showErrorToast && (
-                                    <ToastError message="Please check our message for errors." />
                                 )}
                             </div>
                         </div>
+
+                        {/* Konten Form Utama */}
+                        <div className="w-full lg:w-3/4">
+                            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:shadow-lg  rounded-2xl overflow-hidden transition-all duration-300">
+                                <div className="p-8 sm:p-10">
+                                    <div className="mb-8">
+                                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+                                            <span className="mr-4 text-teal-500">{steps[currentStep].icon}</span>
+                                            {steps[currentStep].title}
+                                        </h1>
+                                        <p className="mt-2 text-gray-600 dark:text-gray-400">
+                                            Lengkapi semua informasi pada bagian ini dengan benar.
+                                        </p>
+                                    </div>
+
+                                    <form onSubmit={submit} className="space-y-8">
+                                        {Object.keys(errors).length > 0 && (
+                                            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 p-4 rounded-md">
+                                                <div className="flex">
+                                                    <div className="flex-shrink-0">
+                                                        <svg className="h-5 w-5 text-red-500 dark:text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
+                                                    </div>
+                                                    <div className="ml-3">
+                                                        <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Terdapat {Object.keys(errors).length} kesalahan.</h3>
+                                                        <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                                                            <ul className="list-disc pl-5 space-y-1">
+                                                                {Object.keys(errors).map((key) => (<li key={key}>{errors[key]}</li>))}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Konten Step */}
+                                        <div className="min-h-[300px]">
+                                            {currentStep === 0 && <PersonalInfoForm data={data} setData={setData} errors={errors} handleNISChange={handleNISChange} handleFileChange={handleFileChange} filePreview={filePreview} />}
+                                            {currentStep === 1 && <ParentInfoForm data={data} setData={setData} errors={errors} />}
+                                            {currentStep === 2 && <AddressInfoForm data={data} setData={setData} errors={errors} />}
+                                        </div>
+
+                                        {/* Navigasi Form */}
+                                        <div className="flex items-center justify-between pt-8 border-t border-gray-200 dark:border-gray-700">
+                                            <div>
+                                                {currentStep > 0 && (
+                                                    <button type="button" onClick={prevStep} className="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 shadow-sm text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800 focus:ring-teal-500 transition-all duration-200 transform hover:scale-[1.02]">
+                                                        Kembali
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div>
+                                                {currentStep < steps.length - 1 ? (
+                                                    <button type="button" onClick={nextStep} className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800 focus:ring-teal-500 transition-all duration-200 transform hover:scale-[1.02]">
+                                                        Lanjut
+                                                        <svg className="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
+                                                    </button>
+                                                ) : (
+                                                    <button type="submit" disabled={processing} className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 dark:focus:ring-offset-gray-800 focus:ring-teal-500 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-75 disabled:cursor-not-allowed">
+                                                        {processing ? (<><svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Memproses...</>) : (<><FiUpload className="mr-2" />Simpan Data Santri</>)}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+            {/* [BARU] Wrapper untuk posisi Toast */}
+            <div aria-live="assertive" className="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start">
+                <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
+                    {/* [MODIFIKASI] Toast dengan Transisi */}
+                    <Transition
+                        show={showSuccessToast}
+                        as={Fragment}
+                        enter="transform ease-out duration-300 transition"
+                        enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+                        enterTo="translate-y-0 opacity-100 sm:translate-x-0"
+                        leave="transition ease-in duration-100"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <ToastSuccess message="Data santri berhasil disimpan!" onClose={() => setShowSuccessToast(false)} />
+                    </Transition>
+                    <Transition
+                        show={showErrorToast}
+                        as={Fragment}
+                        enter="transform ease-out duration-300 transition"
+                        enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+                        enterTo="translate-y-0 opacity-100 sm:translate-x-0"
+                        leave="transition ease-in duration-100"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <ToastError message="Gagal menyimpan data. Silakan periksa kembali." onClose={() => setShowErrorToast(false)} />
+                    </Transition>
                 </div>
             </div>
         </AuthenticatedLayout>
