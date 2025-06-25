@@ -56,7 +56,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                         document.documentElement.classList.contains("dark")
                             ? "#ffffff"
                             : "#000000";
-                  
+
                     chartContext.el.insertAdjacentHTML("beforeend", innerText);
                 },
             },
@@ -78,7 +78,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
         theme: {
             mode: document.documentElement.classList.contains("dark")
                 ? "#1f2937"
-                : "#ffffff", 
+                : "#ffffff",
         },
     };
 
@@ -222,7 +222,7 @@ export default function Index({ auth, hafalans, juzCount, topJuz, topSantri }) {
                                                             {index + 1}
                                                         </td>
                                                         <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
-                                                            {santri.nama}
+                                                            {santri.nama_santri}
                                                         </td>
                                                         <td className="px-3 py-3 text-left text-lg text-gray-700 dark:text-gray-100">
                                                             {juz}

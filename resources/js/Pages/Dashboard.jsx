@@ -108,7 +108,7 @@ export default function Dashboard() {
                                         className="group relative inline-flex items-center overflow-hidden rounded-xl px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-500 dark:from-gray-800 dark:to-gray-700 text-white dark:text-gray-100 font-medium shadow-lg hover:shadow-teal-500/30 dark:hover:shadow-black/40 transition-all duration-500 hover:-translate-y-1"
                                     >
                                         {/* Main text */}
-                                        <span className="relative z-10 transition-all duration-500 group-hover:-translate-y-full group-hover:opacity-0">
+                                        <span className="relative transition-all duration-500 group-hover:-translate-y-full group-hover:opacity-0">
                                             Add Data
                                         </span>
 
@@ -207,7 +207,7 @@ export default function Dashboard() {
                                                             {santri.nis}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                            {santri.nama}
+                                                            {santri.nama_santri}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                                                             {

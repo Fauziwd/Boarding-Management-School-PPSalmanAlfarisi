@@ -18,7 +18,7 @@ export default function SantriShow({ auth, santri }) {
         if (santri) {
             Promise.all([
                 fetchAkademiks(santri.id),
-                fetchHafalans(santri.id)
+                fetchHafalans(santri.id),
             ]).finally(() => setIsLoading(false));
         }
     }, [santri]);
@@ -53,12 +53,12 @@ export default function SantriShow({ auth, santri }) {
     const breadcrumbs = [
         { label: "Home", href: "/" },
         { label: "Santri", href: "/santris" },
-        { label: `${santri.nama}` },
+        { label: `${santri.nama_santri}` },
     ];
 
     return (
         <AuthenticatedLayout auth={auth}>
-            <Head title={`Detail ${santri.nama}`} />
+            <Head title={`Detail ${santri.nama_santri_santri}`} />
 
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -72,14 +72,14 @@ export default function SantriShow({ auth, santri }) {
                                     {santri.foto ? (
                                         <img
                                             src={`/storage/${santri.foto}`}
-                                            alt={`Foto ${santri.nama}`}
+                                            alt={`Foto ${santri.nama_santri}`}
                                             draggable="false"
                                             className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
                                         />
                                     ) : (
                                         <img
                                             src="/pp.jpg"
-                                            alt={`Foto ${santri.nama}`}
+                                            alt={`Foto ${santri.nama_santri}`}
                                             draggable="false"
                                             className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
                                         />
@@ -90,18 +90,36 @@ export default function SantriShow({ auth, santri }) {
                                 </div>
                                 <div className="flex-1">
                                     <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
-                                        {santri.nama}
+                                        {santri.nama_santri}
                                     </h1>
                                     <p className="text-gray-600 dark:text-gray-300 mt-2">
-                                        Informasi lengkap mengenai data diri, capaian hafalan, dan prestasi akademik
+                                        Informasi lengkap mengenai data diri,
+                                        capaian hafalan, dan prestasi akademik
                                     </p>
                                     <div className="mt-4 flex gap-3">
                                         <button
-                                            onClick={() => exportToExcel(santri, akademiks, hafalans)}
+                                            onClick={() =>
+                                                exportToExcel(
+                                                    santri,
+                                                    akademiks,
+                                                    hafalans
+                                                )
+                                            }
                                             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 dark:from-gray-700 dark:to-gray-800 dark:hover:from-gray-600 dark:hover:to-gray-700 text-white rounded-lg shadow-md transition-all duration-300"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-5 w-5"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                />
                                             </svg>
                                             Export Excel
                                         </button>
@@ -112,14 +130,18 @@ export default function SantriShow({ auth, santri }) {
                             {/* Tab Navigation */}
                             <Tab.Group>
                                 <Tab.List className="flex space-x-1 rounded-xl bg-teal-900/20 dark:bg-gray-700 p-1">
-                                    {["Data Diri", "Pencapaian Akademik", "Pencapaian Hafalan"].map((tab) => (
+                                    {[
+                                        "Data Diri",
+                                        "Pencapaian Akademik",
+                                        "Pencapaian Hafalan",
+                                    ].map((tab) => (
                                         <Tab
                                             key={tab}
                                             className={({ selected }) =>
                                                 `w-full py-3 text-sm font-medium leading-5 rounded-lg transition-all duration-300 ${
                                                     selected
-                                                        ? 'bg-white text-teal-700 shadow-lg dark:bg-gray-600 dark:text-white'
-                                                        : 'text-teal-600 hover:bg-white/[0.12] hover:text-teal-800 dark:text-gray-300 dark:hover:text-white'
+                                                        ? "bg-white text-teal-700 shadow-lg dark:bg-gray-600 dark:text-white"
+                                                        : "text-teal-600 hover:bg-white/[0.12] hover:text-teal-800 dark:text-gray-300 dark:hover:text-white"
                                                 }`
                                             }
                                         >
@@ -127,7 +149,7 @@ export default function SantriShow({ auth, santri }) {
                                         </Tab>
                                     ))}
                                 </Tab.List>
-                                
+
                                 {/* Tab Content */}
                                 <Tab.Panels className="mt-4">
                                     <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
@@ -139,7 +161,7 @@ export default function SantriShow({ auth, santri }) {
                                             <Datadiri santri={santri} />
                                         )}
                                     </Tab.Panel>
-                                    
+
                                     <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
                                         {isLoading ? (
                                             <div className="flex justify-center items-center h-64">
@@ -149,7 +171,7 @@ export default function SantriShow({ auth, santri }) {
                                             <Akademik akademiks={akademiks} />
                                         )}
                                     </Tab.Panel>
-                                    
+
                                     <Tab.Panel className="rounded-xl bg-white dark:bg-gray-700 p-6 shadow-sm">
                                         {isLoading ? (
                                             <div className="flex justify-center items-center h-64">

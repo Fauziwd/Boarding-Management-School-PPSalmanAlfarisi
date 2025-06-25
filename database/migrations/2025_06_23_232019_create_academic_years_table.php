@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('santris', function (Blueprint $table) {
+        Schema::create('academic_years', function (Blueprint $table) {
+            $table->id();
+            $table->string('year'); // Contoh: "2024/2025"
+            $table->string('semester'); // Contoh: "Ganjil" atau "Genap"
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('santris', function (Blueprint $table) {
-            $table->dropTimestamps();
-        });
+        Schema::dropIfExists('academic_years');
     }
 };

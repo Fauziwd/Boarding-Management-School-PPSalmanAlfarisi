@@ -27,8 +27,7 @@ const steps = [
 export default function SantriCreate({ auth }) {
     const { data, setData, post, errors, processing, recentlySuccessful, reset } = useForm({
         nis: "",
-        nama: "",
-        tahun_lulus: "",
+        nama_santri: "",
         tempat_lahir: "",
         tanggal_lahir: "",
         anak_ke: "",

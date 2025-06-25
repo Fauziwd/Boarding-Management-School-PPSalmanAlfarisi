@@ -83,7 +83,7 @@ export default function Edit({ auth }) {
                                                     key={santri.id}
                                                     value={santri.id}
                                                 >
-                                                    {santri.nama}
+                                                    {santri.nama_santri}
                                                 </option>
                                             ))}
                                         </select>

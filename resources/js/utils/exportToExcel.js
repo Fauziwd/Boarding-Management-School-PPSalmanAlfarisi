@@ -17,16 +17,16 @@ export const exportToExcel = (santri, akademiks, hafalans) => {
     // Data Diri Sheet
     const dataDiriSheet = [
         ['NIS', santri.nis],
-        ['Nama', santri.nama],
+        ['Nama', santri.nama_santri],
         ['Tahun Lulus', santri.tahun_lulus],
         ['Tempat Lahir', santri.tempat_lahir],
         ['Tanggal Lahir', santri.tanggal_lahir],
         ['Anak Ke', santri.anak_ke],
         ['Status Yatim/Piatu', santri.status_yatim_piatu],
-        ['Nama Bapak', santri.nama_bapak],
+        ['Nama Bapak', santri.nama_santri_bapak],
         ['Pekerjaan Bapak', santri.pekerjaan_bapak],
         ['No HP Bapak', santri.no_telpon_bapak],
-        ['Nama Ibu', santri.nama_ibu],
+        ['Nama Ibu', santri.nama_santri_ibu],
         ['Pekerjaan Ibu', santri.pekerjaan_ibu],
         ['No HP Ibu', santri.no_telpon_ibu],
         [
@@ -64,5 +64,5 @@ export const exportToExcel = (santri, akademiks, hafalans) => {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(hafalanSheet), 'Hafalan');
 
     // Mengekspor file Excel
-    XLSX.writeFile(wb, `Data Santri ${santri.nama}.xlsx`);
+    XLSX.writeFile(wb, `Data Santri ${santri.nama_santri}.xlsx`);
 };

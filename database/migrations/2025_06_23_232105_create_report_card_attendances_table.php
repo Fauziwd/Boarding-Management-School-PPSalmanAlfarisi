@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('akademiks', function (Blueprint $table) {
+        Schema::create('report_card_attendances', function (Blueprint $table) {
             $table->id();
-
-            // Hanya relasi ke santris
-            $table->unsignedBigInteger('santri_id');
-            $table->foreign('santri_id')->references('id')->on('santris')->onDelete('cascade');
-            
-            $table->string('kitab');
-            $table->integer('bab');
+            $table->foreignId('report_card_id')->constrained('report_cards')->onDelete('cascade');
+            $table->integer('sick')->default(0);
+            $table->integer('permission')->default(0);
+            $table->integer('absent')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('akademiks');
+        Schema::dropIfExists('report_card_attendances');
     }
 };

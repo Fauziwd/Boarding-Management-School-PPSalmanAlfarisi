@@ -44,7 +44,7 @@ export default function AkademikIndex({ auth, akademiks }) {
                             Tambah Akademik
                         </Link>
                     </div>
-                    
+
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
                         <div className="p-6">
                             <div className="overflow-x-auto">
@@ -53,7 +53,9 @@ export default function AkademikIndex({ auth, akademiks }) {
                                         <tr className="bg-gradient-to-r from-teal-600 to-teal-700 dark:from-gray-900 dark:to-gray-800 text-white">
                                             <th className="px-6 py-4 text-left font-bold rounded-tl-xl">
                                                 <div className="flex items-center">
-                                                    <span className="mr-2">#</span>
+                                                    <span className="mr-2">
+                                                        #
+                                                    </span>
                                                 </div>
                                             </th>
                                             <th className="px-6 py-4 text-left font-bold">
@@ -97,11 +99,17 @@ export default function AkademikIndex({ auth, akademiks }) {
                                                             <div className="flex items-center">
                                                                 <div className="flex-shrink-0 h-10 w-10 bg-teal-100 dark:bg-teal-900 rounded-full flex items-center justify-center mr-3">
                                                                     <span className="text-teal-600 dark:text-teal-300 font-semibold">
-                                                                        {santri.nama.charAt(0)}
+                                                                        {santri.nama_santri.charAt(
+                                                                            0
+                                                                        )}
                                                                     </span>
                                                                 </div>
                                                                 <div>
-                                                                    <div className="font-medium">{santri.nama}</div>
+                                                                    <div className="font-medium">
+                                                                        {
+                                                                            santri.nama_santri
+                                                                        }
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -127,13 +135,13 @@ export default function AkademikIndex({ auth, akademiks }) {
                                                                 </Link>
                                                                 <SweetAlert
                                                                     title="Konfirmasi Penghapusan"
-                                                                    text={`Apakah Anda yakin ingin menghapus pencapaian oleh ${santri.nama}?`}
+                                                                    text={`Apakah Anda yakin ingin menghapus pencapaian oleh ${santri.nama_santri}?`}
                                                                     icon="warning"
                                                                     confirmButtonText="Ya, hapus!"
                                                                     onConfirm={() =>
                                                                         handleDelete(
                                                                             id,
-                                                                            santri.nama
+                                                                            santri.nama_santri
                                                                         )
                                                                     }
                                                                     className="flex items-center px-4 py-2 bg-white border border-red-500 text-red-600 rounded-md hover:bg-red-50 transition-colors duration-200 shadow-sm"
@@ -154,13 +162,18 @@ export default function AkademikIndex({ auth, akademiks }) {
                                                     <div className="flex flex-col items-center justify-center">
                                                         <FiBook className="text-5xl text-gray-400 dark:text-gray-500 mb-4" />
                                                         <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">
-                                                            Tidak ada data akademik
+                                                            Tidak ada data
+                                                            akademik
                                                         </h3>
                                                         <p className="text-gray-400 dark:text-gray-500 mt-1">
-                                                            Tambahkan data akademik baru untuk memulai
+                                                            Tambahkan data
+                                                            akademik baru untuk
+                                                            memulai
                                                         </p>
                                                         <Link
-                                                            href={route("akademik.create")}
+                                                            href={route(
+                                                                "akademik.create"
+                                                            )}
                                                             className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                                                         >
                                                             <FiPlus className="mr-2" />

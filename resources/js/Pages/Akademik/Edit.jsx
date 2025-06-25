@@ -6,7 +6,13 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import dataKitabDurus from "@/data/dataKitabDurus.json";
-import { FiArrowLeft, FiUser, FiBook, FiBookOpen, FiSave } from "react-icons/fi";
+import {
+    FiArrowLeft,
+    FiUser,
+    FiBook,
+    FiBookOpen,
+    FiSave,
+} from "react-icons/fi";
 
 export default function Edit({ auth, akademik, santris }) {
     const breadcrumbs = [
@@ -25,7 +31,9 @@ export default function Edit({ auth, akademik, santris }) {
 
     useEffect(() => {
         if (data.kitab) {
-            const filtered = dataKitabDurus.filter((k) => k.kitab === data.kitab);
+            const filtered = dataKitabDurus.filter(
+                (k) => k.kitab === data.kitab
+            );
             setFilteredBab(filtered);
         } else {
             setFilteredBab([]);
@@ -89,7 +97,7 @@ export default function Edit({ auth, akademik, santris }) {
                                                 value={santri.id}
                                                 className="py-2"
                                             >
-                                                {santri.nama}
+                                                {santri.nama_santri}
                                             </option>
                                         ))}
                                     </select>
@@ -121,10 +129,16 @@ export default function Edit({ auth, akademik, santris }) {
                                         <option value="">Pilih Kitab</option>
                                         {[
                                             ...new Set(
-                                                dataKitabDurus.map((k) => k.kitab)
+                                                dataKitabDurus.map(
+                                                    (k) => k.kitab
+                                                )
                                             ),
                                         ].map((kitab) => (
-                                            <option key={kitab} value={kitab} className="py-2">
+                                            <option
+                                                key={kitab}
+                                                value={kitab}
+                                                className="py-2"
+                                            >
                                                 {kitab}
                                             </option>
                                         ))}
@@ -148,7 +162,9 @@ export default function Edit({ auth, akademik, santris }) {
                                         id="bab"
                                         name="bab"
                                         className={`mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-teal-500 dark:focus:border-teal-500 py-3 px-4 border transition duration-150 ease-in-out ${
-                                            !data.kitab ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : ""
+                                            !data.kitab
+                                                ? "bg-gray-100 dark:bg-gray-700 text-gray-400"
+                                                : ""
                                         }`}
                                         value={data.bab}
                                         onChange={(e) =>
@@ -157,9 +173,17 @@ export default function Edit({ auth, akademik, santris }) {
                                         disabled={!data.kitab}
                                         required
                                     >
-                                        <option value="">{data.kitab ? "Pilih Bab" : "Pilih kitab terlebih dahulu"}</option>
+                                        <option value="">
+                                            {data.kitab
+                                                ? "Pilih Bab"
+                                                : "Pilih kitab terlebih dahulu"}
+                                        </option>
                                         {filteredBab.map((b) => (
-                                            <option key={b.bab} value={b.bab} className="py-2">
+                                            <option
+                                                key={b.bab}
+                                                value={b.bab}
+                                                className="py-2"
+                                            >
                                                 {b.bab}
                                             </option>
                                         ))}
@@ -182,7 +206,9 @@ export default function Edit({ auth, akademik, santris }) {
                                         disabled={processing}
                                     >
                                         <FiSave className="mr-2" />
-                                        {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                        {processing
+                                            ? "Menyimpan..."
+                                            : "Simpan Perubahan"}
                                     </PrimaryButton>
                                 </div>
                             </form>

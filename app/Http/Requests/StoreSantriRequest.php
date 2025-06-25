@@ -15,8 +15,7 @@ class StoreSantriRequest extends FormRequest
     {
         return [
             'nis' => 'required|string|max:255',
-            'nama' => 'required|string|max:255',
-            'tahun_lulus' => 'required|integer',
+            'nama_santri' => 'required|string|max:255',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'anak_ke' => 'required|integer',

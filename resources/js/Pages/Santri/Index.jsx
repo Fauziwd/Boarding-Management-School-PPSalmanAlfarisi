@@ -172,7 +172,7 @@ export default function SantriIndex({ auth, santris, filters }) {
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                         {santris.data.length > 0 ? (
-                                            santris.data.map(({ id, nis, nama, tempat_lahir, tanggal_lahir, tahun_lulus }, index) => (
+                                            santris.data.map(({ id, nis, nama_santri, tempat_lahir, tanggal_lahir, tahun_lulus }, index) => (
                                                 <tr key={id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                                                         {(data.page - 1) * data.perPage + index + 1}
@@ -182,13 +182,9 @@ export default function SantriIndex({ auth, santris, filters }) {
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">
-                                                            <div className="flex-shrink-0 h-10 w-10 rounded-full bg-teal-100 dark:bg-gray-700 flex items-center justify-center">
-                                                                <span className="text-teal-800 dark:text-teal-300 font-medium">
-                                                                    {nama.charAt(0).toUpperCase()}
-                                                                </span>
-                                                            </div>
+                                                           
                                                             <div className="ml-4">
-                                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{nama}</div>
+                                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{nama_santri}</div>
                                                             </div>
                                                         </div>
                                                     </td>

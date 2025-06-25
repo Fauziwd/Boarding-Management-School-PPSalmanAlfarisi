@@ -17,17 +17,10 @@ const Datadiri = ({ santri }) => {
                         Nama
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama}
+                        {santri.nama_santri_santri}
                     </td>
                 </tr>
-                <tr className="border-b border-gray-300 dark:border-gray-800">
-                    <th className="px-4 py-2 text-left font-semibold bg-teal-700 text-white dark:text-white dark:bg-gray-900/50">
-                        Tahun Lulus
-                    </th>
-                    <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.tahun_lulus}
-                    </td>
-                </tr>
+
                 <tr className="border-b border-gray-300 dark:border-gray-800">
                     <th className="px-4 py-2 text-left font-semibold bg-teal-700 text-white dark:text-white dark:bg-gray-900/50">
                         Tempat Lahir
@@ -65,7 +58,7 @@ const Datadiri = ({ santri }) => {
                         Nama Bapak
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama_bapak}
+                        {santri.nama_santri_bapak}
                     </td>
                 </tr>
                 <tr className="border-b border-gray-300 dark:border-gray-800">
@@ -89,7 +82,7 @@ const Datadiri = ({ santri }) => {
                         Nama Ibu
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama_ibu}
+                        {santri.nama_santri_ibu}
                     </td>
                 </tr>
                 <tr className="border-b border-gray-300 dark:border-gray-800">
@@ -124,3 +117,14 @@ const Datadiri = ({ santri }) => {
 };
 
 export default Datadiri;
+
+{
+    /* <tr className="border-b border-gray-300 dark:border-gray-800">
+                    <th className="px-4 py-2 text-left font-semibold bg-teal-700 text-white dark:text-white dark:bg-gray-900/50">
+                        Tahun Lulus
+                    </th>
+                    <td className="px-4 py-2 dark:bg-gray-600">
+                        {santri.tahun_lulus}
+                    </td>
+                </tr> */
+}

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { FaCalendarAlt, FaBookReader } from 'react-icons/fa'; // Import ikon
 
 export default function Sidebar({ menu }) {
     const [isHovered, setIsHovered] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [isAcademicOpen, setIsAcademicOpen] = useState(false);
     const sidebarRef = useRef(null);
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const { auth } = props; // Ambil data auth dari props
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -48,7 +50,7 @@ export default function Sidebar({ menu }) {
     return (
         <div>
             {/* Hamburger Button */}
-            <div className="text-center">
+            <div className="text-center scroll-smooth scrollbar-none scroll-hidden">
                 <button
                     className="mt-3 mr-5 rounded-lg text-teal-700 dark:text-gray-300 font-bold p-2 dark:hover:text-gray-100 transition-all duration-300 dark:hover:bg-gray-700"
                     type="button"
@@ -104,7 +106,7 @@ export default function Sidebar({ menu }) {
                                 className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
                                 viewBox="0 0 16 16"
                             >
-                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                             </svg>
                         ) : (
                             <svg
@@ -115,7 +117,7 @@ export default function Sidebar({ menu }) {
                                 className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
                                 viewBox="0 0 16 16"
                             >
-                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                             </svg>
                         )}
                         <span className="sr-only">Close menu</span>
@@ -125,6 +127,50 @@ export default function Sidebar({ menu }) {
                 {/* Menu Items */}
                 <div className="py-4 overflow-y-auto">
                     <ul className="space-y-2 font-medium">
+                        
+                        {/* ======================= AWAL PERUBAHAN ======================= */}
+
+                        {/* MENU KHUSUS ADMIN */}
+                        {auth.user.role === 'admin' && (
+                            <>
+                                <li>
+                                    <h4 className="px-3 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase">Administrasi</h4>
+                                </li>
+                                <li>
+                                    <Link
+                                        href={route('academic-years.index')}
+                                        className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
+                                            route().current('academic-years.index')
+                                                ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
+                                                : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
+                                        }`}
+                                    >
+                                        <FaCalendarAlt className="w-5 h-5 mr-3" />
+                                        <span className="font-medium">Tahun Ajaran</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+    href={route('report_cards.index')}
+    className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
+        route().current('report_cards.index')
+            ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
+            : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
+    }`}
+>
+    <FaBookReader className="w-5 h-5 mr-3" />
+    <span className="font-medium">Manajemen Rapor</span>
+</Link>
+                                </li>
+                                <li>
+                                    <h4 className="px-3 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase">Menu Utama</h4>
+                                </li>
+                            </>
+                        )}
+
+                        {/* ======================= AKHIR PERUBAHAN ======================= */}
+
+
                         {Object.entries(groupedMenu).map(([category, items]) => (
                             <li key={category}>
                                 {category === 'Pendidikan' ? (
@@ -183,16 +229,16 @@ export default function Sidebar({ menu }) {
                 </div>
 
                 {/* Sidebar Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+                {/* <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
                     <div className="text-center text-sm text-gray-500 dark:text-gray-400">
                         © {new Date().getFullYear()} Sistem Manajemen Sekolah
                     </div>
-                </div>
+                </div> */}
             </div>
 
             {/* Overlay when sidebar is open */}
             {isOpen && (
-                <div 
+                <div
                     className="fixed inset-0 z-30 bg-black/20 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-300"
                     onClick={toggleSidebar}
                 />

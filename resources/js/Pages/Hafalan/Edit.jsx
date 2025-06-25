@@ -58,7 +58,7 @@ export default function Edit({ auth, hafalan, santris }) {
                                                 key={santri.id}
                                                 value={santri.id}
                                             >
-                                                {santri.nama}
+                                                {santri.nama_santri}
                                             </option>
                                         ))}
                                     </select>

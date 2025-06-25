@@ -115,7 +115,7 @@ export default function AchievementIndex({
                                                     {index + 1}
                                                 </td>
                                                 <td className="px-6 py-4 text-lg text-white">
-                                                    {santri.nama}
+                                                    {santri.nama_santri}
                                                 </td>
                                                 <td className="px-6 py-4 text-lg text-white">
                                                     {type}
@@ -138,13 +138,13 @@ export default function AchievementIndex({
                                                     </Link>
                                                     <SweetAlert
                                                         title="Konfirmasi Penghapusan"
-                                                        text={`Apakah Anda yakin ingin menghapus pencapaian oleh ${santri.nama}?`}
+                                                        text={`Apakah Anda yakin ingin menghapus pencapaian oleh ${santri.nama_santri}?`}
                                                         icon="warning"
                                                         confirmButtonText="Ya, hapus!"
                                                         onConfirm={() =>
                                                             handleDelete(
                                                                 id,
-                                                                santri.nama
+                                                                santri.nama_santri
                                                             )
                                                         }
                                                     />

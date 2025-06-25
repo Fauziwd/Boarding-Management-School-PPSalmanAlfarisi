@@ -12,6 +12,8 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AkademikController;
 use App\Http\Controllers\HafalanController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\ReportCardController;
 use Inertia\Inertia;
 
 // Halaman Welcome
@@ -28,6 +30,19 @@ Route::get('/', function () {
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Route untuk Manajemen Rapor (Admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth','admin'])->group(function () {
+    Route::resource('academic-years', AcademicYearController::class)->except(['show']);
+    Route::post('academic-years/{academicYear}/set-active', [AcademicYearController::class, 'setActive'])->name('academic-years.set-active');
+    
+    Route::get('report_cards/show', [ReportCardController::class, 'show'])->name('report_cards.show');
+    Route::post('report_cards/generate', [ReportCardController::class, 'generate'])->name('report_cards.generate');
+});
 
 Route::get('/dashboard', [AttendanceController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
@@ -96,6 +111,14 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/attendances/submit', [AttendanceController::class, 'submit'])->name('attendances.submit');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Route untuk Melihat dan Download Rapor
+|--------------------------------------------------------------------------
+*/
+Route::resource('report_cards', ReportCardController::class)->only(['index', 'show']);
+Route::get('report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
 
 // Otentikasi Laravel
 require __DIR__ . '/auth.php';

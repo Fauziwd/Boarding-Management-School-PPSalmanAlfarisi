@@ -12,9 +12,16 @@ class Hafalan extends Model
 
     protected $fillable = ['santri_id', 'juz', 'month'];
 
-    // Relasi ke tabel santris
-    public function santri()
-    {
-        return $this->belongsTo(Santri::class);
-    }
+
+    // Relasi ke santri sudah ada, pastikan benar
+public function santri()
+{
+    return $this->belongsTo(Santri::class);
+}
+
+// Tambahkan relasi ini
+public function reportCard()
+{
+    return $this->belongsTo(ReportCard::class);
+}
 }
