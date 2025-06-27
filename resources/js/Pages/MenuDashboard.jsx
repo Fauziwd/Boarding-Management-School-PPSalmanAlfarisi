@@ -19,14 +19,14 @@ const menuItems = [
     },
     {
         label: "User Data",
-        href: "users",
+        href: "users.index",
         icon: UserPlusIcon,
         description: "Manage user accounts",
         gradient: "from-sky-500 to-indigo-600",
         iconColor: "bg-sky-600",
     },
     {
-        label: "Academic Details",
+        label: "Academic",
         href: "akademik.index",
         icon: AcademicCapIcon,
         description: "Manage academic achievments",
@@ -60,7 +60,7 @@ function MenuItem({ item, LinkComponent }) {
         // Gunakan 'group' untuk mengontrol elemen anak saat parent di-hover
         <LinkComponent
             href={finalHref}
-            className={`group relative block overflow-hidden rounded-xl p-6 text-gray-800 dark:text-gray-100 transition-all duration-300 ${item.gradient} hover:shadow-lg hover:shadow-gray-900/20 dark:hover:shadow-black/40 hover:-translate-y-1`}
+            className={`group relative block overflow-hidden rounded-xl p-4 text-gray-800 dark:text-gray-100 transition-all duration-300 ${item.gradient} hover:shadow-lg hover:shadow-gray-900/20 dark:hover:shadow-black/40 hover:-translate-y-1`}
         >
             <div className="relative">
                 {/* Styling Ikon dengan Latar Belakang */}

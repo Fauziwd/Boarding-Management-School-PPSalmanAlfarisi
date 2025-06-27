@@ -8,6 +8,7 @@ import Hafalan from "@/Pages/ShowSantri/Hafalan";
 import axios from "axios";
 import { Tab } from "@headlessui/react";
 import { exportToExcel } from "@/utils/exportToExcel";
+import { FiDownload } from "react-icons/fi";
 
 export default function SantriShow({ auth, santri }) {
     const [akademiks, setAkademiks] = useState([]);
@@ -58,7 +59,7 @@ export default function SantriShow({ auth, santri }) {
 
     return (
         <AuthenticatedLayout auth={auth}>
-            <Head title={`Detail ${santri.nama_santri_santri}`} />
+            <Head title={`Detail ${santri.nama_santri}`} />
 
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -67,23 +68,17 @@ export default function SantriShow({ auth, santri }) {
                     <div className="overflow-hidden bg-white shadow-xl sm:rounded-2xl dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             {/* Profile Header Section */}
-                            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                             <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
                                 <div className="relative">
-                                    {santri.foto ? (
-                                        <img
-                                            src={`/storage/${santri.foto}`}
-                                            alt={`Foto ${santri.nama_santri}`}
-                                            draggable="false"
-                                            className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
-                                        />
-                                    ) : (
-                                        <img
-                                            src="/pp.jpg"
-                                            alt={`Foto ${santri.nama_santri}`}
-                                            draggable="false"
-                                            className="w-32 h-32 shadow-lg border-4 border-teal-500/30 dark:border-gray-600 rounded-full object-cover"
-                                        />
-                                    )}
+                                    {/* ========== PERBAIKAN UTAMA DI SINI ========== */}
+                                    {/* 1. Cek 'santri.foto_url' (dari controller) bukan 'santri.foto' */}
+                                    {/* 2. Gunakan 'santri.foto_url' langsung di src */}
+                                    <img
+                                        src={santri.foto || '/public/pp.jpg'} // Menggunakan foto_url atau fallback
+                                        alt={`Foto ${santri.nama_santri}`}
+                                        draggable="false"
+                                        className="w-32 h-32 shadow-lg border-4 border-white dark:border-gray-700 rounded-full object-cover"
+                                    />
                                     <div className="absolute -bottom-2 -right-2 bg-teal-500 dark:bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
                                         {santri.nis}
                                     </div>

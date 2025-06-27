@@ -19,19 +19,15 @@ class AcademicYearController extends Controller
     }
 
     /**
-     * Menampilkan form untuk membuat tahun ajaran baru.
-     * (Kita akan menggunakan modal/pop-up di halaman Index, jadi method ini tidak perlu)
-     * public function create() { ... }
-     */
-    
-    /**
      * Menyimpan tahun ajaran baru ke database.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'year' => 'required|string|max:10', // Contoh: "2024/2025"
-            'semester' => 'required|string|max:20', // Contoh: "Ganjil"
+            'year' => 'required|string|max:10|unique:academic_years,year,NULL,id,semester,' . $request->semester,
+            'semester' => 'required|string|max:20',
+        ], [
+            'year.unique' => 'Kombinasi Tahun Ajaran dan Semester sudah ada.'
         ]);
 
         AcademicYear::create($validated);
@@ -40,19 +36,15 @@ class AcademicYearController extends Controller
     }
 
     /**
-     * Menampilkan form untuk mengedit tahun ajaran.
-     * (Kita akan menggunakan modal/pop-up di halaman Index, jadi method ini tidak perlu)
-     * public function edit(AcademicYear $academicYear) { ... }
-     */
-
-    /**
      * Mengupdate data tahun ajaran di database.
      */
     public function update(Request $request, AcademicYear $academicYear)
     {
         $validated = $request->validate([
-            'year' => 'required|string|max:10',
+            'year' => 'required|string|max:10|unique:academic_years,year,' . $academicYear->id . ',id,semester,' . $request->semester,
             'semester' => 'required|string|max:20',
+        ], [
+            'year.unique' => 'Kombinasi Tahun Ajaran dan Semester sudah ada.'
         ]);
 
         $academicYear->update($validated);
@@ -65,7 +57,6 @@ class AcademicYearController extends Controller
      */
     public function destroy(AcademicYear $academicYear)
     {
-        // Tambahkan validasi jika tahun ajaran memiliki relasi yang tidak boleh dihapus
         if ($academicYear->reportCards()->exists()) {
             return to_route('academic-years.index')->with('error', 'Tahun Ajaran tidak dapat dihapus karena sudah memiliki data rapor terkait.');
         }
@@ -77,7 +68,6 @@ class AcademicYearController extends Controller
 
     /**
      * Mengatur sebuah tahun ajaran menjadi aktif.
-     * Ini adalah method custom yang kita buat.
      */
     public function setActive(AcademicYear $academicYear)
     {

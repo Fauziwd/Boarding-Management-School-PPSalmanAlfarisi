@@ -8,42 +8,50 @@ use Illuminate\Database\Eloquent\Model;
 class Santri extends Model
 {
     use HasFactory;
-
-    // Hubungkan model dengan tabel 'santris'
-    protected $table = 'santris';
-
+    
+    // Pastikan semua kolom yang bisa diisi sudah terdaftar di sini
     protected $fillable = [
-        'nis', 'nama_santri',  'tempat_lahir', 'tanggal_lahir', 'anak_ke', 
-        'status_yatim_piatu', 'nama_bapak', 'pekerjaan_bapak', 'no_telpon_bapak', 
-        'nama_ibu', 'pekerjaan_ibu', 'no_telpon_ibu', 'alamat', 'kelurahan', 
-        'kecamatan', 'kabupaten_kota', 'provinsi', 'kode_pos', 'foto'
+        'nis',
+        'nisn',
+        'nama_santri',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'kelas_id', // Tambahkan kelas_id
+        'anak_ke',
+        'status_yatim_piatu',
+        'nama_bapak',
+        'pekerjaan_bapak',
+        'no_telpon_bapak',
+        'nama_ibu',
+        'pekerjaan_ibu',
+        'no_telpon_ibu',
+        'alamat',
+        'kelurahan',
+        'kecamatan',
+        'kabupaten_kota',
+        'provinsi',
+        'kode_pos',
+        'foto',
     ];
 
-    public function akademiks()
+    /**
+     * Relasi ke model Kelas.
+     */
+    public function kelas()
     {
-        return $this->hasMany(Akademik::class, 'santri_id');
+        return $this->belongsTo(Kelas::class);
     }
 
-    // Relasi ke tabel rapor
-public function reportCards()
-{
-    return $this->hasMany(ReportCard::class);
-}
+    // Relasi lainnya yang sudah ada...
+    public function akademiks()
+    {
+        return $this->hasMany(Akademik::class);
+    }
 
-    // Relasi ke kelas
-public function kelas()
-{
-    return $this->belongsTo(Kelas::class);
-}
-
-// Relasi ke Akademik dan Hafalan sudah ada, pastikan benar
-public function akademik()
-{
-    return $this->hasMany(Akademik::class);
-}
-
-public function hafalan()
-{
-    return $this->hasMany(Hafalan::class);
-}
+    public function hafalans()
+    {
+        return $this->hasMany(Hafalan::class);
+    }
 }

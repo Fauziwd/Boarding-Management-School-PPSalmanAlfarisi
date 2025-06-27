@@ -4,17 +4,14 @@ import TextInput from "@/Components/TextInput";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function PersonalInfoForm({ data, setData, errors, handleNISChange, handleFileChange, filePreview }) {
-    // State yang lebih deskriptif untuk status pengecekan NIS
+export default function PersonalInfoForm({ data, setData, errors, handleNISChange, handleFileChange, filePreview, kelas }) {
     const [nisStatus, setNisStatus] = useState({ 
         loading: false, 
         exists: null, 
         message: '' 
     });
 
-    // useEffect untuk mengecek NIS secara real-time dengan debouncing & cancellation
     useEffect(() => {
-        // Hanya jalankan jika NIS memiliki panjang yang cukup (sesuai format 1445.01.001)
         if (data.nis && data.nis.length >= 11) {
             setNisStatus({ loading: true, exists: null, message: 'Mengecek NIS...' });
             
@@ -35,7 +32,7 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                              setNisStatus({ loading: false, exists: null, message: 'Gagal mengecek NIS.' });
                         }
                     });
-            }, 500); // Tunggu 500ms setelah user berhenti mengetik
+            }, 500);
 
             return () => {
                 clearTimeout(debounceTimeout);
@@ -147,6 +144,27 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                 </select>
                 <InputError message={errors.jenis_kelamin} className="mt-2" />
             </div>
+
+            {/* ========== PERBAIKAN UTAMA DI SINI ========== */}
+            <div>
+                <InputLabel htmlFor="kelas_id" value="Kelas" />
+                <select
+                    id="kelas_id"
+                    name="kelas_id"
+                    value={data.kelas_id}
+                    onChange={(e) => setData("kelas_id", e.target.value)}
+                    className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:text-white"
+                >
+                    <option value="">-- Pilih Kelas --</option>
+                    {/* Guard Clause: Cek apakah 'kelas' adalah array sebelum di-map */}
+                    {Array.isArray(kelas) && kelas.map((k) => (
+                        <option key={k.id} value={k.id}>{k.nama_kelas}</option>
+                    ))}
+                </select>
+                <InputError message={errors.kelas_id} className="mt-2" />
+            </div>
+            {/* ============================================== */}
+
             <div>
                 <InputLabel htmlFor="agama" value="Agama" />
                 <select
@@ -206,12 +224,7 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                     id="foto"
                     name="foto"
                     type="file"
-                    className="mt-1 block w-full text-sm text-gray-500
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-full file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-teal-50 dark:file:bg-gray-700 file:text-teal-700 dark:file:text-gray-300
-                                hover:file:bg-teal-100"
+                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 dark:file:bg-gray-700 file:text-teal-700 dark:file:text-gray-300 hover:file:bg-teal-100"
                     onChange={handleFileChange}
                     accept="image/*"
                 />

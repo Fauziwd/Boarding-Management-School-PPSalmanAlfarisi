@@ -4,119 +4,108 @@ namespace App\Http\Controllers;
 
 use App\Models\Hafalan;
 use App\Models\Santri;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class HafalanController extends Controller
 {
-    public function index(Request $request)
+   public function index()
     {
-        $hafalans = Hafalan::with('santri')->paginate(5);
-        $currentMonth = date('Y-m');
-        $juzCount = Hafalan::select('juz', \DB::raw('count(*) as total'))
-            ->where('month', 'like', $currentMonth . '%')
-            ->groupBy('juz')
-            ->orderBy('total', 'desc')
-            ->get();
-
-        $topJuz = $juzCount->first();
-
-        $santriCount = Hafalan::select('santri_id', \DB::raw('count(*) as total'))
-            ->where('month', 'like', $currentMonth . '%')
+        // ========== PERBAIKAN DI SINI ==========
+        // Mengganti 'foto_santri' menjadi 'foto' agar sesuai dengan kolom database Anda
+        $hafalans = Hafalan::with('santri:id,nama_santri,nis,foto') 
+            ->select(
+                'santri_id',
+                DB::raw('COUNT(DISTINCT juz) as total_juz'),
+                DB::raw('MAX(created_at) as terakhir_update')
+            )
             ->groupBy('santri_id')
-            ->orderBy('total', 'desc')
-            ->get();
-
-        $topSantri = null;
-        $topSantriNames = [];
-        if ($santriCount->count() > 0) {
-            $maxCount = $santriCount->first()->total;
-            foreach ($santriCount as $santri) {
-                if ($santri->total == $maxCount) {
-                    $topSantriNames[] = Santri::find($santri->santri_id)->nama;
-                } else {
-                    break;
-                }
+            ->orderBy('terakhir_update', 'desc')
+            ->paginate(10);
+            
+        // Menambahkan URL foto ke setiap santri
+        $hafalans->getCollection()->transform(function ($item) {
+            if ($item->santri) {
+                // Menggunakan 'foto' untuk mengecek dan membuat URL
+                $item->santri->foto = $item->santri->foto ? Storage::url($item->santri->foto) : null;
             }
-            if (count($topSantriNames) > 3) {
-                $topSantri = '-';
-            } else {
-                $topSantri = implode(', ', $topSantriNames);
-            }
-        }
+            return $item;
+        });
 
         return Inertia::render('Hafalan/Index', [
-            'hafalans' => $hafalans, 
-            'juzCount' => $juzCount,
-            'topJuz' => $topJuz,
-            'topSantri' => $topSantri,
+            'hafalans' => $hafalans,
         ]);
     }
 
-    public function getBySantriId($santriId)
-    {
-        // Ambil semua data hafalan berdasarkan santri_id
-        $hafalans = Hafalan::where('santri_id', $santriId)->get();
-
-        return response()->json($hafalans);
-    }
 
     public function create()
     {
-        $santris = Santri::all();
+        $santris = Santri::select('id', 'nama_santri', 'nis')->orderBy('nama_santri')->get();
         return Inertia::render('Hafalan/Create', ['santris' => $santris]);
     }
+
+
 
     public function store(Request $request)
     {
         $request->validate([
             'santri_id' => 'required|exists:santris,id',
-            'juz' => 'required|integer',
+            'juz' => 'required|integer|min:1|max:30',
             'month' => 'required|date_format:Y-m',
         ]);
 
-        // Mengizinkan input data di bulan manapun
         Hafalan::create($request->all());
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil ditambahkan.');
     }
 
     public function edit(Hafalan $hafalan)
     {
-        $santris = Santri::all();
-        return Inertia::render('Hafalan/Edit', ['hafalan' => $hafalan, 'santris' => $santris]);
+        $santris = Santri::select('id', 'nama_santri')->orderBy('nama_santri')->get();
+        return Inertia::render('Hafalan/Edit', [
+            'hafalan' => $hafalan, 
+            'santris' => $santris
+        ]);
     }
 
     public function update(Request $request, Hafalan $hafalan)
     {
         $request->validate([
             'santri_id' => 'required|exists:santris,id',
-            'juz' => 'required|integer',
+            'juz' => 'required|integer|min:1|max:30',
             'month' => 'required|date_format:Y-m',
         ]);
 
-        // Mengizinkan update data di bulan manapun
         $hafalan->update($request->all());
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil diperbarui.');
     }
 
-    public function destroy(Hafalan $hafalan)
+     public function destroy(Hafalan $hafalan)
     {
         $hafalan->delete();
         return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil dihapus.');
     }
-
+    
+    public function getBySantriId($santriId)
+    {
+        $hafalans = Hafalan::where('santri_id', $santriId)->orderBy('created_at', 'desc')->get();
+        return response()->json($hafalans);
+    }
+    
     public function monthlySummary(Request $request)
     {
-        $month = $request->input('month');
+        $month = $request->input('month', date('Y-m'));
 
-        $summary = Hafalan::where('month', 'like', $month . '%')
+        $summary = Hafalan::with('santri:id,nama_santri')
+            ->where('month', 'like', $month . '%')
             ->get()
             ->groupBy('juz')
             ->map(function ($group) {
                 return $group->map(function ($hafalan) {
                     return [
-                        'nama' => $hafalan->santri->nama,
-                        'created_at' => $hafalan->created_at->format('Y-m-d H:i:s'), b  
+                        'nama' => $hafalan->santri->nama_santri,
+                        'created_at' => $hafalan->created_at->format('d/m/Y'), 
                     ];
                 });
             });
@@ -124,4 +113,3 @@ class HafalanController extends Controller
         return response()->json($summary);
     }
 }
-

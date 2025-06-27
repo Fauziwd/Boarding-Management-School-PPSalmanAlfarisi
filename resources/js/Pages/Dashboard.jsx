@@ -80,8 +80,7 @@ export default function Dashboard() {
 
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
-                    {/* Menu Dashboard */}
-                    <MenuDashboard LinkComponent={Link} />
+                  
 
                     {/* Main Content Card */}
                     <div className="overflow-hidden bg-white dark:bg-gray-800 rounded-2xl shadow-xl ring-1 ring-gray-100 dark:ring-gray-700">
@@ -336,6 +335,8 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+              {/* Menu Dashboard */}
+                    <MenuDashboard LinkComponent={Link} />
         </AuthenticatedLayout>
     );
 }

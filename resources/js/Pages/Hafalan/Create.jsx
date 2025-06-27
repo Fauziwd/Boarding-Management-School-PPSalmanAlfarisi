@@ -112,7 +112,7 @@ export default function Create({ auth, santris }) {
                                         <option value="">Pilih Santri</option>
                                         {filteredSantris.map((s) => (
                                             <option key={s.id} value={s.id}>
-                                                {s.nama} - {s.nis}
+                                                {s.nama_santri}
                                             </option>
                                         ))}
                                     </select>

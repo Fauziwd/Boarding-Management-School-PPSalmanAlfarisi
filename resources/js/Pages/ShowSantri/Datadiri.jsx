@@ -17,7 +17,7 @@ const Datadiri = ({ santri }) => {
                         Nama
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama_santri_santri}
+                        {santri.nama_santri}
                     </td>
                 </tr>
 
@@ -58,7 +58,7 @@ const Datadiri = ({ santri }) => {
                         Nama Bapak
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama_santri_bapak}
+                        {santri.nama_bapak}
                     </td>
                 </tr>
                 <tr className="border-b border-gray-300 dark:border-gray-800">
@@ -82,7 +82,7 @@ const Datadiri = ({ santri }) => {
                         Nama Ibu
                     </th>
                     <td className="px-4 py-2 dark:bg-gray-600">
-                        {santri.nama_santri_ibu}
+                        {santri.nama_ibu}
                     </td>
                 </tr>
                 <tr className="border-b border-gray-300 dark:border-gray-800">

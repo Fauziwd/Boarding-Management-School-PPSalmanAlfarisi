@@ -5,49 +5,48 @@ namespace App\Http\Controllers;
 use App\Models\Akademik;
 use App\Models\Santri;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AkademikController extends Controller
 {
-    public function index()
+   public function index(Request $request)
     {
-        $akademiks = Akademik::with('santri')->paginate(10);
+        $akademiks = Akademik::with('santri:id,nama_santri,nis,foto')
+            ->select(
+                'santri_id',
+                DB::raw('COUNT(DISTINCT kitab) as jumlah_kitab'),
+                DB::raw('COUNT(id) as total_pencapaian'),
+                DB::raw('MAX(created_at) as terakhir_update')
+            )
+            ->groupBy('santri_id')
+            ->orderBy('terakhir_update', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+        
+        $akademiks->getCollection()->transform(function ($item) {
+            if ($item->santri) {
+                $item->santri->foto = $item->santri->foto ? Storage::url($item->santri->foto) : null;
+            }
+            return $item;
+        });
 
         return Inertia::render('Akademik/Index', [
-            'akademiks' => $akademiks
+            'akademiks' => $akademiks,
         ]);
     }
 
     public function getBySantriId($santriId)
-{
-    // Ambil semua data akademik berdasarkan santri_id
-    $akademiks = Akademik::where('santri_id', $santriId)->get();
-
-    return response()->json($akademiks);
-}
-
-
-    public function show($id)
     {
-        $akademik = Akademik::with('santri')->findOrFail($id);
-
-        return Inertia::render('Akademik/Show', [
-            'akademik' => $akademik
-        ]);
+        // Urutkan berdasarkan tanggal terbaru
+        $akademiks = Akademik::where('santri_id', $santriId)->latest()->get();
+        return response()->json($akademiks);
     }
-
-    public function destroy($id)
-    {
-        $akademik = Akademik::findOrFail($id);
-        $akademik->delete();
-
-        return redirect()->route('akademik.index')->with('success', 'Pencapaian berhasil dihapus.');
-    }  
-
 
     public function create()
     {
-        $santris = Santri::all();
+        $santris = Santri::select('id', 'nama_santri', 'nis')->orderBy('nama_santri')->get();
         return inertia('Akademik/Create', [
             'santris' => $santris,
         ]);
@@ -59,21 +58,21 @@ class AkademikController extends Controller
             'santri_id' => 'required|exists:santris,id',
             'kitab' => 'required|string|max:255',
             'bab' => 'required|string',
+            'status' => 'required|string|in:Belum Selesai,Ikhtibar,Tamat', // Menambahkan validasi status
         ]);
 
-          // Simpan data ke tabel akademiks
         Akademik::create($request->all());
 
-          // Redirect ke halaman sebelumnya dengan pesan sukses
-          return redirect()->route('akademik.index')->with('success', 'Data akademik berhasil ditambahkan!');
-      }
-  
- 
-
+        return redirect()->route('akademik.index')->with('success', 'Data akademik berhasil ditambahkan!');
+    }
+    
     public function edit(Akademik $akademik)
     {
-        $santris = Santri::all();
-        return inertia('Akademik/Edit', ['akademik' => $akademik, 'santris' => $santris]);
+        $santris = Santri::select('id', 'nama_santri')->orderBy('nama_santri')->get();
+        return inertia('Akademik/Edit', [
+            'akademik' => $akademik,
+            'santris' => $santris
+        ]);
     }
 
     public function update(Request $request, Akademik $akademik)
@@ -82,6 +81,7 @@ class AkademikController extends Controller
             'santri_id' => 'required|exists:santris,id',
             'kitab' => 'required|string|max:255',
             'bab' => 'required|string',
+            'status' => 'required|string|in:Belum Selesai,Ikhtibar,Tamat',
         ]);
 
         $akademik->update($request->all());
@@ -89,5 +89,9 @@ class AkademikController extends Controller
         return redirect()->route('akademik.index')->with('success', 'Data akademik berhasil diupdate.');
     }
 
-
+    public function destroy(Akademik $akademik)
+    {
+        $akademik->delete();
+        return redirect()->route('akademik.index')->with('success', 'Pencapaian berhasil dihapus.');
+    }
 }

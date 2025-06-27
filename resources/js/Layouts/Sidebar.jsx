@@ -1,248 +1,202 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import { FaCalendarAlt, FaBookReader } from 'react-icons/fa'; // Import ikon
+import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import {
+    HomeIcon,
+    UsersIcon,
+    UserGroupIcon,
+    AcademicCapIcon,
+    BookOpenIcon,
+    ClockIcon,
+    DocumentChartBarIcon,
+    CalendarDaysIcon,
+    BuildingOffice2Icon,
+    ArrowLeftOnRectangleIcon
+} from "@heroicons/react/24/outline";
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function Sidebar({ menu }) {
-    const [isHovered, setIsHovered] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
-    const [isAcademicOpen, setIsAcademicOpen] = useState(false);
-    const sidebarRef = useRef(null);
-    const { url, props } = usePage();
-    const { auth } = props; // Ambil data auth dari props
+// Helper untuk memeriksa rute aktif
+const isCurrent = (href) => {
+    const currentRoute = route().current();
+    if (!currentRoute) return false;
+    
+    if (href.includes('*')) {
+        const baseRoute = href.replace('.*', '');
+        return currentRoute.startsWith(baseRoute);
+    }
+    return route().current(href);
+};
+
+const menuConfig = {
+    admin: [
+        { label: "Dashboard", href: "dashboard", icon: HomeIcon },
+        { label: "Attendance", href: "absensi.index", icon: ClockIcon },
+        {
+            label: "Administration",
+            icon: UserGroupIcon,
+            children: [
+                { label: "User Management", href: "users.index", icon: UsersIcon },
+                { label: "Student Management", href: "santris.index", icon: UserGroupIcon },
+                { label: "Class Management", href: "kelas.index", icon: BuildingOffice2Icon },
+            ],
+        },
+        {
+            label: "Education",
+            icon: AcademicCapIcon,
+            children: [
+                { label: "Academic", href: "akademik.index", icon: AcademicCapIcon },
+                { label: "Memorization", href: "hafalan.index", icon: BookOpenIcon },
+            ],
+        },
+        {
+            label: "Report Management",
+            icon: DocumentChartBarIcon,
+            children: [
+                { label: "Academic Year", href: "academic-years.index", icon: CalendarDaysIcon },
+                { label: "Report Data", href: "report-cards.index", icon: DocumentChartBarIcon },
+            ],
+        },
+    ],
+    muhafidz: [
+        { label: "Dashboard", href: "dashboard", icon: HomeIcon },
+        { label: "Memorization", href: "hafalan.index", icon: BookOpenIcon },
+    ],
+    default: [
+        { label: "Dashboard", href: "dashboard", icon: HomeIcon },
+    ],
+};
+
+
+const SubMenuItem = ({ item }) => {
+    const active = isCurrent(item.href);
+    return (
+        <li>
+            <Link
+                href={route(item.href)}
+                className={`flex items-center p-2 pl-11 text-sm rounded-lg transition-colors duration-200 group ${
+                    active
+                        ? "text-teal-700 dark:text-teal-300 font-semibold bg-teal-50 dark:bg-teal-900/40"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                }`}
+            >
+                {item.label}
+            </Link>
+        </li>
+    );
+};
+
+const MenuItem = ({ item }) => {
+    const isParentActive = item.children?.some(child => isCurrent(child.href));
+    const [isOpen, setIsOpen] = useState(isParentActive);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-                closeSidebar();
-            }
-        };
-
-        const closeSidebar = () => {
-            document.getElementById("drawer-navigation").classList.add("-translate-x-full");
-            setIsOpen(false);
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const toggleSidebar = () => {
-        document.getElementById("drawer-navigation").classList.toggle("-translate-x-full");
-        setIsOpen(!isOpen);
-    };
-
-    // Group menu items by category
-    const groupedMenu = menu.reduce((acc, item) => {
-        if (item.name === "Akademik" || item.name === "Hafalan") {
-            if (!acc['Pendidikan']) {
-                acc['Pendidikan'] = [];
-            }
-            acc['Pendidikan'].push(item);
-        } else {
-            acc[item.name] = [item];
+        if (isParentActive) {
+            setIsOpen(true);
         }
-        return acc;
-    }, {});
+    }, [isParentActive]);
+
+    if (!item.children) {
+        const active = isCurrent(item.href);
+        return (
+            <li>
+                <Link
+                    href={route(item.href)}
+                    className={`flex items-center p-3 text-base rounded-lg transition-all duration-200 group ${
+                        active
+                            ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-md font-semibold"
+                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium"
+                    }`}
+                >
+                    <item.icon className={`w-6 h-6 mr-3 transition-colors ${active ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600"}`} />
+                    <span>{item.label}</span>
+                </Link>
+            </li>
+        );
+    }
 
     return (
-        <div>
-            {/* Hamburger Button */}
-            <div className="text-center scroll-smooth scrollbar-none scroll-hidden">
-                <button
-                    className="mt-3 mr-5 rounded-lg text-teal-700 dark:text-gray-300 font-bold p-2 dark:hover:text-gray-100 transition-all duration-300 dark:hover:bg-gray-700"
-                    type="button"
-                    onClick={toggleSidebar}
-                    aria-label="Open navigation"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="30"
-                        height="30"
-                        fill="currentColor"
-                        className="bi bi-list transition-transform duration-300 hover:scale-110"
-                        viewBox="0 0 16 16"
+        <li>
+            <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex items-center w-full p-3 text-base rounded-lg transition-colors duration-200 group ${isParentActive ? "bg-gray-100 dark:bg-gray-700/50" : ""} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium`}>
+                <item.icon className={`w-6 h-6 mr-3 transition-colors ${isParentActive ? "text-teal-600 dark:text-teal-400" : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600"}`} />
+                <span className="flex-1 text-left">{item.label}</span>
+                <ChevronDownIcon className={`w-5 h-5 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.ul
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
                     >
-                        <path
-                            fillRule="evenodd"
-                            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
-                        />
-                    </svg>
-                </button>
+                        <div className="py-2 space-y-1 pl-1">
+                            {item.children.map(child => <SubMenuItem key={child.href} item={child} />)}
+                        </div>
+                    </motion.ul>
+                )}
+            </AnimatePresence>
+        </li>
+    );
+};
+
+const UserProfile = () => {
+    const { auth } = usePage().props;
+    const user = auth.user;
+    return (
+        <div className="flex items-center p-4 mt-auto rounded-lg bg-gray-50 dark:bg-gray-700/30">
+            <img className="w-10 h-10 rounded-full object-cover" src={`https://ui-avatars.com/api/?name=${user.name}&background=teal&color=fff`} alt={user.name} />
+            <div className="ml-3 overflow-hidden">
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user.role}</p>
             </div>
-
-            {/* Sidebar */}
-            <div
-                id="drawer-navigation"
-                ref={sidebarRef}
-                className="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform duration-300 ease-in-out -translate-x-full bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl border-r border-gray-200 dark:border-gray-700"
-                tabIndex="-1"
-                aria-labelledby="drawer-navigation-label"
-            >
-                {/* Sidebar Header */}
-                <div className="flex items-center justify-between mb-8 mt-5 px-2">
-                    <h5
-                        id="drawer-navigation-label"
-                        className="text-lg font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider"
-                    >
-                        Menu
-                    </h5>
-                    <button
-                        type="button"
-                        onClick={toggleSidebar}
-                        className="text-teal-600 dark:text-teal-400 bg-transparent rounded-lg text-sm p-1.5 inline-flex items-center transition-all duration-300 dark:hover:bg-gray-700"
-                        aria-label="Close navigation"
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
-                    >
-                        {isHovered ? (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="25"
-                                height="25"
-                                fill="currentColor"
-                                className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
-                                viewBox="0 0 16 16"
-                            >
-                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-                            </svg>
-                        ) : (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="25"
-                                height="25"
-                                fill="currentColor"
-                                className="bi bi-x-lg transition-transform duration-300 hover:rotate-90"
-                                viewBox="0 0 16 16"
-                            >
-                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-                            </svg>
-                        )}
-                        <span className="sr-only">Close menu</span>
-                    </button>
-                </div>
-
-                {/* Menu Items */}
-                <div className="py-4 overflow-y-auto">
-                    <ul className="space-y-2 font-medium">
-                        
-                        {/* ======================= AWAL PERUBAHAN ======================= */}
-
-                        {/* MENU KHUSUS ADMIN */}
-                        {auth.user.role === 'admin' && (
-                            <>
-                                <li>
-                                    <h4 className="px-3 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase">Administrasi</h4>
-                                </li>
-                                <li>
-                                    <Link
-                                        href={route('academic-years.index')}
-                                        className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
-                                            route().current('academic-years.index')
-                                                ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
-                                                : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        }`}
-                                    >
-                                        <FaCalendarAlt className="w-5 h-5 mr-3" />
-                                        <span className="font-medium">Tahun Ajaran</span>
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-    href={route('report_cards.index')}
-    className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
-        route().current('report_cards.index')
-            ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
-            : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
-    }`}
->
-    <FaBookReader className="w-5 h-5 mr-3" />
-    <span className="font-medium">Manajemen Rapor</span>
-</Link>
-                                </li>
-                                <li>
-                                    <h4 className="px-3 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase">Menu Utama</h4>
-                                </li>
-                            </>
-                        )}
-
-                        {/* ======================= AKHIR PERUBAHAN ======================= */}
-
-
-                        {Object.entries(groupedMenu).map(([category, items]) => (
-                            <li key={category}>
-                                {category === 'Pendidikan' ? (
-                                    <>
-                                        <button
-                                            onClick={() => setIsAcademicOpen(!isAcademicOpen)}
-                                            className="flex items-center justify-between w-full p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                            <span className="font-medium">Pendidikan</span>
-                                            {isAcademicOpen ? (
-                                                <ChevronUpIcon className="h-5 w-5" />
-                                            ) : (
-                                                <ChevronDownIcon className="h-5 w-5" />
-                                            )}
-                                        </button>
-                                        {isAcademicOpen && (
-                                            <ul className="ml-4 mt-2 space-y-2">
-                                                {items.map((item, index) => (
-                                                    <li key={index}>
-                                                        <Link
-                                                            href={route(item.href)}
-                                                            className={`flex items-center p-2 pl-4 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
-                                                                route().current(item.current)
-                                                                    ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
-                                                                    : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
-                                                            }`}
-                                                        >
-                                                            <span className="font-medium">{item.name}</span>
-                                                            {route().current(item.current) && (
-                                                                <span className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                                                            )}
-                                                        </Link>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </>
-                                ) : (
-                                    <Link
-                                        href={route(items[0].href)}
-                                        className={`flex items-center p-3 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 ${
-                                            route().current(items[0].current)
-                                                ? "bg-gradient-to-r from-teal-600 to-teal-500 text-white shadow-lg"
-                                                : "hover:bg-teal-100 hover:text-teal-700 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        }`}
-                                    >
-                                        <span className="font-medium">{items[0].name}</span>
-                                        {route().current(items[0].current) && (
-                                            <span className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                                        )}
-                                    </Link>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Sidebar Footer */}
-                {/* <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400">
-                        © {new Date().getFullYear()} Sistem Manajemen Sekolah
-                    </div>
-                </div> */}
-            </div>
-
-            {/* Overlay when sidebar is open */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-30 bg-black/20 dark:bg-black/50 backdrop-blur-sm transition-opacity duration-300"
-                    onClick={toggleSidebar}
-                />
-            )}
         </div>
+    );
+};
+
+
+export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
+    const { auth } = usePage().props;
+    const userRole = auth.user.role || 'default';
+    const menu = menuConfig[userRole] || menuConfig.default;
+
+    return (
+        <>
+            {/* Overlay untuk mobile view */}
+            <AnimatePresence>
+                {sidebarOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        onClick={() => setSidebarOpen(false)}
+                        className="fixed inset-0 bg-black/30 z-30 lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <aside className={`fixed inset-y-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+                <div className="h-full flex flex-col px-3 py-4 overflow-y-auto">
+                    <div className="flex items-center justify-between px-2.5 mb-6">
+                        <Link href={route('dashboard')} className="flex items-center">
+                            <ApplicationLogo className="h-8 w-auto" />
+                        </Link>
+                    </div>
+
+                    <ul className="space-y-2 flex-grow">
+                        {menu.map(item => <MenuItem key={item.label} item={item} />)}
+                    </ul>
+
+                    <UserProfile />
+
+                    <Link href={route('logout')} method="post" as="button" className="flex items-center p-3 mt-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-200">
+                        <ArrowLeftOnRectangleIcon className="w-6 h-6 mr-3 text-gray-500 dark:text-gray-400" />
+                        <span className="font-medium">Sign Out</span>
+                    </Link>
+                </div>
+            </aside>
+        </>
     );
 }

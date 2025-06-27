@@ -15,7 +15,7 @@ class HomeController extends Controller
 
         if ($request->has('search') && $request->input('search') != '') {
             $search = $request->input('search');
-            $query->where('nama', 'like', "%{$search}%")
+            $query->where('nama_santri', 'like', "%{$search}%")
                   ->orWhere('nis', 'like', "%{$search}%")
                   ->orWhere('tempat_lahir', 'like', "%{$search}%")
                   ->orWhere('tanggal_lahir', 'like', "%{$search}%")
