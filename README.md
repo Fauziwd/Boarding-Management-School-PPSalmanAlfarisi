@@ -5,23 +5,57 @@
 <h1 align="center">Boarding Management School - PP Salman Al Farisi</h1>
 
 <p align="center">
-  <strong>Pesment</strong> adalah sistem manajemen pondok pesantren modern yang dirancang untuk menjadi solusi digital terpadu bagi Pondok Pesantren Salman Al Farisi. Dibangun dengan teknologi
-  <a href="https://laravel.com/" target="_blank">Laravel</a>, <a href="https://react.dev/" target="_blank">React.js</a>, dan <a href="https://inertiajs.com/" target="_blank">Inertia.js</a>,
-  sistem ini bertujuan untuk menyederhanakan dan mengoptimalkan berbagai aspek manajemen, mulai dari data santri hingga pelaporan akademik.
-</p>
-
-<p align="center">
   <a href="https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi/actions"><img src="https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi/workflows/tests/badge.svg" alt="Build Status"></a>
   <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20.svg?style=flat-square" alt="Laravel Version">
   <img src="https://img.shields.io/badge/React-18.x-61DAFB.svg?style=flat-square" alt="React Version">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License">
+  <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey.svg?style=flat-square" alt="License"></a>
 </p>
 
 ---
 
-## 🚀 Fitur Unggulan
+<p align="center">
+  <strong>(ID)</strong> <strong>Pesment</strong> adalah sistem manajemen pondok pesantren modern yang dirancang untuk menjadi solusi digital terpadu bagi Pondok Pesantren Salman Al Farisi. Dibangun dengan teknologi <a href="https://laravel.com/" target="_blank">Laravel</a>, <a href="https://react.dev/" target="_blank">React.js</a>, dan <a href="https://inertiajs.com/" target="_blank">Inertia.js</a>, sistem ini bertujuan untuk menyederhanakan dan mengoptimalkan berbagai aspek manajemen, mulai dari data santri hingga pelaporan akademik.
+</p>
+<p align="center">
+  <strong>(EN)</strong> <strong>Pesment</strong> is a modern Islamic boarding school management system designed as an integrated digital solution for Pondok Pesantren Salman Al Farisi. Built with <a href="https://laravel.com/" target="_blank">Laravel</a>, <a href="https://react.dev/" target="_blank">React.js</a>, and <a href="https://inertiajs.com/" target="_blank">Inertia.js</a>, this system aims to simplify and optimize various management aspects, from student data to academic reporting.
+</p>
 
-Pesment dilengkapi dengan serangkaian fitur yang dirancang khusus untuk memenuhi kebutuhan pesantren modern:
+---
+
+## 🚀 Key Features / Fitur Unggulan
+
+<details>
+<summary><strong>English</strong></summary>
+
+* **👨‍🎓 Student Management:**
+    * **Complete Biodata:** Manage detailed student information, including personal data, parent information, and addresses.
+    * **Advanced Search & Filter:** Quickly find student data by student ID (NIS), name, or status.
+    * **Bulk Data Import:** Import hundreds of student records at once using a provided Excel template.
+
+* **📚 Academic & Memorization Tracking:**
+    * **Academic Progress (Durus):** Record students' achievements in their book studies, complete with grades and teacher notes.
+    * **Quran Memorization Progress (Hifdz):** Monitor students' Quran memorization submissions, including juz, page, and scores.
+    * **Data Visualization:** View memorization progress through informative and interactive charts.
+
+* **👨‍🏫 Teacher Management:**
+    * **Centralized Teacher Profiles:** Each teacher has a profile page displaying their data and assigned groups.
+    * **Multiple Role Management:** A teacher can hold several roles simultaneously (e.g., Murobbi, Muhafidz, Mudaris).
+
+* **👥 Group & Class Management:**
+    * **Usroh & Halaqoh:** Easily manage coaching groups and memorization circles.
+    * **Study Classes:** Organize classes based on the books being taught and the academic year.
+
+* **📊 Reporting & Analytics:**
+    * **Automatic Report Card Generation:** Create semester report cards for all students with a single click.
+    * **Attendance Statistics:** Gain insights into overall student attendance rates.
+
+* **🔐 Access & Role Management:**
+    * **Dynamic Access Control:** The system automatically adjusts menus and features based on the user's role (Admin, Teacher, etc.).
+
+</details>
+
+<details>
+<summary><strong>Bahasa Indonesia</strong></summary>
 
 * **👨‍🎓 Manajemen Data Santri:**
     * **Biodata Lengkap:** Kelola informasi detail santri, termasuk data pribadi, informasi orang tua, dan alamat.
@@ -48,86 +82,107 @@ Pesment dilengkapi dengan serangkaian fitur yang dirancang khusus untuk memenuhi
 * **🔐 Manajemen Akses & Peran:**
     * **Hak Akses Dinamis:** Sistem secara otomatis menyesuaikan menu dan fitur yang dapat diakses berdasarkan peran pengguna (Admin, Guru, dll).
 
-## 🛠️ Cara Penggunaan
+</details>
 
-### Prasyarat
+## 🛠️ Getting Started / Cara Penggunaan
+
+### Prerequisites / Prasyarat
 
 * PHP >= 8.2
 * Composer
 * Node.js & NPM
-* Database (MySQL/MariaDB direkomendasikan)
+* Database (MySQL/MariaDB is recommended)
 
-### Langkah Instalasi
+### Installation Steps / Langkah Instalasi
 
-1.  **Clone Repositori:**
+1.  **Clone the repository / Clone repositori:**
     ```bash
     git clone [https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi.git](https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi.git)
     cd boarding-management-school-ppsalmanalfarisi
     ```
 
-2.  **Instalasi Dependensi:**
+2.  **Install dependencies / Instalasi dependensi:**
     ```bash
     composer install
     npm install
     ```
 
-3.  **Konfigurasi Lingkungan:**
-    * Salin file `.env.example` menjadi `.env`.
+3.  **Environment configuration / Konfigurasi lingkungan:**
+    * Copy `.env.example` to `.env`.
         ```bash
         cp .env.example .env
         ```
-    * Buat kunci aplikasi baru.
+    * Generate a new application key.
         ```bash
         php artisan key:generate
         ```
-    * Konfigurasikan koneksi database Anda di dalam file `.env`.
+    * Configure your database connection in the `.env` file.
 
-4.  **Migrasi & Seeding Database:**
-    * Jalankan migrasi untuk membuat tabel-tabel yang dibutuhkan.
+4.  **Database migration & seeding / Migrasi & seeding database:**
+    * Run migrations to create the necessary tables.
         ```bash
         php artisan migrate
         ```
-    * (Opsional) Jalankan seeder untuk mengisi data awal.
+    * (Optional) Run seeders to populate initial data.
         ```bash
         php artisan db:seed
         ```
 
-5.  **Jalankan Aplikasi:**
-    * Jalankan server development Vite dan Laravel.
+5.  **Run the application / Jalankan aplikasi:**
+    * Run the Vite and Laravel development servers.
         ```bash
         npm run dev
         ```
-    * Di terminal lain, jalankan server PHP.
+    * In another terminal, run the PHP server.
         ```bash
         php artisan serve
         ```
 
-Aplikasi sekarang dapat diakses di `http://localhost:8000`.
+The application is now accessible at `http://localhost:8000`.
 
-## 📄 Hak Cipta & Lisensi
+## 📄 Copyright & License / Hak Cipta & Lisensi
 
-Proyek **Boarding Management School - PP Salman Al Farisi** ini dilisensikan di bawah **Lisensi MIT**.
+This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License**.
 
-**Pernyataan Hak Cipta:**
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />
+Copyright © 2024, Fauzi Adi Wijaya. All Rights Reserved.
 
-© 2024, Fauzi Dwi Prasetyo. Hak Cipta Dilindungi.
+<details>
+<summary><strong>View License Details (English)</strong></summary>
 
-Berdasarkan Undang-Undang Hak Cipta yang berlaku di Indonesia (UU No. 28 Tahun 2014), seluruh kode sumber, desain, dan aset dalam repositori ini adalah milik intelektual dari **Fauzi Dwi Prasetyo**.
+This license allows you to:
+* **Share** — copy and redistribute the material in any medium or format.
+* **Adapt** — remix, transform, and build upon the material.
 
-Lisensi MIT memberikan Anda kebebasan untuk:
-* **Menggunakan:** Anda bebas menggunakan perangkat lunak ini untuk tujuan apa pun, baik pribadi, komersial, maupun pendidikan.
-* **Memodifikasi:** Anda bebas mengubah dan menyesuaikan kode sumber sesuai kebutuhan Anda.
-* **Mendistribusikan:** Anda bebas membagikan salinan perangkat lunak ini.
-* **Sublisensi:** Anda bebas memberikan sublisensi kepada pihak lain dengan syarat yang sama.
+Under the following terms:
+* **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+* **NonCommercial** — You may not use the material for commercial purposes.
+* **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
 
-**Kewajiban:**
-Satu-satunya kewajiban Anda adalah **menyertakan pemberitahuan hak cipta dan izin lisensi asli** di semua salinan atau bagian penting dari perangkat lunak.
+**Restriction:**
+You are **not permitted** to sell this software or its derivatives.
 
-**Batasan:**
-Perangkat lunak ini disediakan "SEBAGAIMANA ADANYA", tanpa jaminan apa pun. Pengembang tidak bertanggung jawab atas klaim, kerusakan, atau kewajiban lainnya yang timbul dari penggunaan perangkat lunak ini.
+For full details, please refer to the [legal code of the CC BY-NC-SA 4.0 license](http://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+</details>
 
-Untuk detail lengkap, silakan merujuk ke file [LICENSE](https://opensource.org/licenses/MIT) yang terdapat dalam repositori ini.
+<details>
+<summary><strong>Lihat Detail Lisensi (Bahasa Indonesia)</strong></summary>
+
+Berdasarkan lisensi ini, Anda bebas untuk:
+* **Berbagi** — menyalin dan menyebarluaskan materi dalam media atau format apa pun.
+* **Adaptasi** — menggubah, mengubah, dan membuat turunan dari materi.
+
+Dengan syarat berikut:
+* **Atribusi (Attribution)** — Anda harus memberikan kredit yang sesuai, menyediakan tautan ke lisensi, dan menunjukkan jika ada perubahan yang dilakukan.
+* **NonKomersial (NonCommercial)** — Anda tidak dapat menggunakan materi ini untuk tujuan komersial.
+* **BerbagiSerupa (ShareAlike)** — Jika Anda mengubah atau membuat turunan dari materi ini, Anda harus mendistribusikan kontribusi Anda di bawah lisensi yang sama dengan aslinya.
+
+**Larangan:**
+Anda **tidak diizinkan** untuk menjual perangkat lunak ini atau karya turunannya.
+
+Untuk detail lengkap, silakan merujuk ke [teks legal lisensi CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+</details>
 
 ---
 
-Terima kasih telah menggunakan dan berkontribusi pada proyek ini!
+Thank you for using and contributing to this project!
