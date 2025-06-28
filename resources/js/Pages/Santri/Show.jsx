@@ -68,14 +68,14 @@ export default function SantriShow({ auth, santri }) {
                     <div className="overflow-hidden bg-white shadow-xl sm:rounded-2xl dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
                             {/* Profile Header Section */}
-                             <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-8">
                                 <div className="relative">
-                                    {/* ========== PERBAIKAN UTAMA DI SINI ========== */}
-                                    {/* 1. Cek 'santri.foto_url' (dari controller) bukan 'santri.foto' */}
-                                    {/* 2. Gunakan 'santri.foto_url' langsung di src */}
                                     <img
-                                        src={santri.foto || '/public/pp.jpg'} // Menggunakan foto_url atau fallback
-                                        alt={`Foto ${santri.nama_santri}`}
+                                        src={
+                                            santri.foto_url ||
+                                            "/img/default-avatar.png"
+                                        } // Gunakan foto_url
+                                        alt={`Foto ${santri.nama_santri || `/img/pp.jpg`}`}
                                         draggable="false"
                                         className="w-32 h-32 shadow-lg border-4 border-white dark:border-gray-700 rounded-full object-cover"
                                     />

@@ -11,7 +11,7 @@ import {
     DocumentChartBarIcon,
     CalendarDaysIcon,
     BuildingOffice2Icon,
-    ArrowLeftOnRectangleIcon
+    ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,9 +20,9 @@ import { motion, AnimatePresence } from "framer-motion";
 const isCurrent = (href) => {
     const currentRoute = route().current();
     if (!currentRoute) return false;
-    
-    if (href.includes('*')) {
-        const baseRoute = href.replace('.*', '');
+
+    if (href.includes("*")) {
+        const baseRoute = href.replace(".*", "");
         return currentRoute.startsWith(baseRoute);
     }
     return route().current(href);
@@ -37,14 +37,18 @@ const menuConfig = {
             icon: UserGroupIcon,
             children: [
                 { label: "User Management", href: "users.index", icon: UsersIcon },
-                { label: "Student Management", href: "santris.index", icon: UserGroupIcon },
-                { label: "Class Management", href: "kelas.index", icon: BuildingOffice2Icon },
+                { label: "Teacher Management", href: "teachers.index", icon: AcademicCapIcon },
+                { label: "Manajemen Tahun Santri", href: "tahun-santri.index", icon: CalendarDaysIcon },
+                { label: "Manajemen Usroh", href: "usrohs.index", icon: UserGroupIcon },
             ],
         },
         {
             label: "Education",
             icon: AcademicCapIcon,
             children: [
+                { label: "Student Management", href: "santris.index", icon: UserGroupIcon },
+                { label: "Manajemen Kelas", href: "study-classes.index", icon: BuildingOffice2Icon },
+                { label: "Manajemen Halaqoh", href: "halaqohs.index", icon: BookOpenIcon },
                 { label: "Academic", href: "akademik.index", icon: AcademicCapIcon },
                 { label: "Memorization", href: "hafalan.index", icon: BookOpenIcon },
             ],
@@ -62,11 +66,8 @@ const menuConfig = {
         { label: "Dashboard", href: "dashboard", icon: HomeIcon },
         { label: "Memorization", href: "hafalan.index", icon: BookOpenIcon },
     ],
-    default: [
-        { label: "Dashboard", href: "dashboard", icon: HomeIcon },
-    ],
+    default: [{ label: "Dashboard", href: "dashboard", icon: HomeIcon }],
 };
-
 
 const SubMenuItem = ({ item }) => {
     const active = isCurrent(item.href);
@@ -87,7 +88,7 @@ const SubMenuItem = ({ item }) => {
 };
 
 const MenuItem = ({ item }) => {
-    const isParentActive = item.children?.some(child => isCurrent(child.href));
+    const isParentActive = item.children?.some((child) => isCurrent(child.href));
     const [isOpen, setIsOpen] = useState(isParentActive);
 
     useEffect(() => {
@@ -117,8 +118,12 @@ const MenuItem = ({ item }) => {
 
     return (
         <li>
-            <button type="button" onClick={() => setIsOpen(!isOpen)} className={`flex items-center w-full p-3 text-base rounded-lg transition-colors duration-200 group ${isParentActive ? "bg-gray-100 dark:bg-gray-700/50" : ""} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium`}>
-                <item.icon className={`w-6 h-6 mr-3 transition-colors ${isParentActive ? "text-teal-600 dark:text-teal-400" : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600"}`} />
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`flex items-center w-full p-3 text-base rounded-lg transition-colors duration-200 group ${ isParentActive ? "bg-gray-100 dark:bg-gray-700/50" : "" } text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 font-medium`}
+            >
+                <item.icon className={`w-6 h-6 mr-3 transition-colors ${ isParentActive ? "text-teal-600 dark:text-teal-400" : "text-gray-500 dark:text-gray-400 group-hover:text-teal-600"}`} />
                 <span className="flex-1 text-left">{item.label}</span>
                 <ChevronDownIcon className={`w-5 h-5 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
             </button>
@@ -132,7 +137,9 @@ const MenuItem = ({ item }) => {
                         className="overflow-hidden"
                     >
                         <div className="py-2 space-y-1 pl-1">
-                            {item.children.map(child => <SubMenuItem key={child.href} item={child} />)}
+                            {item.children.map((child) => (
+                                <SubMenuItem key={child.href} item={child} />
+                            ))}
                         </div>
                     </motion.ul>
                 )}
@@ -146,19 +153,26 @@ const UserProfile = () => {
     const user = auth.user;
     return (
         <div className="flex items-center p-4 mt-auto rounded-lg bg-gray-50 dark:bg-gray-700/30">
-            <img className="w-10 h-10 rounded-full object-cover" src={`https://ui-avatars.com/api/?name=${user.name}&background=teal&color=fff`} alt={user.name} />
+            <img
+                className="w-10 h-10 rounded-full object-cover"
+                src={`https://ui-avatars.com/api/?name=${user.name}&background=teal&color=fff`}
+                alt={user.name}
+            />
             <div className="ml-3 overflow-hidden">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user.role}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {user.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+                    {user.role}
+                </p>
             </div>
         </div>
     );
 };
 
-
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { auth } = usePage().props;
-    const userRole = auth.user.role || 'default';
+    const userRole = auth.user.role || "default";
     const menu = menuConfig[userRole] || menuConfig.default;
 
     return (
@@ -177,21 +191,35 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 )}
             </AnimatePresence>
 
-            <aside className={`fixed inset-y-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+            <aside
+                className={`fixed inset-y-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-transform duration-300 ease-in-out ${
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                } lg:translate-x-0`}
+            >
                 <div className="h-full flex flex-col px-3 py-4 overflow-y-auto">
                     <div className="flex items-center justify-between px-2.5 mb-6">
-                        <Link href={route('dashboard')} className="flex items-center">
+                        <Link
+                            href={route("dashboard")}
+                            className="flex items-center"
+                        >
                             <ApplicationLogo className="h-8 w-auto" />
                         </Link>
                     </div>
 
                     <ul className="space-y-2 flex-grow">
-                        {menu.map(item => <MenuItem key={item.label} item={item} />)}
+                        {menu.map((item) => (
+                            <MenuItem key={item.label} item={item} />
+                        ))}
                     </ul>
 
                     <UserProfile />
 
-                    <Link href={route('logout')} method="post" as="button" className="flex items-center p-3 mt-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-200">
+                    <Link
+                        href={route("logout")}
+                        method="post"
+                        as="button"
+                        className="flex items-center p-3 mt-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors duration-200"
+                    >
                         <ArrowLeftOnRectangleIcon className="w-6 h-6 mr-3 text-gray-500 dark:text-gray-400" />
                         <span className="font-medium">Sign Out</span>
                     </Link>

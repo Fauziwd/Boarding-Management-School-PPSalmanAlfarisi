@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\ReportCard;
 use App\Models\AcademicYear;
 use App\Models\Santri;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Attendance;
+use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\ReportCardAttendance;
+use Illuminate\Support\Facades\DB;
 
 class ReportCardController extends Controller
 {
@@ -17,7 +20,9 @@ class ReportCardController extends Controller
     public function index()
     {
         $activeYear = AcademicYear::where('is_active', true)->first();
-        $reportCards = ReportCard::with(['santri', 'academicYear', 'kelas'])
+        // PERBAIKAN: Memuat relasi 'santri' dan 'kelas' secara langsung dari ReportCard.
+        // Ini lebih handal daripada memuat 'santri.kelas' yang bersarang.
+        $reportCards = ReportCard::with(['santri', 'kelas', 'academicYear']) 
             ->latest()
             ->paginate(10);
             
@@ -30,30 +35,29 @@ class ReportCardController extends Controller
     /**
      * Fungsi untuk membuat "kerangka" rapor untuk semua santri di semester aktif.
      */
-    public function generate()
+    public function generate(Request $request)
     {
-        $activeYear = AcademicYear::where('is_active', true)->first();
+        $request->validate(['academic_year_id' => 'required|exists:academic_years,id']);
+        $activeYear = AcademicYear::find($request->academic_year_id);
+        
         if (!$activeYear) {
             return redirect()->back()->with('error', 'Tidak ada tahun ajaran yang aktif untuk generate rapor.');
         }
 
-// AMBIL SANTRI YANG SUDAH PUNYA KELAS SAJA
         $students = Santri::whereNotNull('kelas_id')->get();
-        if($students->isEmpty()){
+        if ($students->isEmpty()){
             return redirect()->back()->with('error', 'Tidak ada santri yang memiliki kelas untuk dibuatkan rapor.');
         }
 
-      $generatedCount = 0;
+        $generatedCount = 0;
         $skippedCount = 0;
         foreach ($students as $student) {
-            // Cek apakah rapor sudah ada, jika belum, buat baru
             $report = ReportCard::firstOrCreate(
                 [
                     'santri_id' => $student->id,
                     'academic_year_id' => $activeYear->id,
                 ],
                 [
-                    // GUNAKAN KELAS_ID DARI DATA SANTRI, BUKAN HARDCODE
                     'kelas_id' => $student->kelas_id, 
                 ]
             );
@@ -65,12 +69,12 @@ class ReportCardController extends Controller
             }
         }
 
-         $message = "$generatedCount rapor baru berhasil digenerate.";
+        $message = "$generatedCount rapor baru berhasil digenerate.";
         if ($skippedCount > 0) {
             $message .= " $skippedCount rapor sudah ada dan dilewati.";
         }
         
-        return redirect()->route('report-cards.index')->with('success', "$generatedCount rapor baru berhasil digenerate.");
+        return redirect()->route('report-cards.index')->with('success', $message);
     }
 
     /**
@@ -78,18 +82,60 @@ class ReportCardController extends Controller
      */
     public function show(ReportCard $reportCard)
     {
-        $reportCard->load(
-            'santri', 
+        $this->calculateAndStoreAttendance($reportCard);
+
+        // PERBAIKAN: Menggunakan relasi 'kelas' langsung dari ReportCard
+        $reportCard->load([
+            'santri.user', 
+            'kelas', // Lebih handal
             'academicYear', 
-            'kelas', 
-            'attendance',
-            'academicScores', 
-            'hafalanScores'
-        );
+            'akademikDetails.course', 
+            'hafalanDetails', 
+            'attendanceSummary',
+            'murobbi.user'
+        ]);
+        
+        $reportCard->akademik_details = $reportCard->akademikDetails;
+        $reportCard->hafalan_details = $reportCard->hafalanDetails;
+        $reportCard->attendance_summary = $reportCard->attendanceSummary;
 
         return Inertia::render('ReportCard/Show', [
-            'reportCard' => $reportCard,
+            'reportCard' => $reportCard
         ]);
+    }
+
+    /**
+     * Fungsi private untuk menghitung dan menyimpan rekap absensi.
+     */
+    private function calculateAndStoreAttendance(ReportCard $reportCard)
+    {
+        $academicYear = $reportCard->academicYear;
+        if (!$academicYear || !$academicYear->start_date || !$academicYear->end_date) {
+            return;
+        }
+
+        $startDate = $academicYear->start_date;
+        $endDate = $academicYear->end_date;
+        $santriId = $reportCard->santri_id;
+
+        $attendanceCounts = Attendance::query()
+            ->where('santri_id', $santriId)
+            ->whereBetween('attendance_date', [$startDate, $endDate])
+            ->select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $summary = [
+            'present'    => $attendanceCounts->get('Hadir', 0),
+            'sick'       => $attendanceCounts->get('Sakit', 0),
+            'permission' => $attendanceCounts->get('Izin', 0),
+            'absent'     => $attendanceCounts->get('Alpa', 0),
+        ];
+
+        ReportCardAttendance::updateOrCreate(
+            ['report_card_id' => $reportCard->id],
+            $summary
+        );
     }
 
     /**
@@ -97,12 +143,16 @@ class ReportCardController extends Controller
      */
     public function downloadPdf(ReportCard $reportCard)
     {
-        $reportCard->load('santri', 'academicYear', 'kelas', 'attendance', 'academicScores', 'hafalanScores');
+        $reportCard->load([
+            'santri.kelas', 
+            'academicYear', 
+            'akademikDetails.course', 
+            'hafalanDetails', 
+            'attendanceSummary'
+        ]);
 
-        // Pastikan Anda memiliki view 'pdf.report-card' di resources/views/
-        $pdf = Pdf::loadView('pdf.report-card', compact('reportCard')); 
-        $pdf->setPaper('a4', 'portrait');
-
+        $pdf = Pdf::loadView('pdf.report_card', ['reportCard' => $reportCard]); 
+        
         return $pdf->download('Rapor - ' . $reportCard->santri->nama_santri . '.pdf');
     }
 }

@@ -5,30 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Santri;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // PERBAIKAN: Menambahkan DB Facade
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class SantriController extends Controller
 {
-    /**
-     * Menampilkan daftar santri dengan fitur pencarian dan paginasi.
-     */
     public function index(Request $request)
     {
-        $query = Santri::query();
+        $query = Santri::with('kelas');
 
         if ($request->has('search') && $request->input('search') != '') {
             $search = $request->input('search');
             $query->where(function($q) use ($search) {
                 $q->where('nama_santri', 'like', "%{$search}%")
                   ->orWhere('nis', 'like', "%{$search}%")
-                  ->orWhere('tempat_lahir', 'like', "%{$search}%");
+                  ->orWhereHas('kelas', function ($subQuery) use ($search) {
+                      $subQuery->where('nama_kelas', 'like', "%{$search}%");
+                  });
             });
         }
 
-        $query->orderBy('nis', 'asc');
-
+        $query->orderBy('nama_santri', 'asc');
         $perPage = $request->input('perPage', 10);
         $santris = $query->paginate($perPage)->withQueryString();
 
@@ -38,33 +37,22 @@ class SantriController extends Controller
         ]);
     }
 
-    /**
-     * Menampilkan detail santri.
-     */
     public function show(Santri $santri)
     {
-        $santri->foto = $santri->foto_santri ? Storage::url($santri->foto_santri) : null;
-
-        return Inertia::render('Santri/Show', [
-            'santri' => $santri,
-        ]);
+        $santri->load('kelas');
+        $santri->foto_url = $santri->foto ? Storage::url($santri->foto) : null;
+        return Inertia::render('Santri/Show', ['santri' => $santri]);
     }
 
-    /**
-     * Menampilkan form untuk menambahkan santri baru.
-     */
-   public function create()
+    public function create()
     {
-        return Inertia::render('Santri/Create', [
-            'kelas' => Kelas::orderBy('nama_kelas')->get(), // Kirim data kelas
-        ]);
+        // Tidak perlu mengirim data kelas ke form create
+        return Inertia::render('Santri/Create');
     }
 
-    /**
-     * Menyimpan data santri baru ke database.
-     */
     public function store(Request $request)
     {
+        // Validasi lengkap untuk data santri baru
         $validatedData = $request->validate([
             'nis' => 'required|string|max:20|unique:santris,nis',
             'nisn' => 'nullable|string|max:20|unique:santris,nisn',
@@ -72,7 +60,7 @@ class SantriController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
-            'kelas_id' => 'required|exists:kelas,id', // Tambahkan validasi kelas_id
+            'kelas_id' => 'nullable|exists:kelas,id',
             'agama' => 'required|string',
             'anak_ke' => 'required|integer',
             'status_yatim_piatu' => 'required|string|in:Ya,Tidak',
@@ -88,45 +76,38 @@ class SantriController extends Controller
             'kabupaten_kota' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'kode_pos' => 'required|string|max:10',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {
-            $validatedData['foto_santri'] = $request->file('foto')->store('fotos', 'public');
+            $validatedData['foto'] = $request->file('foto')->store('fotos', 'public');
         }
 
         Santri::create($validatedData);
-
         return redirect()->route('santris.index')->with('success', 'Santri berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan form untuk mengedit data santri.
-     */
     public function edit(Santri $santri)
     {
-        // Menyertakan URL lengkap untuk foto agar bisa ditampilkan di frontend
-        $santri->foto_url = $santri->foto_santri ? Storage::url($santri->foto_santri) : null;
-
+        $santri->foto_url = $santri->foto ? Storage::url($santri->foto) : null;
         return Inertia::render('Santri/Edit', [
             'santri' => $santri,
-            'kelas' => Kelas::orderBy('nama_kelas')->get(), // Mengirim daftar kelas ke view
+            // Untuk form edit, kita tetap butuh daftar kelas
+            'kelas' => Kelas::orderBy('nama_kelas')->get(),
         ]);
     }
 
-    /**
-     * Mengupdate data santri yang sudah ada.
-     */
     public function update(Request $request, Santri $santri)
     {
+        // PERBAIKAN: Melengkapi semua aturan validasi untuk update
         $validatedData = $request->validate([
             'nis' => ['required', 'string', 'max:20', Rule::unique('santris')->ignore($santri->id)],
             'nisn' => ['nullable', 'string', 'max:20', Rule::unique('santris')->ignore($santri->id)],
             'nama_santri' => 'required|string|max:255',
-            'kelas_id' => 'required|exists:kelas,id',
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+            'kelas_id' => 'nullable|exists:kelas,id',
             'agama' => 'required|string',
             'anak_ke' => 'required|integer',
             'status_yatim_piatu' => 'required|string|in:Ya,Tidak',
@@ -145,32 +126,23 @@ class SantriController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
-        // Handle file update
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($santri->foto_santri) {
-                Storage::disk('public')->delete($santri->foto_santri);
+            if ($santri->foto) {
+                Storage::disk('public')->delete($santri->foto);
             }
-            // Simpan foto baru dan update path di data validasi
-            $validatedData['foto_santri'] = $request->file('foto')->store('fotos', 'public');
+            $validatedData['foto'] = $request->file('foto')->store('fotos', 'public');
         }
 
         $santri->update($validatedData);
-
         return redirect()->route('santris.index')->with('success', 'Data santri berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data santri.
-     */
     public function destroy(Santri $santri)
     {
-        if ($santri->foto_santri) {
-            Storage::disk('public')->delete($santri->foto_santri);
+        if ($santri->foto) {
+            Storage::disk('public')->delete($santri->foto);
         }
-
         $santri->delete();
-
         return redirect()->route('santris.index')->with('success', 'Data santri berhasil dihapus.');
     }
 
@@ -179,7 +151,11 @@ class SantriController extends Controller
      */
     public function checkNis($nis)
     {
-        $exists = Santri::where('nis', $nis)->exists();
+        // PERBAIKAN: Menggunakan perbandingan yang akurat dengan menghapus format titik.
+        // Query ini membandingkan NIS dari input (tanpa format) dengan
+        // data NIS di database yang juga dihilangkan formatnya.
+        $exists = Santri::where(DB::raw("REPLACE(nis, '.', '')"), $nis)->exists();
+
         return response()->json(['exists' => $exists]);
     }
 
@@ -188,6 +164,7 @@ class SantriController extends Controller
      */
     public function checkNisn($nisn)
     {
+        // Pengecekan NISN sudah benar karena formatnya hanya angka.
         $exists = Santri::where('nisn', $nisn)->exists();
         return response()->json(['exists' => $exists]);
     }

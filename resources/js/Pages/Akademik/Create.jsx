@@ -1,221 +1,218 @@
-import React, { useState, useEffect } from "react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
+import React, { useEffect, useState } from 'react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, Link, useForm } from '@inertiajs/react';
 import Breadcrumbs from "@/Components/Breadcrumbs";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import dataKitabDurus from "@/data/dataKitabDurus.json";
-import { FiArrowLeft, FiUser, FiCalendar, FiBook, FiBookOpen, FiSave, FiPlus } from "react-icons/fi";
-import ToastSuccess from "@/Components/ToastSuccess";
-import ToastError from "@/Components/ToastError";
+import InputLabel from '@/Components/InputLabel';
+import TextInput from '@/Components/TextInput';
+import InputError from '@/Components/InputError';
+import PrimaryButton from '@/Components/PrimaryButton';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import Swal from 'sweetalert2';
+// Impor data kitab dari file JSON Anda
+import dataKitabDurus from '@/data/dataKitabDurus.json';
 
-export default function Create({ auth, santris }) {
+export default function Create({ auth, santris, selectedSantri }) {
     const breadcrumbs = [
         { label: "Home", href: route("dashboard") },
         { label: "Akademik", href: route("akademik.index") },
-        { label: "Tambah Data" },
+        { label: "Tambah" },
     ];
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
-        santri_id: "",
-        kitab: "",
-        bab: "",
-        year: ""
+    const { data, setData, post, processing, errors, reset } = useForm({
+        santri_id: selectedSantri?.id || '',
+        kitab: '',
+        bab: '',
+        nilai: '',
+        catatan: '',
+        status: 'Belum Selesai',
+        // State baru untuk menyimpan tahun angkatan yang dipilih
+        year: selectedSantri ? selectedSantri.nis.toString().slice(0, 4) : "",
     });
 
+    const uniqueKitabs = [...new Set(dataKitabDurus.map(item => item.kitab))];
+    const [filteredBab, setFilteredBab] = useState([]);
+    const [isNilaiEnabled, setIsNilaiEnabled] = useState(false);
+    
+    // --- LOGIKA BARU UNTUK FILTER TAHUN ANGKATAN ---
     const [uniqueYears, setUniqueYears] = useState([]);
     const [filteredSantris, setFilteredSantris] = useState([]);
-    const [filteredBab, setFilteredBab] = useState([]);
-    const [showSuccessToast, setShowSuccessToast] = useState(false);
-    const [showErrorToast, setShowErrorToast] = useState(false);
 
+    // Mengambil tahun unik dari NIS untuk dropdown filter
     useEffect(() => {
-        const years = [...new Set(santris.map((s) => s.nis.toString().slice(0, 4)))];
-        setUniqueYears(years);
+        if (santris) {
+            const years = [...new Set(santris.map((s) => s.nis.toString().slice(0, 4)))].sort();
+            setUniqueYears(years);
+        }
     }, [santris]);
 
+    // Filter santri berdasarkan tahun yang dipilih
     useEffect(() => {
-        if (data.year) {
+        if (data.year && santris) {
             const filtered = santris.filter((s) => s.nis.toString().startsWith(data.year));
             setFilteredSantris(filtered);
         } else {
-            setFilteredSantris([]);
+            // Jika ada santri yang sudah terpilih dari awal, tampilkan dia di list
+            setFilteredSantris(selectedSantri ? [selectedSantri] : []);
+        }
+        // Reset pilihan santri jika tahun berubah
+        if (!selectedSantri) {
+            setData('santri_id', '');
         }
     }, [data.year, santris]);
+    // --- AKHIR LOGIKA BARU ---
 
     useEffect(() => {
         if (data.kitab) {
-            const filtered = dataKitabDurus.filter((k) => k.kitab === data.kitab);
-            setFilteredBab(filtered);
+            const babOptions = dataKitabDurus.filter(k => k.kitab === data.kitab).map(k => k.bab);
+            setFilteredBab(babOptions);
+            setData('bab', ''); 
         } else {
             setFilteredBab([]);
         }
     }, [data.kitab]);
 
-    const handleSubmit = (e) => {
+    // --- PERBAIKAN: Logika baru untuk mengontrol input nilai ---
+    // useEffect ini sekarang memantau perubahan pada 'status'
+    useEffect(() => {
+        // Cek apakah status yang dipilih adalah "Ikhtibar" ATAU "Tamat"
+        const enableNilai = data.status === 'Tamat';
+        setIsNilaiEnabled(enableNilai);
+
+        // Jika input nilai dinonaktifkan, kosongkan nilainya
+        if (!enableNilai) {
+            setData('nilai', '');
+        }
+    }, [data.status]); // <-- Bergantung pada perubahan 'status'
+
+
+    const submit = (e) => {
         e.preventDefault();
-        post(route("akademik.store"), {
-            ...data,
-            bab: parseInt(data.bab, 10),
+        post(route('akademik.store'), {
+            onSuccess: () => {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Data akademik berhasil disimpan.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                reset();
+            }
         });
     };
 
     return (
-        <AuthenticatedLayout auth={auth}>
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Tambah Akademik" />
-            <div className="py-1 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen">
-                <div className="mx-auto max-w-3xl sm:px-6 lg:px-8">
-                    <div className="p-6 flex justify-between items-start">
-                        <div>
-                            <Link
-                                href={route("akademik.index")}
-                                className="flex items-center text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-300 mb-4 transition-colors"
-                            >
-                                <FiArrowLeft className="mr-2" />
-                                Kembali
-                            </Link>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                                <FiPlus className="mr-3 text-teal-500" />
-                                Tambah Pencapaian Akademik
-                            </h1>
-                            <Breadcrumbs items={breadcrumbs} className="mt-2" />
-                        </div>
+            <div className="py-1">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="p-7">
+                        <Breadcrumbs items={breadcrumbs} />
                     </div>
-
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div className="p-8">
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                {/* Tahun Input */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <FiCalendar className="text-teal-500 mr-2" />
-                                        <InputLabel
-                                            htmlFor="year"
-                                            value="Tahun Angkatan"
-                                            className="text-gray-700 dark:text-gray-300 font-medium"
-                                        />
+                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div className="p-6 md:p-8 text-gray-900 dark:text-gray-100">
+                            <form onSubmit={submit} className="space-y-6">
+                                {/* --- PENAMBAHAN DROPDOWN TAHUN ANGKATAN --- */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <InputLabel htmlFor="year" value="Filter Santri per Tahun Angkatan (NIS)" />
+                                        <select
+                                            id="year" name="year"
+                                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600"
+                                            value={data.year}
+                                            onChange={(e) => setData("year", e.target.value)}
+                                            disabled={!!selectedSantri}
+                                        >
+                                            <option value="">Pilih Tahun Angkatan</option>
+                                            {uniqueYears.map((year) => <option key={year} value={year}>{year}</option>)}
+                                        </select>
                                     </div>
-                                    <select
-                                        id="year"
-                                        name="year"
-                                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-teal-500 dark:focus:border-teal-500 py-3 px-4 border transition duration-150 ease-in-out"
-                                        value={data.year}
-                                        onChange={(e) => setData("year", e.target.value)}
-                                        required
-                                    >
-                                        <option value="">Pilih Tahun Angkatan</option>
-                                        {uniqueYears.map((year) => (
-                                            <option key={year} value={year} className="py-2">
-                                                {year}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError className="mt-1" message={errors.year} />
+                                    <div>
+                                        <InputLabel htmlFor="santri_id" value="Santri" />
+                                        <select
+                                            id="santri_id" name="santri_id"
+                                            className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 ${!!selectedSantri ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed' : ''}`}
+                                            value={data.santri_id}
+                                            onChange={(e) => setData("santri_id", e.target.value)}
+                                            disabled={!!selectedSantri || !data.year}
+                                            required
+                                        >
+                                            <option value="">{data.year ? 'Pilih Santri' : 'Pilih Tahun Angkatan Dulu'}</option>
+                                            {filteredSantris.map((s) => (
+                                                <option key={s.id} value={s.id}>{s.nama_santri}</option>
+                                            ))}
+                                        </select>
+                                        <InputError className="mt-2" message={errors.santri_id} />
+                                    </div>
                                 </div>
 
-                                {/* Santri Selection */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <FiUser className="text-teal-500 mr-2" />
-                                        <InputLabel
-                                            htmlFor="santri_id"
-                                            value="Nama Santri"
-                                            className="text-gray-700 dark:text-gray-300 font-medium"
-                                        />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <InputLabel htmlFor="kitab" value="Kitab" />
+                                        <select
+                                            id="kitab" name="kitab" value={data.kitab}
+                                            onChange={(e) => setData('kitab', e.target.value)}
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm"
+                                            required
+                                        >
+                                            <option value="">-- Pilih Kitab --</option>
+                                            {uniqueKitabs.map((kitabName) => (
+                                                <option key={kitabName} value={kitabName}>{kitabName}</option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.kitab} className="mt-2" />
                                     </div>
-                                    <select
-                                        id="santri_id"
-                                        name="santri_id"
-                                        className={`mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-teal-500 dark:focus:border-teal-500 py-3 px-4 border transition duration-150 ease-in-out ${
-                                            !data.year ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : ""
-                                        }`}
-                                        value={data.santri_id}
-                                        onChange={(e) => setData("santri_id", e.target.value)}
-                                        disabled={!data.year}
-                                        required
-                                    >
-                                        <option value="">{data.year ? "Pilih Santri" : "Pilih tahun terlebih dahulu"}</option>
-                                        {filteredSantris.map((s) => (
-                                            <option key={s.id} value={s.id} className="py-2">
-                                                {s.nama} - {s.nis}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError className="mt-1" message={errors.santri_id} />
+                                    <div>
+                                        <InputLabel htmlFor="bab" value="Bab / Pembahasan" />
+                                        <select
+                                            id="bab" name="bab" value={data.bab}
+                                            onChange={(e) => setData('bab', e.target.value)}
+                                            disabled={!data.kitab || filteredBab.length === 0}
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm"
+                                            required
+                                        >
+                                            <option value="">{data.kitab ? 'Pilih Bab' : 'Pilih Kitab Dulu'}</option>
+                                            {filteredBab.map((bab) => (
+                                                <option key={bab} value={bab}>{bab}</option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.bab} className="mt-2" />
+                                    </div>
                                 </div>
 
-                                {/* Kitab Selection */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <FiBook className="text-teal-500 mr-2" />
-                                        <InputLabel
-                                            htmlFor="kitab"
-                                            value="Kitab"
-                                            className="text-gray-700 dark:text-gray-300 font-medium"
-                                        />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                     <div>
+                                        <InputLabel htmlFor="status" value="Status" />
+                                        <select id="status" name="status" value={data.status} onChange={(e) => setData('status', e.target.value)} className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
+                                            <option value="Belum Selesai">Belum Selesai</option>
+                                            <option value="Ikhtibar">Ikhtibar</option>
+                                            <option value="Tamat">Tamat</option>
+                                        </select>
+                                        <InputError message={errors.status} className="mt-2" />
                                     </div>
-                                    <select
-                                        id="kitab"
-                                        name="kitab"
-                                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-teal-500 dark:focus:border-teal-500 py-3 px-4 border transition duration-150 ease-in-out"
-                                        value={data.kitab}
-                                        onChange={(e) => setData("kitab", e.target.value)}
-                                        required
-                                    >
-                                        <option value="">Pilih Kitab</option>
-                                        {[...new Set(dataKitabDurus.map((k) => k.kitab))].map((kitab) => (
-                                            <option key={kitab} value={kitab} className="py-2">
-                                                {kitab}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError className="mt-1" message={errors.kitab} />
+                                    <div>
+                                        <InputLabel htmlFor="nilai" value="Nilai" />
+                                        <TextInput 
+                                            id="nilai" type="number" min="0" max="100" 
+                                            value={data.nilai} 
+                                            onChange={(e) => setData('nilai', e.target.value)} 
+                                            className={`mt-1 block w-full ${!isNilaiEnabled ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : ''}`}
+                                            disabled={!isNilaiEnabled}
+                                            required={isNilaiEnabled}
+                                            placeholder={!isNilaiEnabled ? 'Sudah Selesai?' : '0-100'}
+                                        />
+                                        <InputError message={errors.nilai} className="mt-2" />
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <InputLabel htmlFor="catatan" value="Catatan (Opsional)" />
+                                    <textarea id="catatan" value={data.catatan} onChange={(e) => setData('catatan', e.target.value)} className="mt-1 block w-full h-24 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm" />
+                                    <InputError message={errors.catatan} className="mt-2" />
                                 </div>
 
-                                {/* Bab Selection */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <FiBookOpen className="text-teal-500 mr-2" />
-                                        <InputLabel
-                                            htmlFor="bab"
-                                            value="Bab"
-                                            className="text-gray-700 dark:text-gray-300 font-medium"
-                                        />
-                                    </div>
-                                    <select
-                                        id="bab"
-                                        name="bab"
-                                        className={`mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:focus:ring-teal-500 dark:focus:border-teal-500 py-3 px-4 border transition duration-150 ease-in-out ${
-                                            !data.kitab ? "bg-gray-100 dark:bg-gray-700 text-gray-400" : ""
-                                        }`}
-                                        value={data.bab}
-                                        onChange={(e) => setData("bab", e.target.value)}
-                                        disabled={!data.kitab}
-                                        required
-                                    >
-                                        <option value="">{data.kitab ? "Pilih Bab" : "Pilih kitab terlebih dahulu"}</option>
-                                        {filteredBab.map((b) => (
-                                            <option key={b.bab} value={b.bab} className="py-2">
-                                           {b.bab}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError className="mt-1" message={errors.bab} />
-                                </div>
-
-                                <div className="flex justify-end space-x-4 pt-6">
-                                    <Link
-                                        href={route("akademik.index")}
-                                        className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150 ease-in-out"
-                                    >
-                                        Batal
-                                    </Link>
-                                    <PrimaryButton
-                                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-lg shadow-sm text-white font-medium hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-150 ease-in-out"
-                                        disabled={processing}
-                                    >
-                                        <FiSave className="mr-2" />
+                                <div className="flex justify-end mt-6">
+                                    <PrimaryButton disabled={processing}>
                                         {processing ? 'Menyimpan...' : 'Simpan Data'}
                                     </PrimaryButton>
                                 </div>
@@ -224,20 +221,6 @@ export default function Create({ auth, santris }) {
                     </div>
                 </div>
             </div>
-
-            {/* Toast Notifications */}
-            {showSuccessToast && (
-                <ToastSuccess 
-                    message="Data akademik berhasil ditambahkan!" 
-                    onClose={() => setShowSuccessToast(false)}
-                />
-            )}
-            {showErrorToast && (
-                <ToastError 
-                    message="Terjadi kesalahan. Silakan periksa kembali." 
-                    onClose={() => setShowErrorToast(false)}
-                />
-            )}
         </AuthenticatedLayout>
     );
 }

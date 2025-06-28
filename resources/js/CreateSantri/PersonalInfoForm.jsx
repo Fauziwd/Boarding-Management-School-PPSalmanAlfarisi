@@ -3,46 +3,74 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { debounce } from "lodash";
 
-export default function PersonalInfoForm({ data, setData, errors, handleNISChange, handleFileChange, filePreview, kelas }) {
+export default function PersonalInfoForm({ 
+    data, 
+    setData, 
+    errors, 
+    handleFileChange, 
+    filePreview,
+    // PERBAIKAN: Prop 'kelas' tidak lagi dibutuhkan di sini
+}) {
+    // State lokal untuk mengelola status pengecekan NIS
     const [nisStatus, setNisStatus] = useState({ 
         loading: false, 
         exists: null, 
         message: '' 
     });
 
-    useEffect(() => {
-        if (data.nis && data.nis.length >= 11) {
-            setNisStatus({ loading: true, exists: null, message: 'Mengecek NIS...' });
-            
-            const source = axios.CancelToken.source();
+    // Fungsi untuk menangani perubahan pada input NIS, mempertahankan format Anda
+    const handleNISChange = (e) => {
+        let value = e.target.value.replace(/[^\d.]/g, ""); // Izinkan angka dan titik
+        // Logika pemformatan Anda dipertahankan
+        if (value.length > 4 && value[4] !== '.') value = value.slice(0, 4) + "." + value.slice(4);
+        if (value.length > 7 && value[7] !== '.') value = value.slice(0, 7) + "." + value.slice(7);
+        // Batasi panjang maksimal
+        if (value.length > 11) value = value.slice(0, 11);
+        
+        setData('nis', value);
+    };
 
-            const debounceTimeout = setTimeout(() => {
-                axios.get(`/api/check-nis/${data.nis}`, { cancelToken: source.token })
+    // Pengecekan ketersediaan NIS secara real-time ke server
+    useEffect(() => {
+        // Cek hanya jika NIS sudah diisi lengkap (11 karakter termasuk titik)
+        if (data.nis && data.nis.length === 11) {
+            
+            setNisStatus({ 
+                loading: true, 
+                exists: null, 
+                message: 'Mengecek NIS...' 
+            });
+            
+            const nisForCheck = data.nis.replace(/\./g, '');
+
+            const debouncedCheck = debounce(() => {
+                axios.get(route('api.santri.checkNis', { nis: nisForCheck }))
                     .then(response => {
-                        if (response.data.exists) {
-                            setNisStatus({ loading: false, exists: true, message: 'NIS sudah digunakan.' });
-                        } else {
-                            setNisStatus({ loading: false, exists: false, message: 'NIS tersedia.' });
-                        }
+                        setNisStatus({
+                            loading: false,
+                            exists: response.data.exists,
+                            message: response.data.exists ? 'NIS sudah digunakan' : 'NIS tersedia'
+                        });
                     })
                     .catch(error => {
-                        if (!axios.isCancel(error)) {
-                             console.error("There was an error checking the NIS!", error);
-                             setNisStatus({ loading: false, exists: null, message: 'Gagal mengecek NIS.' });
-                        }
+                        console.error("Gagal mengecek NIS:", error);
+                        setNisStatus({ 
+                            loading: false, 
+                            exists: null, 
+                            message: 'Gagal mengecek NIS.' 
+                        });
                     });
             }, 500);
 
-            return () => {
-                clearTimeout(debounceTimeout);
-                source.cancel();
-            };
+            debouncedCheck();
+
+            return () => debouncedCheck.cancel();
         } else {
-             setNisStatus({ loading: false, exists: null, message: '' });
+            setNisStatus({ loading: false, exists: null, message: '' });
         }
     }, [data.nis]);
-
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -61,10 +89,16 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                 />
                 {nisStatus.message && (
                     <p className={`text-sm mt-1 ${
-                        nisStatus.exists === true ? 'text-red-500' 
-                        : nisStatus.exists === false ? 'text-green-500' 
-                        : 'text-gray-500'
+                        nisStatus.exists === true ? 'text-red-500' : 
+                        nisStatus.exists === false ? 'text-green-500' : 
+                        'text-gray-500'
                     }`}>
+                        {nisStatus.loading && (
+                            <span className="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full mr-2" 
+                                role="status" 
+                                aria-hidden="true">
+                            </span>
+                        )}
                         {nisStatus.message}
                     </p>
                 )}
@@ -127,7 +161,7 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                 <InputError className="mt-2" message={errors.tanggal_lahir} />
             </div>
             
-            {/* Jenis Kelamin & Agama */}
+            {/* Jenis Kelamin */}
             <div>
                  <InputLabel htmlFor="jenis_kelamin" value="Jenis Kelamin" />
                  <select
@@ -145,26 +179,9 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                 <InputError message={errors.jenis_kelamin} className="mt-2" />
             </div>
 
-            {/* ========== PERBAIKAN UTAMA DI SINI ========== */}
-            <div>
-                <InputLabel htmlFor="kelas_id" value="Kelas" />
-                <select
-                    id="kelas_id"
-                    name="kelas_id"
-                    value={data.kelas_id}
-                    onChange={(e) => setData("kelas_id", e.target.value)}
-                    className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:text-white"
-                >
-                    <option value="">-- Pilih Kelas --</option>
-                    {/* Guard Clause: Cek apakah 'kelas' adalah array sebelum di-map */}
-                    {Array.isArray(kelas) && kelas.map((k) => (
-                        <option key={k.id} value={k.id}>{k.nama_kelas}</option>
-                    ))}
-                </select>
-                <InputError message={errors.kelas_id} className="mt-2" />
-            </div>
-            {/* ============================================== */}
+            {/* PERBAIKAN: Dropdown Kelas dihapus dari sini */}
 
+            {/* Agama */}
             <div>
                 <InputLabel htmlFor="agama" value="Agama" />
                 <select
@@ -175,7 +192,6 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                     className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     required
                 >
-                    <option value="">Pilih Agama</option>
                     <option value="Islam">Islam</option>
                     <option value="Kristen Protestan">Kristen Protestan</option>
                     <option value="Kristen Katolik">Kristen Katolik</option>
@@ -210,11 +226,10 @@ export default function PersonalInfoForm({ data, setData, errors, handleNISChang
                     className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     required
                 >
-                    <option value="">Pilih Status</option>
                     <option value="Ya">Ya</option>
                     <option value="Tidak">Tidak</option>
                 </select>
-                <InputError className="mt-2" message={errors.status_yatim_piatu} />
+                <InputError message={errors.status_yatim_piatu} className="mt-2" />
             </div>
             
              {/* Foto Santri */}

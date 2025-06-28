@@ -7,9 +7,13 @@ use App\Http\Controllers\HafalanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportCardController;
-use App\Http\Controllers\KelasController; 
 use App\Http\Controllers\SantriController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\UsrohController;
+use App\Http\Controllers\HalaqohController;
+use App\Http\Controllers\StudyClassController;
+use App\Http\Controllers\TahunSantriController; // Controller yang sudah di-rename
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,80 +27,82 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
 /*
 |--------------------------------------------------------------------------
-| Rute yang Membutuhkan Otentikasi
+| Rute yang Membutuhkan Login (Semua Role)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
-    // Dashboard Utama
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-    // Profil Pengguna
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Rute Absensi
+    // Rute Absensi (Hanya submit)
     Route::post('/attendances/submit', [AttendanceController::class, 'submit'])->name('attendances.submit');
-    Route::get('/attendances/check-today', [AttendanceController::class, 'checkTodayAttendance'])->name('attendances.checkToday');
-    
-    // Rapor (akses umum untuk yang terotentikasi)
-    Route::get('/report-cards', [ReportCardController::class, 'index'])->name('report-cards.index');
-    Route::get('/report-cards/{reportCard}', [ReportCardController::class, 'show'])->name('report-cards.show');
-    Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Rute Khusus Admin
+| Rute Khusus untuk Peran 'admin'
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])->group(function () {
-    // Manajemen Pengguna
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
-    Route::resource('kelas', KelasController::class)->except(['show']); 
+    // MANAJEMEN INTI
+    Route::resource('users', UserController::class);
+    Route::resource('teachers', TeacherController::class);
+    Route::resource('santris', SantriController::class);
 
-    // Manajemen Santri
-    Route::resource('santris', SantriController::class)->except(['destroy']);
-    Route::delete('/santris/{santri}', [SantriController::class, 'destroy'])->name('santris.destroy');
+    // MANAJEMEN TAHUN, USROH, HALAQOH & KELAS
+    Route::resource('tahun-santri', TahunSantriController::class)->except(['show']);
+    
+    Route::resource('usrohs', UsrohController::class);
+    Route::post('/usrohs/{usroh}/add-santri', [UsrohController::class, 'addSantri'])->name('usrohs.addSantri');
+    Route::post('/usrohs/{usroh}/remove-santri', [UsrohController::class, 'removeSantri'])->name('usrohs.removeSantri');
+    
+    Route::resource('halaqohs', HalaqohController::class);
+    Route::post('/halaqohs/{halaqoh}/add-santri', [HalaqohController::class, 'addSantri'])->name('halaqohs.addSantri');
+    Route::post('/halaqohs/{halaqoh}/remove-santri', [HalaqohController::class, 'removeSantri'])->name('halaqohs.removeSantri');
+    
+    Route::resource('study-classes', StudyClassController::class);
+    Route::post('/study-classes/{study_class}/add-santri', [StudyClassController::class, 'addSantri'])->name('study-classes.addSantri');
+    Route::post('/study-classes/{study_class}/remove-santri', [StudyClassController::class, 'removeSantri'])->name('study-classes.removeSantri');
 
-    // Manajemen Akademik
+    // MANAJEMEN AKADEMIK & HAFALAN
     Route::resource('akademik', AkademikController::class);
-
-    // Manajemen Hafalan
-    Route::resource('hafalan', HafalanController::class)->except(['show']);
-    Route::get('/hafalans/monthly-summary', [HafalanController::class, 'monthlySummary'])->name('hafalan.monthlySummary');
-
-    // Manajemen Absensi (Melihat rekap)
-    Route::get('/absensi', [AttendanceController::class, 'index'])->name('absensi.index');
-
-    // Manajemen Tahun Ajaran & Rapor
+    Route::resource('hafalan', HafalanController::class);
+    
+    // MANAJEMEN Tahun & RAPOR
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);
     Route::post('academic-years/{academicYear}/set-active', [AcademicYearController::class, 'setActive'])->name('academic-years.set-active');
+    Route::resource('report-cards', ReportCardController::class)->only(['index', 'show']);
     Route::post('report-cards/generate', [ReportCardController::class, 'generate'])->name('report-cards.generate');
+    Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
+});
+
+// Manajemen Absensi
+Route::prefix('absensi')->name('absensi.')->group(function () {
+    Route::get('/', [AttendanceController::class, 'index'])->name('index');
+    Route::get('/create', [AttendanceController::class, 'create'])->name('create');
+    Route::post('/', [AttendanceController::class, 'store'])->name('store');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Rute API
+| Rute API (Membutuhkan Login)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->prefix('api')->group(function () {
-    Route::get('/akademiks/{santriId}', [AkademikController::class, 'getBySantriId']);
-    Route::get('/hafalans/{santriId}', [HafalanController::class, 'getBySantriId']);
-    Route::get('/check-nis/{nis}', [SantriController::class, 'checkNis']);
-    Route::get('/check-nisn/{nisn}', [SantriController::class, 'checkNisn']);
+Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/akademiks/{santriId}', [AkademikController::class, 'getBySantriId'])->name('akademiks.getBySantriId');
+    Route::get('/hafalans/{santriId}', [HafalanController::class, 'getBySantriId'])->name('hafalans.getBySantriId');
+    Route::get('/check-nis/{nis}', [SantriController::class, 'checkNis'])->name('santri.checkNis');
+    Route::get('/check-nisn/{nisn}', [SantriController::class, 'checkNisn'])->name('santri.checkNisn');
 });
 
-// File rute otentikasi default dari Laravel Breeze
+// File rute otentikasi default
 require __DIR__ . '/auth.php';
+

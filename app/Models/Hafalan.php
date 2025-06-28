@@ -10,14 +10,22 @@ class Hafalan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['santri_id', 'juz', 'month'];
+   protected $fillable = [
+        'santri_id',
+        'juz',
+        'halaman', // Baru
+        'baris',   // Baru
+        'nilai',   // Baru
+        'month',
+        'report_card_id',
+    ];
 
 
     // Relasi ke santri sudah ada, pastikan benar
-public function santri()
-{
-    return $this->belongsTo(Santri::class);
-}
+ public function santri()
+    {
+        return $this->belongsTo(Santri::class);
+    }
 
 // Tambahkan relasi ini
 public function reportCard()

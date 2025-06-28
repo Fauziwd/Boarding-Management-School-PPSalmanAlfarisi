@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string('wali_santri')->nullable();
             $table->string('pekerjaan_wali')->nullable();
             $table->string('no_hp_wali')->nullable();
-            $table->string('foto')->nullable(); // Kolom foto langsung dibuat di sini
-            $table->timestamps(); // Kolom created_at dan updated_at dibuat di sini
+           $table->string('foto')->nullable(); // Pastikan ini benar
+    $table->timestamps(); // Kolom created_at dan updated_at dibuat di sini
         });
     }
 

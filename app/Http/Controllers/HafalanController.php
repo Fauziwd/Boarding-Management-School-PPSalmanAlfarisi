@@ -4,32 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Hafalan;
 use App\Models\Santri;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class HafalanController extends Controller
 {
-   public function index()
+    /**
+     * Menampilkan ringkasan pencapaian hafalan per santri.
+     */
+    public function index()
     {
-        // ========== PERBAIKAN DI SINI ==========
-        // Mengganti 'foto_santri' menjadi 'foto' agar sesuai dengan kolom database Anda
-        $hafalans = Hafalan::with('santri:id,nama_santri,nis,foto') 
+        $hafalans = Hafalan::with('santri:id,nama_santri,nis,foto')
             ->select(
                 'santri_id',
                 DB::raw('COUNT(DISTINCT juz) as total_juz'),
+                DB::raw('COUNT(id) as total_setoran'),
                 DB::raw('MAX(created_at) as terakhir_update')
             )
             ->groupBy('santri_id')
             ->orderBy('terakhir_update', 'desc')
             ->paginate(10);
-            
+        
         // Menambahkan URL foto ke setiap santri
         $hafalans->getCollection()->transform(function ($item) {
             if ($item->santri) {
-                // Menggunakan 'foto' untuk mengecek dan membuat URL
-                $item->santri->foto = $item->santri->foto ? Storage::url($item->santri->foto) : null;
+                // Pastikan menggunakan kolom 'foto' yang benar
+                $item->santri->foto_url = $item->santri->foto ? Storage::url($item->santri->foto) : null;
             }
             return $item;
         });
@@ -39,77 +41,94 @@ class HafalanController extends Controller
         ]);
     }
 
-
-    public function create()
+    /**
+     * Mengambil riwayat hafalan untuk santri tertentu (API untuk panel detail).
+     */
+    public function getBySantriId($santriId)
     {
-        $santris = Santri::select('id', 'nama_santri', 'nis')->orderBy('nama_santri')->get();
-        return Inertia::render('Hafalan/Create', ['santris' => $santris]);
+        // PERBAIKAN: Memilih kolom secara spesifik untuk mencegah error serialisasi.
+        $hafalans = Hafalan::where('santri_id', $santriId)
+            ->select('id', 'month', 'juz', 'halaman', 'baris', 'nilai')
+            ->latest()
+            ->get();
+            
+        return response()->json($hafalans);
     }
 
+    /**
+     * Menampilkan formulir untuk membuat data hafalan baru.
+     */
+    public function create(Request $request)
+    {
+        $santris = Santri::orderBy('nama_santri')->get(['id', 'nama_santri', 'nis']);
+        
+        $selectedSantri = null;
+        if ($request->has('santri_id')) {
+            $selectedSantri = Santri::find($request->input('santri_id'));
+        }
 
+        return Inertia::render('Hafalan/Create', [
+            'santris' => $santris,
+            'selectedSantri' => $selectedSantri,
+        ]);
+    }
 
+    /**
+     * Menyimpan data hafalan baru ke database.
+     */
     public function store(Request $request)
     {
         $request->validate([
             'santri_id' => 'required|exists:santris,id',
             'juz' => 'required|integer|min:1|max:30',
+            'halaman' => 'nullable|string|max:255',
+            'baris' => 'nullable|string|max:255',
+            'nilai' => 'required|integer|min:0|max:100',
             'month' => 'required|date_format:Y-m',
         ]);
 
         Hafalan::create($request->all());
-        return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil ditambahkan.');
+
+        return redirect()->route('hafalan.index')->with('success', 'Data hafalan berhasil ditambahkan.');
     }
 
+    /**
+     * Menampilkan formulir untuk mengedit data hafalan.
+     */
     public function edit(Hafalan $hafalan)
     {
-        $santris = Santri::select('id', 'nama_santri')->orderBy('nama_santri')->get();
+        $hafalan->load('santri:id,nama_santri');
+
         return Inertia::render('Hafalan/Edit', [
-            'hafalan' => $hafalan, 
-            'santris' => $santris
+            'hafalan' => $hafalan,
         ]);
     }
 
+    /**
+     * Memperbarui data hafalan di database.
+     */
     public function update(Request $request, Hafalan $hafalan)
     {
         $request->validate([
-            'santri_id' => 'required|exists:santris,id',
             'juz' => 'required|integer|min:1|max:30',
+            'halaman' => 'nullable|string|max:255',
+            'baris' => 'nullable|string|max:255',
+            'nilai' => 'required|integer|min:0|max:100',
             'month' => 'required|date_format:Y-m',
         ]);
 
         $hafalan->update($request->all());
-        return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil diperbarui.');
+
+        return redirect()->route('hafalan.index')->with('success', 'Data hafalan berhasil diperbarui.');
     }
 
-     public function destroy(Hafalan $hafalan)
+    /**
+     * Menghapus data hafalan dari database.
+     */
+    public function destroy(Hafalan $hafalan)
     {
         $hafalan->delete();
-        return redirect()->route('hafalan.index')->with('success', 'Hafalan berhasil dihapus.');
-    }
-    
-    public function getBySantriId($santriId)
-    {
-        $hafalans = Hafalan::where('santri_id', $santriId)->orderBy('created_at', 'desc')->get();
-        return response()->json($hafalans);
-    }
-    
-    public function monthlySummary(Request $request)
-    {
-        $month = $request->input('month', date('Y-m'));
-
-        $summary = Hafalan::with('santri:id,nama_santri')
-            ->where('month', 'like', $month . '%')
-            ->get()
-            ->groupBy('juz')
-            ->map(function ($group) {
-                return $group->map(function ($hafalan) {
-                    return [
-                        'nama' => $hafalan->santri->nama_santri,
-                        'created_at' => $hafalan->created_at->format('d/m/Y'), 
-                    ];
-                });
-            });
-
-        return response()->json($summary);
+        
+        return redirect()->route('hafalan.index')->with('success', 'Data hafalan berhasil dihapus.');
     }
 }

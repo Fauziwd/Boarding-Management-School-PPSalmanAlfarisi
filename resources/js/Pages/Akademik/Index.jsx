@@ -4,7 +4,7 @@ import { Head, Link } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Pagination from "@/Components/Pagination";
 import axios from "axios";
-import { FiBook, FiPlus, FiChevronRight, FiX, FiList, FiEdit2 } from "react-icons/fi";
+import { FiBook, FiPlus, FiChevronRight, FiX, FiList, FiEdit2, FiMessageSquare } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Komponen untuk Panel Detail (Grafik Dihilangkan)
@@ -66,13 +66,13 @@ const DetailPanel = ({ santri, onClose }) => {
             
             <div className="flex-grow p-6 overflow-y-auto">
                 {loading ? (
-                     <div className="flex justify-center items-center h-full">
+                    <div className="flex justify-center items-center h-full">
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
                     </div>
                 ) : (
                     <>
                         <div className="mb-6">
-                             <Link 
+                            <Link 
                                 href={route("akademik.create", { santri_id: santri.id })} 
                                 className="inline-flex items-center gap-2 w-full justify-center bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all"
                             >
@@ -84,19 +84,40 @@ const DetailPanel = ({ santri, onClose }) => {
                             <h3 className="font-bold text-lg mb-4 text-gray-800 dark:text-white flex items-center"><FiList className="mr-2 text-teal-500"/>Riwayat Pencapaian</h3>
                             <div className="space-y-3">
                                 {details.map(item => (
-                                    <div key={item.id} className={`p-4 rounded-lg shadow-sm flex items-center justify-between transition-all hover:shadow-md ${getStatusClass(item.status)}`}>
-                                        <div>
-                                            <p className={`font-semibold ${getStatusTextColor(item.status)}`}>{item.kitab}</p>
-                                            <p className={`text-sm ${getStatusTextColor(item.status)} opacity-80`}>{item.bab}</p>
+                                    // PERBAIKAN: Layout item diubah untuk mengakomodasi nilai & catatan
+                                    <div key={item.id} className={`p-4 rounded-lg shadow-sm transition-all hover:shadow-md ${getStatusClass(item.status)}`}>
+                                        <div className="flex items-start justify-between">
+                                            {/* Info Kitab & Bab */}
+                                            <div>
+                                                <p className={`font-semibold ${getStatusTextColor(item.status)}`}>{item.kitab}</p>
+                                                <p className={`text-sm ${getStatusTextColor(item.status)} opacity-80`}>{item.bab}</p>
+                                            </div>
+                                            {/* Info Status, Nilai, & Aksi */}
+                                            <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                                                {/* Menampilkan Nilai jika ada */}
+                                                {item.nilai && (
+                                                     <div className="text-right">
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">Nilai</p>
+                                                        <p className="font-bold text-xl text-teal-600 dark:text-teal-300">{item.nilai}</p>
+                                                    </div>
+                                                )}
+                                                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusTextColor(item.status)} border border-current`}>
+                                                    {item.status}
+                                                </span>
+                                                <Link href={route('akademik.edit', item.id)} className="p-2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/40 transition">
+                                                    <FiEdit2 className="h-4 w-4" />
+                                                </Link>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusClass(item.status)} ${getStatusTextColor(item.status)} border border-current`}>
-                                                {item.status}
-                                            </span>
-                                            <Link href={route('akademik.edit', item.id)} className="p-2 text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/40 transition">
-                                                <FiEdit2 className="h-4 w-4" />
-                                            </Link>
-                                        </div>
+                                        {/* Menampilkan Catatan jika ada */}
+                                        {item.catatan && (
+                                            <div className="mt-3 pt-3 border-t border-gray-300 dark:border-gray-700/50">
+                                                <p className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                                                    <FiMessageSquare className="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0" />
+                                                    <span className="italic">"{item.catatan}"</span>
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -169,11 +190,11 @@ export default function AkademikIndex({ auth, akademiks }) {
                                     </tbody>
                                 </table>
                             </div>
-                             {links && links.length > 3 && (
+                            {links && links.length > 3 && (
                                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-                                     <Pagination links={links} />
+                                      <Pagination links={links} />
                                  </div>
-                             )}
+                            )}
                         </div>
                     </div>
                 </motion.div>

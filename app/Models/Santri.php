@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Santri extends Model
 {
     use HasFactory;
-    
+
     // Pastikan semua kolom yang bisa diisi sudah terdaftar di sini
     protected $fillable = [
         'nis',
@@ -54,4 +54,35 @@ class Santri extends Model
     {
         return $this->hasMany(Hafalan::class);
     }
+    /**
+     * Relasi many-to-many ke Usroh.
+     * Seorang santri bisa menjadi anggota dari banyak usroh.
+     */
+    public function usrohs()
+    {
+        return $this->belongsToMany(Usroh::class, 'santri_usroh');
+    }
+
+    /**
+     * Relasi many-to-many ke Halaqoh.
+     * Seorang santri bisa menjadi anggota dari banyak halaqoh.
+     */
+    public function halaqohs()
+    {
+        return $this->belongsToMany(Halaqoh::class, 'halaqoh_santri');
+    }
+
+    /**
+     * Relasi many-to-many ke StudyClass (Kelas Belajar).
+     * Seorang santri bisa menjadi anggota dari banyak kelas belajar.
+     */
+    public function studyClasses()
+    {
+        return $this->belongsToMany(StudyClass::class, 'santri_study_class');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

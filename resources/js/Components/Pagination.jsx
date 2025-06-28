@@ -10,7 +10,7 @@ export default function Pagination({ links }) {
                     className={
                         link.active
                             ? " px-3  border border-teal-600 bg-teal-600 text-white dark:bg-gray-900 dark:border-gray-500 rounded-md"
-                            : " px-3  border border-teal-600 text-primary hover:bg-teal-500 hover:text-white dark:hover:bg-gray-900 dark:border-gray-500 rounded-md"
+                            : " px-3  border border-teal-600 text-primary hover:bg-teal-500 dark:text-white hover:text-white dark:hover:bg-gray-900 dark:border-gray-500 rounded-md"
                     }
                     dangerouslySetInnerHTML={{ __html: link.label }}
                 />
