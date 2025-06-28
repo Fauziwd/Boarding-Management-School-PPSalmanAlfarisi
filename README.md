@@ -1,66 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://raw.githubusercontent.com/fauziwd/boarding-management-school-ppsalmanalfarisi/main/public/Logo/logo1.png" width="200" alt="Pesment Logo">
 </p>
 
-## About Laravel
+<h1 align="center">Boarding Management School - PP Salman Al Farisi</h1>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <strong>Pesment</strong> adalah sistem manajemen pondok pesantren modern yang dirancang untuk menjadi solusi digital terpadu bagi Pondok Pesantren Salman Al Farisi. Dibangun dengan teknologi
+  <a href="https://laravel.com/" target="_blank">Laravel</a>, <a href="https://react.dev/" target="_blank">React.js</a>, dan <a href="https://inertiajs.com/" target="_blank">Inertia.js</a>,
+  sistem ini bertujuan untuk menyederhanakan dan mengoptimalkan berbagai aspek manajemen, mulai dari data santri hingga pelaporan akademik.
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<p align="center">
+  <a href="https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi/actions"><img src="https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi/workflows/tests/badge.svg" alt="Build Status"></a>
+  <img src="https://img.shields.io/badge/Laravel-11.x-FF2D20.svg?style=flat-square" alt="Laravel Version">
+  <img src="https://img.shields.io/badge/React-18.x-61DAFB.svg?style=flat-square" alt="React Version">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License">
+</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Fitur Unggulan
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Pesment dilengkapi dengan serangkaian fitur yang dirancang khusus untuk memenuhi kebutuhan pesantren modern:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* **👨‍🎓 Manajemen Data Santri:**
+    * **Biodata Lengkap:** Kelola informasi detail santri, termasuk data pribadi, informasi orang tua, dan alamat.
+    * **Pencarian & Filter Canggih:** Temukan data santri dengan cepat berdasarkan NIS, nama, atau status.
+    * **Import Data Massal:** Impor ratusan data santri sekaligus menggunakan template Excel.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* **📚 Pencatatan Akademik & Hafalan:**
+    * **Progres Akademik (Durus):** Catat pencapaian santri dalam pembelajaran kitab, lengkap dengan nilai dan catatan pengajar.
+    * **Progres Hafalan (Hifdz):** Monitor setoran hafalan Al-Quran santri, termasuk juz, halaman, dan nilai.
+    * **Visualisasi Data:** Lihat progres hafalan melalui grafik interaktif yang informatif.
 
-## Laravel Sponsors
+* **👨‍🏫 Manajemen Tenaga Pendidik:**
+    * **Profil Guru Terpusat:** Setiap guru memiliki profil yang menampilkan data dan kelompok yang diampu.
+    * **Manajemen Peran Ganda:** Seorang guru dapat memegang beberapa peran (Murobbi, Muhafidz, Mudaris) secara bersamaan.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* **👥 Manajemen Kelompok & Kelas:**
+    * **Usroh & Halaqoh:** Kelola kelompok pembinaan dan kelompok hafalan dengan mudah.
+    * **Kelas Belajar:** Atur kelas belajar berdasarkan kitab yang diajarkan dan tahun ajaran.
 
-### Premium Partners
+* **📊 Laporan & Analitik:**
+    * **Generate Rapor Otomatis:** Buat rapor semesteran untuk semua santri dengan sekali klik.
+    * **Statistik Absensi:** Dapatkan insight mengenai tingkat kehadiran santri secara keseluruhan.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+* **🔐 Manajemen Akses & Peran:**
+    * **Hak Akses Dinamis:** Sistem secara otomatis menyesuaikan menu dan fitur yang dapat diakses berdasarkan peran pengguna (Admin, Guru, dll).
 
-## Contributing
+## 🛠️ Cara Penggunaan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prasyarat
 
-## Code of Conduct
+* PHP >= 8.2
+* Composer
+* Node.js & NPM
+* Database (MySQL/MariaDB direkomendasikan)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah Instalasi
 
-## Security Vulnerabilities
+1.  **Clone Repositori:**
+    ```bash
+    git clone [https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi.git](https://github.com/fauziwd/boarding-management-school-ppsalmanalfarisi.git)
+    cd boarding-management-school-ppsalmanalfarisi
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2.  **Instalasi Dependensi:**
+    ```bash
+    composer install
+    npm install
+    ```
 
-## License
+3.  **Konfigurasi Lingkungan:**
+    * Salin file `.env.example` menjadi `.env`.
+        ```bash
+        cp .env.example .env
+        ```
+    * Buat kunci aplikasi baru.
+        ```bash
+        php artisan key:generate
+        ```
+    * Konfigurasikan koneksi database Anda di dalam file `.env`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4.  **Migrasi & Seeding Database:**
+    * Jalankan migrasi untuk membuat tabel-tabel yang dibutuhkan.
+        ```bash
+        php artisan migrate
+        ```
+    * (Opsional) Jalankan seeder untuk mengisi data awal.
+        ```bash
+        php artisan db:seed
+        ```
+
+5.  **Jalankan Aplikasi:**
+    * Jalankan server development Vite dan Laravel.
+        ```bash
+        npm run dev
+        ```
+    * Di terminal lain, jalankan server PHP.
+        ```bash
+        php artisan serve
+        ```
+
+Aplikasi sekarang dapat diakses di `http://localhost:8000`.
+
+## 📄 Hak Cipta & Lisensi
+
+Proyek **Boarding Management School - PP Salman Al Farisi** ini dilisensikan di bawah **Lisensi MIT**.
+
+**Pernyataan Hak Cipta:**
+
+© 2024, Fauzi Dwi Prasetyo. Hak Cipta Dilindungi.
+
+Berdasarkan Undang-Undang Hak Cipta yang berlaku di Indonesia (UU No. 28 Tahun 2014), seluruh kode sumber, desain, dan aset dalam repositori ini adalah milik intelektual dari **Fauzi Dwi Prasetyo**.
+
+Lisensi MIT memberikan Anda kebebasan untuk:
+* **Menggunakan:** Anda bebas menggunakan perangkat lunak ini untuk tujuan apa pun, baik pribadi, komersial, maupun pendidikan.
+* **Memodifikasi:** Anda bebas mengubah dan menyesuaikan kode sumber sesuai kebutuhan Anda.
+* **Mendistribusikan:** Anda bebas membagikan salinan perangkat lunak ini.
+* **Sublisensi:** Anda bebas memberikan sublisensi kepada pihak lain dengan syarat yang sama.
+
+**Kewajiban:**
+Satu-satunya kewajiban Anda adalah **menyertakan pemberitahuan hak cipta dan izin lisensi asli** di semua salinan atau bagian penting dari perangkat lunak.
+
+**Batasan:**
+Perangkat lunak ini disediakan "SEBAGAIMANA ADANYA", tanpa jaminan apa pun. Pengembang tidak bertanggung jawab atas klaim, kerusakan, atau kewajiban lainnya yang timbul dari penggunaan perangkat lunak ini.
+
+Untuk detail lengkap, silakan merujuk ke file [LICENSE](https://opensource.org/licenses/MIT) yang terdapat dalam repositori ini.
+
+---
+
+Terima kasih telah menggunakan dan berkontribusi pada proyek ini!
