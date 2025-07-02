@@ -164,7 +164,7 @@ export default function Show({ auth, halaqoh, availableSantris = [] }) {
                                                 <option value="">-- Pilih Santri --</option>
                                                 {filteredSantris.map(santri => (
                                                     <option key={santri.id} value={santri.id}>
-                                                        {santri.nama_santri || 'Nama tidak tersedia'} (NIS: {santri.nis || 'N/A'}) - {santri.kelas?.nama_kelas || 'Belum ada kelas'}
+                                                        {santri.nama_santri || 'Nama tidak tersedia'} ({santri.kelas?.nama_kelas || 'Belum masuk Halaqoh'})
                                                     </option>
                                                 ))}
                                             </select>
