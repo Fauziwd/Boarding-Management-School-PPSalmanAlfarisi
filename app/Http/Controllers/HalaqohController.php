@@ -20,8 +20,22 @@ class HalaqohController extends Controller
 
     public function create()
     {
+        $activeYear = AcademicYear::where('is_active', true)->first();
+
+        // Ambil semua guru dengan role Muhafidz
+        $muhafidzRoleTeachers = Teacher::whereJsonContains('roles', 'Muhafidz')->pluck('id');
+
+        // Ambil ID guru yang sudah mengampu halaqoh di tahun ajaran aktif
+        $assignedTeacherIds = Halaqoh::where('academic_year_id', $activeYear ? $activeYear->id : null)->pluck('teacher_id');
+
+        // Guru yang tersedia adalah yang memiliki role Muhafidz dan belum mengampu
+        $availableTeachers = Teacher::with('user')
+            ->whereIn('id', $muhafidzRoleTeachers)
+            ->whereNotIn('id', $assignedTeacherIds)
+            ->get();
+
         return Inertia::render('Halaqoh/Create', [
-            'muhafidzs' => Teacher::whereJsonContains('roles', 'Muhafidz')->with('user')->get(),
+            'muhafidzs' => $availableTeachers,
             'academicYears' => AcademicYear::where('is_active', true)->get(),
         ]);
     }
