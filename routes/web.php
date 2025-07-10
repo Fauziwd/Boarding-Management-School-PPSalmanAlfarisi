@@ -98,6 +98,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Rute Khusus untuk Peran Guru (Murobbi, Muhafidz, Mudaris)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'teacher'])->group(function () {
+    // Rute untuk menampilkan kelompok yang diampu guru
+    Route::get('/my-halaqoh', [HalaqohController::class, 'myHalaqoh'])->name('halaqohs.my');
+    Route::get('/my-study-class', [StudyClassController::class, 'myClass'])->name('study-classes.my');
+
+    // Rute untuk absensi kelompok guru
+    Route::get('/my-attendance', [AttendanceController::class, 'create'])->name('absensi.my');
+
+    // Rute untuk melihat dan menilai rapor santri di kelompoknya
+    Route::get('/my-report-cards', [ReportCardController::class, 'myReportCards'])->name('report-cards.my');
+    Route::post('/report-cards/{reportCard}/add-note', [ReportCardController::class, 'addNote'])->name('report-cards.add-note');
+});
 
 /*
 |--------------------------------------------------------------------------

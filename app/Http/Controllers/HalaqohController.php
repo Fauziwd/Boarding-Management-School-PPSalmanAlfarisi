@@ -80,4 +80,17 @@ class HalaqohController extends Controller
         $halaqoh->delete();
         return redirect()->route('halaqohs.index')->with('success', 'Kelompok Halaqoh berhasil dihapus.');
     }
+
+    public function myHalaqoh()
+{
+    $teacherId = Auth::user()->teacher->id;
+    $halaqoh = Halaqoh::where('teacher_id', $teacherId)
+                       ->with(['santris.kelas', 'academicYear'])
+                       ->firstOrFail();
+
+    return Inertia::render('Halaqoh/Show', [
+        'halaqoh' => $halaqoh,
+        'availableSantris' => [] // Kosongkan karena guru tidak bisa menambah santri di halaman ini
+    ]);
+}
 }

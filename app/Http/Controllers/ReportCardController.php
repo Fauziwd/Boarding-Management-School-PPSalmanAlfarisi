@@ -155,4 +155,46 @@ class ReportCardController extends Controller
         
         return $pdf->download('Rapor - ' . $reportCard->santri->nama_santri . '.pdf');
     }
+
+    public function myReportCards()
+{
+    $teacherId = Auth::user()->teacher->id;
+
+    // Ambil ID santri dari semua kelompok yang diampu guru
+    $usrohSantriIds = Usroh::where('murobbi_id', $teacherId)->pluck('santris.id');
+
+    $reportCards = ReportCard::whereIn('santri_id', $usrohSantriIds)
+        ->with(['santri', 'kelas', 'academicYear'])
+        ->where('academic_year_id', AcademicYear::where('is_active', true)->value('id'))
+        ->paginate(10);
+
+    return Inertia::render('ReportCard/TeacherIndex', ['reportCards' => $reportCards]);
+}
+
+public function addNote(Request $request, ReportCard $reportCard)
+{
+    $request->validate([
+        'murobbi_note' => 'required|string',
+    ]);
+
+    $teacherId = Auth::user()->teacher->id;
+
+    // Otorisasi: pastikan guru adalah murobbi dari santri terkait
+    $isMurobbi = Usroh::where('murobbi_id', $teacherId)
+                       ->whereHas('santris', function ($query) use ($reportCard) {
+                           $query->where('id', $reportCard->santri_id);
+                       })->exists();
+
+    if (!$isMurobbi) {
+        abort(403, 'AKSES DITOLAK');
+    }
+
+    $reportCard->update([
+        'murobbi_note' => $request->murobbi_note,
+        'murobbi_id' => $teacherId
+    ]);
+
+    return back()->with('success', 'Catatan rapor berhasil disimpan.');
+}
+
 }

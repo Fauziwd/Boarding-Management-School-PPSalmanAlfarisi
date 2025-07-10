@@ -1,6 +1,6 @@
 import React from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import {
     DocumentTextIcon,
     ClipboardDocumentCheckIcon,
@@ -53,6 +53,16 @@ const AttendanceSummary = ({ attendance }) => {
 
 
 export default function ReportCardShow({ auth, reportCard }) {
+     const { data, setData, post, processing, errors } = useForm({
+        murobbi_note: reportCard.murobbi_note || '',
+    });
+    
+     const handleNoteSubmit = (e) => {
+        e.preventDefault();
+        post(route('report-cards.add-note', reportCard.id));
+    };
+
+
     // Fungsi helper untuk menentukan predikat dan warnanya, dipindahkan ke dalam komponen utama
     const getPredikat = (nilai) => {
         if (nilai >= 90) return "A"; // Mumtaz (Istimewa)
@@ -208,16 +218,22 @@ export default function ReportCardShow({ auth, reportCard }) {
                                 </div>
 
                                 {/* Murobbi Notes */}
-                                <div>
-                                    <h3 className="flex items-center text-lg font-bold mb-3 text-teal-600 dark:text-teal-400">
-                                        <PencilIcon className="w-6 h-6 mr-2" /> D. CATATAN MUROBBI
-                                    </h3>
-                                    <div className="bg-gray-50 dark:bg-gray-900/30 p-4 rounded-lg min-h-[100px] border border-gray-200 dark:border-gray-700">
-                                        <p className="text-gray-700 dark:text-gray-300 italic leading-relaxed">
-                                            {reportCard.murobbi_note || "Tidak ada catatan khusus dari Murobbi."}
-                                        </p>
-                                    </div>
-                                </div>
+                                {auth.user.teacher?.roles.includes('Murobbi') && (
+        <div className="mt-8">
+            <h3 className="text-lg font-bold mb-3 text-teal-600">Catatan dari Anda sebagai Murobbi</h3>
+            <form onSubmit={handleNoteSubmit}>
+                <textarea
+                    value={data.murobbi_note}
+                    onChange={(e) => setData('murobbi_note', e.target.value)}
+                    className="w-full h-24 p-2 border rounded-md dark:bg-gray-700"
+                />
+                <InputError message={errors.murobbi_note} className="mt-2" />
+                <PrimaryButton className="mt-2" disabled={processing}>
+                    {processing ? 'Menyimpan...' : 'Simpan Catatan'}
+                </PrimaryButton>
+            </form>
+        </div>
+    )}
                             </div>
 
                             {/* Signatures */}
