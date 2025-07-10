@@ -13,8 +13,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UsrohController;
 use App\Http\Controllers\HalaqohController;
 use App\Http\Controllers\StudyClassController;
-use App\Http\Controllers\TahunSantriController; // Controller yang sudah di-rename
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\TahunSantriController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -41,16 +40,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-    // Rute Absensi (Hanya submit)
-    Route::post('/attendances/submit', [AttendanceController::class, 'submit'])->name('attendances.submit');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Rute Manajemen Absensi
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'verified'])->prefix('absensi')->name('absensi.')->group(function () {
+    Route::get('/', [AttendanceController::class, 'index'])->name('index');
+    Route::get('/create', [AttendanceController::class, 'create'])->name('create');
+    Route::post('/', [AttendanceController::class, 'store'])->name('store');
+    
+    // PERBAIKAN: Menggunakan middleware 'admin' yang akan kita daftarkan
+    Route::patch('/update-by-admin', [AttendanceController::class, 'updateByAdmin'])
+        ->name('updateByAdmin')
+        ->middleware('admin'); 
+});
+
 
 /*
 |--------------------------------------------------------------------------
 | Rute Khusus untuk Peran 'admin'
 |--------------------------------------------------------------------------
 */
+// PERBAIKAN: Menggunakan middleware 'admin' yang akan kita daftarkan
 Route::middleware(['auth', 'admin'])->group(function () {
     // MANAJEMEN INTI
     Route::resource('users', UserController::class);
@@ -84,12 +98,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
 });
 
-// Manajemen Absensi
-Route::prefix('absensi')->name('absensi.')->group(function () {
-    Route::get('/', [AttendanceController::class, 'index'])->name('index');
-    Route::get('/create', [AttendanceController::class, 'create'])->name('create');
-    Route::post('/', [AttendanceController::class, 'store'])->name('store');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +105,7 @@ Route::prefix('absensi')->name('absensi.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/attendances/students', [AttendanceController::class, 'getStudentsForAttendance'])->name('attendance.getStudents');
     Route::get('/akademiks/{santriId}', [AkademikController::class, 'getBySantriId'])->name('akademiks.getBySantriId');
     Route::get('/hafalans/{santriId}', [HafalanController::class, 'getBySantriId'])->name('hafalans.getBySantriId');
     Route::get('/check-nis/{nis}', [SantriController::class, 'checkNis'])->name('santri.checkNis');
@@ -105,4 +114,3 @@ Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
 
 // File rute otentikasi default
 require __DIR__ . '/auth.php';
-

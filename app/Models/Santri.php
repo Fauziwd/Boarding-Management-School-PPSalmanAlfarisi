@@ -9,54 +9,46 @@ class Santri extends Model
 {
     use HasFactory;
 
-    // Pastikan semua kolom yang bisa diisi sudah terdaftar di sini
-    protected $fillable = [
-        'nis',
-        'nisn',
-        'nama_santri',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'jenis_kelamin',
-        'agama',
-        'kelas_id', // Tambahkan kelas_id
-        'anak_ke',
-        'status_yatim_piatu',
-        'nama_bapak',
-        'pekerjaan_bapak',
-        'no_telpon_bapak',
-        'nama_ibu',
-        'pekerjaan_ibu',
-        'no_telpon_ibu',
-        'alamat',
-        'kelurahan',
-        'kecamatan',
-        'kabupaten_kota',
-        'provinsi',
-        'kode_pos',
-        'foto',
-    ];
+    /**
+     * Menggunakan guarded untuk mengizinkan mass assignment pada semua kolom kecuali id.
+     * Ini lebih praktis daripada mendaftarkan setiap kolom di $fillable.
+     */
+    protected $guarded = ['id'];
 
     /**
-     * Relasi ke model Kelas.
+     * Relasi ke model User.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relasi ke model Kelas (jika ada).
      */
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Kelas::class); // Pastikan model Kelas ada
     }
 
-    // Relasi lainnya yang sudah ada...
+    /**
+     * Relasi ke model Akademik.
+     */
     public function akademiks()
     {
         return $this->hasMany(Akademik::class);
     }
 
+    /**
+     * Relasi ke model Hafalan.
+     */
     public function hafalans()
     {
         return $this->hasMany(Hafalan::class);
     }
+
     /**
      * Relasi many-to-many ke Usroh.
-     * Seorang santri bisa menjadi anggota dari banyak usroh.
      */
     public function usrohs()
     {
@@ -65,24 +57,19 @@ class Santri extends Model
 
     /**
      * Relasi many-to-many ke Halaqoh.
-     * Seorang santri bisa menjadi anggota dari banyak halaqoh.
      */
     public function halaqohs()
     {
+        // 'halaqoh_santri' adalah nama tabel pivot Anda
         return $this->belongsToMany(Halaqoh::class, 'halaqoh_santri');
     }
 
     /**
      * Relasi many-to-many ke StudyClass (Kelas Belajar).
-     * Seorang santri bisa menjadi anggota dari banyak kelas belajar.
      */
     public function studyClasses()
     {
+        // 'santri_study_class' adalah nama tabel pivot Anda
         return $this->belongsToMany(StudyClass::class, 'santri_study_class');
     }
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
 }
