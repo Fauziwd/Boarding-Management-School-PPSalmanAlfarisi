@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
-use Tightenco\Ziggy\Ziggy;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -31,23 +30,10 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return [
-        ...parent::share($request),
-        'auth' => [
-            // KEMBALIKAN SEPERTI INI (TANPA ->load('teacher'))
-            'user' => $request->user(),
-        ],
-        'reportNotifications' => function () use ($request) {
-            // Bagian notifikasi ini bisa tetap ada jika Anda ingin menggunakannya nanti
-            if ($request->user() && in_array($request->user()->role, ['Murobbi'])) {
-                // Logika notifikasi untuk Murobbi
-                return 0; // Ganti dengan logika query Anda
-            }
-            return 0;
-        },
-        'ziggy' => fn () => [
-            ...(new Ziggy)->toArray(),
-            'location' => $request->url(),
-        ],
-    ];
+            ...parent::share($request),
+            'auth' => [
+                'user' => $request->user(),
+            ],
+        ];
     }
 }
