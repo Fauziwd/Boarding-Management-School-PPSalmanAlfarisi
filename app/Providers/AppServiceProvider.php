@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Santri;
+use App\Observers\SantriObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +21,8 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
-        Vite::prefetch(concurrency: 3);
-    }
+{
+    // Daftarkan SantriObserver
+    Santri::observe(SantriObserver::class);
+}
 }

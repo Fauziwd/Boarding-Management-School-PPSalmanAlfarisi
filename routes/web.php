@@ -89,6 +89,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // MANAJEMEN AKADEMIK & HAFALAN
     Route::resource('akademik', AkademikController::class);
     Route::resource('hafalan', HafalanController::class);
+      Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
+         ->name('internal-api.santri.study-classes');
     
     // MANAJEMEN Tahun & RAPOR
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);

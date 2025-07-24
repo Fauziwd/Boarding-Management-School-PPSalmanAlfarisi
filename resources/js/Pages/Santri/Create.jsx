@@ -24,9 +24,9 @@ const steps = [
     { id: 'alamat', title: "Informasi Alamat", icon: <FiHome className="w-5 h-5" />, description: "Alamat lengkap santri" }
 ];
 
-export default function SantriCreate({ auth }) {
+export default function SantriCreate({ auth, generatedNis }) {
     const { data, setData, post, errors, processing, recentlySuccessful, reset, clearErrors } = useForm({
-        nis: "",
+         nis: generatedNis || "",
         nisn: "",
         nama_santri: "",
         tempat_lahir: "",
@@ -38,10 +38,10 @@ export default function SantriCreate({ auth }) {
         status_yatim_piatu: "",
         nama_bapak: "",
         pekerjaan_bapak: "",
-        no_telpon_bapak: "",
+        no_hp_bapak: "",
         nama_ibu: "",
         pekerjaan_ibu: "",
-        no_telpon_ibu: "",
+        no_hp_ibu: "",
         alamat: "",
         kelurahan: "",
         kecamatan: "",

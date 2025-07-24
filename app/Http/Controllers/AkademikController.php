@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Akademik;
 use App\Models\Santri;
+use App\Models\AcademicYear;
+use App\Models\StudyClass; // PERBAIKAN: Import yang hilang ditambahkan
+use App\Models\Teacher;    // PERBAIKAN: Import yang hilang ditambahkan
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AkademikController extends Controller
@@ -14,96 +17,105 @@ class AkademikController extends Controller
     /**
      * Menampilkan ringkasan pencapaian akademik per santri.
      */
-    public function index(Request $request)
+   public function index(Request $request)
     {
-        $akademiks = Akademik::with('santri:id,nama_santri,nis,foto')
+        $query = Akademik::with('santri:id,nama_santri,nis,foto')
             ->select(
                 'santri_id',
-                DB::raw('COUNT(DISTINCT kitab) as jumlah_kitab'),
+                // PERBAIKAN: Menggunakan 'nama_kitab' sesuai dengan struktur tabel baru.
+                DB::raw('COUNT(DISTINCT nama_kitab) as jumlah_kitab'),
                 DB::raw('COUNT(id) as total_pencapaian'),
                 DB::raw('MAX(created_at) as terakhir_update')
             )
-            ->groupBy('santri_id')
-            ->orderBy('terakhir_update', 'desc')
-            ->paginate(10)
-            ->withQueryString();
+            ->groupBy('santri_id');
+            
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            $query->whereHas('santri', function($q) use ($search) {
+                $q->where('nama_santri', 'like', "%{$search}%")
+                  ->orWhere('nis', 'like', "%{$search}%");
+            });
+        }
+        
+        $akademiks = $query->orderBy('terakhir_update', 'desc')
+                           ->paginate(10)
+                           ->withQueryString();
         
         $akademiks->getCollection()->transform(function ($item) {
             if ($item->santri) {
-                $item->santri->foto = $item->santri->foto ? Storage::url($item->santri->foto) : null;
+                $item->santri->foto_url = $item->santri->foto ? Storage::url($item->santri->foto) : null;
             }
             return $item;
         });
 
         return Inertia::render('Akademik/Index', [
             'akademiks' => $akademiks,
+            'filters' => $request->only(['search']),
         ]);
-    }
-
-    /**
-     * Mengambil data akademik untuk santri tertentu (digunakan di API).
-     */
-    public function getBySantriId($santriId)
-    {
-        $akademiks = Akademik::where('santri_id', $santriId)->latest()->get();
-        return response()->json($akademiks);
     }
 
     /**
      * Menampilkan formulir untuk menambah data akademik.
      */
-    public function create(Request $request)
+   public function create()
     {
-        $santris = Santri::select('id', 'nama_santri', 'nis')->orderBy('nama_santri')->get();
-        
-        $selectedSantri = null;
-        if ($request->has('santri_id')) {
-            $selectedSantri = Santri::find($request->input('santri_id'));
-        }
-        
-        return inertia('Akademik/Create', [
+        // PERBAIKAN: Menghapus 'kelas_id' dari query karena sudah tidak ada.
+        $santris = Santri::orderBy('nama_santri')
+                         ->where('status_santri', 'Aktif')
+                         ->get(['id', 'nama_santri', 'nis']);
+
+        $academicYears = AcademicYear::where('is_active', true)->get();
+
+        return Inertia::render('Akademik/Create', [
             'santris' => $santris,
-            'selectedSantri' => $selectedSantri,
+            'academicYears' => $academicYears,
         ]);
     }
+
 
     /**
      * Menyimpan data akademik baru ke database.
      */
-    public function store(Request $request)
+     public function store(Request $request)
     {
-        // PERBAIKAN: Menambahkan 'nilai' dan kolom lain ke validasi
-        $request->validate([
+        // PERBAIKAN: Validasi disesuaikan dengan form frontend dinamis yang benar.
+        $validatedData = $request->validate([
             'santri_id' => 'required|exists:santris,id',
-            'kitab' => 'required|string|max:255',
-            'bab' => 'required|string|max:255',
-            'halaman' => 'nullable|string|max:255',
-            'baris' => 'nullable|string|max:255',
-            'nilai' => 'nullable|integer|min:0|max:100',
-            'catatan' => 'nullable|string',
-            'status' => 'required|string|in:Belum Selesai,Ikhtibar,Tamat',
+            'academic_year_id' => 'required|exists:academic_years,id',
+            'nama_kitab' => 'required|string|max:255',
+            'teacher_id' => 'required|exists:teachers,id',
+            'jilid' => 'nullable|string|max:50',
+            'halaman' => 'required|string|max:255', // 'halaman' dari frontend akan jadi 'keterangan'
+            'nilai' => 'required|numeric|min:0|max:100',
         ]);
 
-        Akademik::create($request->all());
+        // Membuat data baru di tabel akademiks
+        Akademik::create([
+            'santri_id' => $validatedData['santri_id'],
+            'academic_year_id' => $validatedData['academic_year_id'],
+            'nama_kitab' => $validatedData['nama_kitab'],
+            'teacher_id' => $validatedData['teacher_id'],
+            'jilid' => $validatedData['jilid'],
+            'keterangan' => $validatedData['halaman'],
+            'nilai' => $validatedData['nilai'],
+        ]);
 
-        // Alihkan kembali ke halaman detail santri yang bersangkutan
-        return redirect()->route('santris.show', $request->santri_id)
-                         ->with('success', 'Data akademik berhasil ditambahkan!');
+        return redirect()->route('akademik.index')->with('success', 'Data akademik berhasil ditambahkan.');
     }
+
     
+
     /**
      * Menampilkan formulir untuk mengedit data akademik.
      */
     public function edit(Akademik $akademik)
     {
-        $santris = Santri::select('id', 'nama_santri')->orderBy('nama_santri')->get();
-        
-        // Memuat relasi santri agar namanya bisa ditampilkan
-        $akademik->load('santri');
+        // Memuat relasi agar data santri, ustadz, dan tahun ajaran tersedia
+        $akademik->load(['santri', 'teacher', 'academicYear']);
 
         return inertia('Akademik/Edit', [
             'akademik' => $akademik,
-            'santris' => $santris
+            'academicYears' => AcademicYear::where('is_active', true)->get(),
         ]);
     }
 
@@ -112,19 +124,18 @@ class AkademikController extends Controller
      */
     public function update(Request $request, Akademik $akademik)
     {
-        // PERBAIKAN: Menambahkan 'nilai' dan kolom lain ke validasi
-        $request->validate([
+        // PERBAIKAN: Validasi disamakan dengan method store untuk konsistensi
+        $validatedData = $request->validate([
             'santri_id' => 'required|exists:santris,id',
+            'academic_year_id' => 'required|exists:academic_years,id',
             'kitab' => 'required|string|max:255',
-            'bab' => 'required|string|max:255',
-            'halaman' => 'nullable|string|max:255',
-            'baris' => 'nullable|string|max:255',
-            'nilai' => 'nullable|integer|min:0|max:100',
-            'catatan' => 'nullable|string',
-            'status' => 'required|string|in:Belum Selesai,Ikhtibar,Tamat',
+            'teacher_id' => 'required|exists:teachers,id',
+            'jilid' => 'nullable|string|max:50',
+            'keterangan' => 'required|string|max:255',
+            'nilai' => 'numeric|min:0|max:100',
         ]);
 
-        $akademik->update($request->all());
+        $akademik->update($validatedData);
 
         return redirect()->route('akademik.index')->with('success', 'Data akademik berhasil diupdate.');
     }
@@ -137,4 +148,31 @@ class AkademikController extends Controller
         $akademik->delete();
         return redirect()->route('akademik.index')->with('success', 'Pencapaian berhasil dihapus.');
     }
+
+    /**
+     * API internal untuk mengambil daftar StudyClass (kitab dan ustadz)
+     * berdasarkan kelas dari santri yang dipilih.
+     * PERBAIKAN: Method ini dipindahkan ke dalam kelas.
+     */
+   public function getStudyClassesForSantri(Santri $santri)
+    {
+        // PERBAIKAN: Menggunakan relasi many-to-many 'studyClasses' yang ada di model Santri,
+        // bukan 'kelas_id' yang sudah dihapus.
+        $studyClasses = $santri->studyClasses()->with('teacher:id,nama_guru')->get();
+
+        $formattedData = $studyClasses->map(function ($studyClass) {
+            if ($studyClass->teacher) {
+                return [
+                    'id' => $studyClass->id,
+                    'nama_kitab' => $studyClass->nama_kitab,
+                    'teacher_id' => $studyClass->teacher->id,
+                    'teacher_name' => $studyClass->teacher->nama_guru,
+                ];
+            }
+            return null;
+        })->filter()->values();
+
+        return response()->json($formattedData);
+    }
+
 }

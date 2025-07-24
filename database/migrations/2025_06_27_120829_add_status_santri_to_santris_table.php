@@ -6,23 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('santris', function (Blueprint $table) {
-            // Menambahkan kolom ENUM untuk status santri setelah kolom foto
-            // dengan nilai default 'Aktif'.
-            $table->enum('status_santri', ['Aktif', 'Lulus', 'Pindah', 'Berhenti'])
+            // Ubah enum menjadi 'Aktif', 'Lulus', dan 'Keluar'
+            $table->enum('status_santri', ['Aktif', 'Lulus', 'Keluar'])
                   ->default('Aktif')
                   ->after('foto');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('santris', function (Blueprint $table) {

@@ -164,7 +164,7 @@ export default function Show({ auth, studyClass, availableSantris }) {
                                                 <option value="">-- Pilih Santri --</option>
                                                 {filteredSantris.map(santri => (
                                                     <option key={santri.id} value={santri.id}>
-                                                        {santri.nama_santri} ({santri.kelas?.nama_kelas || 'Belum ada kelas'})
+                                                        {santri.nama_santri} ({santri.nis})
                                                     </option>
                                                 ))}
                                             </select>
@@ -206,17 +206,6 @@ export default function Show({ auth, studyClass, availableSantris }) {
                                         {studyClass.santris.length} Santri
                                     </span>
                                 </h3>
-                                
-                                <div className="flex items-center gap-3">
-                                    <div className="relative">
-                                        <select className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 pl-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm">
-                                            <option>Semua Status</option>
-                                            <option>Aktif</option>
-                                            <option>Non-Aktif</option>
-                                        </select>
-                                        <ChevronDownIcon className="w-5 h-5 absolute right-2 top-2 text-gray-400 pointer-events-none" />
-                                    </div>
-                                </div>
                             </div>
                             
                             <div className="overflow-x-auto">
@@ -259,10 +248,8 @@ export default function Show({ auth, studyClass, availableSantris }) {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
                                                         {santri.nis}
                                                     </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200">
-                                                            {santri.kelas?.nama_kelas || 'N/A'}
-                                                        </span>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                        {santri.tahun_ke ? `Tahun ke-${santri.tahun_ke}` : 'N/A'}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <button 

@@ -45,8 +45,8 @@ export default function SantriIndex({ auth, santris, filters, success }) {
             text: "Data yang sudah dihapus tidak dapat dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Ya, hapus!',
             cancelButtonText: 'Batal'
         }).then((result) => {
@@ -106,7 +106,8 @@ export default function SantriIndex({ auth, santris, filters, success }) {
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">No</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">NIS</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Santri</th>
-                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kelas</th>
+                                        {/* PERUBAHAN: Kolom Kelas diganti menjadi Tahun Ke */}
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tahun Ke</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tempat, Tgl Lahir</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                                     </tr>
@@ -118,7 +119,10 @@ export default function SantriIndex({ auth, santris, filters, success }) {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">{santris.from + index}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-mono">{santri.nis}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">{santri.nama_santri}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">{santri.kelas_id}</td>
+                                                {/* PERUBAHAN: Menampilkan data tahun_ke */}
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                                                    {santri.tahun_ke ? `Tahun ke-${santri.tahun_ke}` : 'N/A'}
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{santri.tempat_lahir}, {new Date(santri.tanggal_lahir).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                                     <Link href={route("santris.show", santri.id)} className="inline-flex items-center gap-1 px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-teal-700 bg-teal-100 hover:bg-teal-200 dark:bg-teal-900/50 dark:text-teal-300 dark:hover:bg-teal-900/80 transition-all">
@@ -135,7 +139,7 @@ export default function SantriIndex({ auth, santris, filters, success }) {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="5" className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">Tidak ada data santri yang cocok dengan pencarian Anda.</td>
+                                            <td colSpan="6" className="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">Tidak ada data santri yang cocok dengan pencarian Anda.</td>
                                         </tr>
                                     )}
                                 </tbody>

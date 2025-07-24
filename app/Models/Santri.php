@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AcademicYear;
 
 class Santri extends Model
 {
@@ -38,23 +39,30 @@ class Santri extends Model
     {
         return $this->hasMany(Akademik::class);
     }
-
-    /**
-     * Relasi ke model Hafalan.
-     */
+    
     public function hafalans()
     {
         return $this->hasMany(Hafalan::class);
     }
-
-    /**
-     * Relasi many-to-many ke Usroh.
-     */
-    public function usrohs()
+    
+    public function achievements()
     {
+        return $this->hasMany(Achievement::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+    
+     public function usrohs()
+    {
+        // 'santri_usroh' adalah nama tabel pivot yang menghubungkan santri dan usroh.
         return $this->belongsToMany(Usroh::class, 'santri_usroh');
     }
 
+    // Relasi-relasi lain yang sudah ada...
+   
     /**
      * Relasi many-to-many ke Halaqoh.
      */
@@ -71,5 +79,21 @@ class Santri extends Model
     {
         // 'santri_study_class' adalah nama tabel pivot Anda
         return $this->belongsToMany(StudyClass::class, 'santri_study_class');
+    }
+     public function getTahunKeAttribute()
+    {
+        // Ambil tahun ajaran Hijriyah yang sedang aktif
+        $activeYear = AcademicYear::where('is_active', true)->first();
+        if (!$activeYear || !preg_match('/^(\d{4})/', $this->nis, $matches)) {
+            return null; // Jika tidak ada tahun aktif atau format NIS salah
+        }
+
+        $tahunMasuk = (int) $matches[1];
+        $tahunSekarang = (int) preg_replace('/\/.*$/', '', $activeYear->year);
+
+        // Hitung tahun ke-
+        $tahunKe = ($tahunSekarang - $tahunMasuk) + 1;
+        
+        return $tahunKe > 6 ? 'Lulus' : $tahunKe;
     }
 }
