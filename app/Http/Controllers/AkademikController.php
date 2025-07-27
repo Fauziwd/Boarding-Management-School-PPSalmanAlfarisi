@@ -22,8 +22,8 @@ class AkademikController extends Controller
         $query = Akademik::with('santri:id,nama_santri,nis,foto')
             ->select(
                 'santri_id',
-                // PERBAIKAN: Menggunakan 'nama_kitab' sesuai dengan struktur tabel baru.
-                DB::raw('COUNT(DISTINCT nama_kitab) as jumlah_kitab'),
+                // PERBAIKAN: Menggunakan 'kitab' sesuai dengan struktur tabel baru.
+                DB::raw('COUNT(DISTINCT kitab) as jumlah_kitab'),
                 DB::raw('COUNT(id) as total_pencapaian'),
                 DB::raw('MAX(created_at) as terakhir_update')
             )
@@ -82,7 +82,7 @@ class AkademikController extends Controller
         $validatedData = $request->validate([
             'santri_id' => 'required|exists:santris,id',
             'academic_year_id' => 'required|exists:academic_years,id',
-            'nama_kitab' => 'required|string|max:255',
+            'kitab' => 'required|string|max:255',
             'teacher_id' => 'required|exists:teachers,id',
             'jilid' => 'nullable|string|max:50',
             'halaman' => 'required|string|max:255', // 'halaman' dari frontend akan jadi 'keterangan'
@@ -93,7 +93,7 @@ class AkademikController extends Controller
         Akademik::create([
             'santri_id' => $validatedData['santri_id'],
             'academic_year_id' => $validatedData['academic_year_id'],
-            'nama_kitab' => $validatedData['nama_kitab'],
+            'kitab' => $validatedData['kitab'],
             'teacher_id' => $validatedData['teacher_id'],
             'jilid' => $validatedData['jilid'],
             'keterangan' => $validatedData['halaman'],
@@ -164,7 +164,7 @@ class AkademikController extends Controller
             if ($studyClass->teacher) {
                 return [
                     'id' => $studyClass->id,
-                    'nama_kitab' => $studyClass->nama_kitab,
+                    'kitab' => $studyClass->kitab,
                     'teacher_id' => $studyClass->teacher->id,
                     'teacher_name' => $studyClass->teacher->nama_guru,
                 ];

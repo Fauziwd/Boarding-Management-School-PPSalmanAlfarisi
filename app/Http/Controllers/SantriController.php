@@ -21,12 +21,12 @@ class SantriController extends Controller
 
         if ($request->has('search') && $request->input('search') != '') {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_santri', 'like', "%{$search}%")
-                  ->orWhere('nis', 'like', "%{$search}%");
+                    ->orWhere('nis', 'like', "%{$search}%");
             });
         }
-        
+
         $query->orderBy('nama_santri', 'asc');
         $perPage = $request->input('perPage', 10);
         $santris = $query->paginate($perPage)->withQueryString();
@@ -62,7 +62,7 @@ class SantriController extends Controller
         if ($activeYear) {
             $tahunHijriyah = preg_replace('/\/.*$/', '', $activeYear->year);
             $lastSantri = Santri::where('nis', 'like', $tahunHijriyah . '%')->orderBy('nis', 'desc')->first();
-            $nextId = $lastSantri ? (int)substr($lastSantri->nis, -3) + 1 : 1;
+            $nextId = $lastSantri ? (int) substr($lastSantri->nis, -3) + 1 : 1;
             $nextNis = $tahunHijriyah . '.01.' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
         }
 
@@ -96,7 +96,7 @@ class SantriController extends Controller
             'alamat' => 'required|string',
             'kelurahan' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
-            'kabupaten_kota' => 'required|string|max:255',
+            'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -149,13 +149,13 @@ class SantriController extends Controller
             'alamat' => 'required|string',
             'kelurahan' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
-            'kabupaten_kota' => 'required|string|max:255',
+            'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_santri' => 'required|string|in:Aktif,Lulus,Keluar',
         ]);
-        
+
         if ($request->hasFile('foto')) {
             if ($santri->foto) {
                 Storage::disk('public')->delete($santri->foto);
@@ -196,5 +196,26 @@ class SantriController extends Controller
     {
         $exists = Santri::where('nisn', $nisn)->exists();
         return response()->json(['exists' => $exists]);
+    }
+
+    public function map()
+    {
+        // Kelompokkan santri berdasarkan provinsi, hanya yang Lulus/Keluar
+        $santriByProvince = Santri::whereIn('status_santri', ['Lulus', 'Keluar'])
+            ->whereNotNull('provinsi')
+            ->select('provinsi', DB::raw('count(*) as total'))
+            ->groupBy('provinsi')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        // Detail santri (untuk popup info box)
+        $allSantriDetails = Santri::whereIn('status_santri', ['Lulus', 'Keluar'])
+            ->whereNotNull('provinsi')
+            ->get(['id', 'nama_santri', 'nis', 'provinsi', 'kabupaten as kabupaten']);
+
+        return Inertia::render('Santri/Map', [
+            'santriByProvince' => $santriByProvince,
+            'allSantriDetails' => $allSantriDetails,
+        ]);
     }
 }

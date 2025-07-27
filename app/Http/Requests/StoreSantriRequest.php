@@ -29,7 +29,7 @@ class StoreSantriRequest extends FormRequest
             'alamat' => 'required|string|max:255',
             'kelurahan' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
-            'kabupaten_kota' => 'required|string|max:255',
+            'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'kode_pos' => 'required|string|max:255',
             'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

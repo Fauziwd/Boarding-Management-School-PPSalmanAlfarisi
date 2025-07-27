@@ -49,6 +49,7 @@ const menuConfig = {
             children: [
                 { label: "Student Management", href: "santris.index" },
                 { label: "Manajemen Kelas", href: "study-classes.index" },
+                { label: "Peta Sebaran Santri", href: "santris.map" }, 
                 { label: "Manajemen Halaqoh", href: "halaqohs.index" },
                 { label: "Academic", href: "akademik.index" },
                 { label: "Memorization", href: "hafalan.index" },

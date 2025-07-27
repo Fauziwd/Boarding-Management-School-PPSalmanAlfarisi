@@ -31,7 +31,7 @@ export const exportToExcel = (santri, akademiks, hafalans) => {
         ['No HP Ibu', santri.no_telpon_ibu],
         [
             'Alamat',
-            `${santri.alamat}, ${santri.kelurahan}, ${santri.kecamatan}, ${santri.kabupaten_kota}, ${santri.provinsi} - ${santri.kode_pos}`
+            `${santri.alamat}, ${santri.kelurahan}, ${santri.kecamatan}, ${santri.kabupaten}, ${santri.provinsi} - ${santri.kode_pos}`
         ]
     ];
 

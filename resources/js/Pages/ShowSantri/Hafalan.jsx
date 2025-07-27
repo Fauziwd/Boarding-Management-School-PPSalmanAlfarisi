@@ -1,16 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import Chart from 'react-apexcharts';
-import { format, parse } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { FiBookOpen, FiEdit2, FiPlus, FiTrendingUp } from "react-icons/fi";
 
-// Komponen Grafik dengan APEXCHARTS
+// Helper function untuk mengubah '1B' -> 2, '4A' -> 7, dst.
+const convertHalamanToValue = (halaman) => {
+    if (!halaman || !/(\d{1,2})([AB])/i.test(halaman)) return 0;
+    const matches = halaman.match(/(\d{1,2})([AB])/i);
+    return ((parseInt(matches[1], 10) - 1) * 2) + (matches[2].toUpperCase() === 'A' ? 1 : 2);
+};
+
+// Komponen Grafik Peningkatan Hafalan
 const HafalanChart = ({ hafalans }) => {
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
     useEffect(() => {
-        // Listener untuk perubahan tema dark/light
         const observer = new MutationObserver(() => {
             setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         });
@@ -18,104 +24,73 @@ const HafalanChart = ({ hafalans }) => {
         return () => observer.disconnect();
     }, []);
     
-    // ** ALGORITMA UTAMA YANG DIPERBAIKI **
     const chartData = useMemo(() => {
         if (!hafalans || hafalans.length === 0) return [];
         
-        // 1. Urutkan data berdasarkan bulan yang diinput ("YYYY-MM")
-        const sortedData = [...hafalans].sort((a, b) => a.month.localeCompare(b.month));
+        // 1. Urutkan data berdasarkan tanggal setoran
+        const sortedData = [...hafalans].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-        // 2. Hitung progres kumulatif
-        let cumulativeJuz = 0;
-        const monthlyProgress = sortedData.reduce((acc, item) => {
-            cumulativeJuz += 1;
-            acc[item.month] = cumulativeJuz;
+        // 2. Hitung total halaman absolut untuk setiap setoran
+        const dataWithTotalPages = sortedData.map(item => ({
+            date: parseISO(item.created_at),
+            totalPages: ((item.juz - 1) * 20) + convertHalamanToValue(item.halaman),
+        }));
+
+        // 3. Kelompokkan berdasarkan bulan dan ambil nilai tertinggi per bulan
+        const monthlyMaxPages = dataWithTotalPages.reduce((acc, item) => {
+            const monthKey = format(item.date, 'yyyy-MM');
+            if (!acc[monthKey] || item.totalPages > acc[monthKey]) {
+                acc[monthKey] = item.totalPages;
+            }
             return acc;
         }, {});
-        
-        // 3. Format data untuk ApexCharts
-        return Object.keys(monthlyProgress).sort().map(key => ({
-            x: format(parse(key, 'yyyy-MM', new Date()), 'MMM yy'), // Label X: "Jul 25"
-            y: monthlyProgress[key] // Nilai Y: Jumlah kumulatif
-        }));
+
+        // 4. Hitung peningkatan (progress) antar bulan
+        const months = Object.keys(monthlyMaxPages).sort();
+        let lastMonthTotal = 0;
+        return months.map(monthKey => {
+            const currentMonthTotal = monthlyMaxPages[monthKey];
+            const progress = currentMonthTotal - lastMonthTotal;
+            lastMonthTotal = currentMonthTotal;
+            return {
+                x: format(parseISO(`${monthKey}-01`), 'MMM yy'),
+                y: progress,
+            };
+        });
     }, [hafalans]);
 
     const chartOptions = {
-        chart: {
-            type: 'area',
-            height: 300,
-            toolbar: { show: false },
-            zoom: { enabled: false },
-            background: 'transparent',
-            animations: {
-                enabled: true,
-                easing: 'linear',
-                speed: 800,
-                animateGradually: { enabled: true, delay: 150 }
-            }
-        },
+        chart: { type: 'bar', height: 300, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '60%', endingShape: 'rounded' } },
         dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 3 },
-        series: [{
-            name: "Total Juz Tercapai",
-            data: chartData,
-        }],
-        colors: ["#38B2AC"], // Warna Teal
-        fill: {
-            type: "gradient",
-            gradient: {
-                shade: theme === 'dark' ? 'dark' : 'light',
-                type: 'vertical',
-                shadeIntensity: 0.5,
-                opacityFrom: 0.6,
-                opacityTo: 0.1,
-                stops: [0, 100],
-            },
-        },
-        xaxis: {
-            type: 'category',
-            labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } },
-            axisBorder: { show: false },
-            axisTicks: { show: false },
-        },
-        yaxis: {
-            labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } },
-            min: 0,
-            tickAmount: 5,
-            title: { text: "Jumlah Juz", style: { color: theme === 'dark' ? '#a0aec0' : '#4a5568', fontWeight: 400 } }
-        },
-        grid: {
-            borderColor: theme === 'dark' ? "#2d3748" : "#e0e6ed",
-            strokeDashArray: 4
-        },
-        tooltip: {
-            theme: theme,
-            x: { show: true },
-        },
+        stroke: { show: true, width: 2, colors: ['transparent'] },
+        series: [{ name: "Peningkatan Halaman", data: chartData }],
+        colors: ["#38B2AC"],
+        xaxis: { type: 'category', labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } } },
+        yaxis: { title: { text: "Jumlah Halaman", style: { color: theme === 'dark' ? '#a0aec0' : '#4a5568' } }, labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } } },
+        grid: { borderColor: theme === 'dark' ? "#2d3748" : "#e0e6ed" },
+        tooltip: { theme: theme, y: { formatter: (val) => `${val} Halaman` } },
     };
 
     return (
         <div className="h-full w-full">
-            <Chart options={chartOptions} series={chartOptions.series} type="area" height="100%" />
+            <Chart options={chartOptions} series={chartOptions.series} type="bar" height="100%" />
         </div>
     );
 };
 
-
+// Komponen Utama Halaman
 export default function Hafalan({ hafalans, santriId }) {
-
-    // Urutkan data hafalan berdasarkan bulan terbaru untuk tampilan daftar riwayat
     const sortedHafalansForList = useMemo(() => {
         if (!hafalans) return [];
-        return [...hafalans].sort((a, b) => b.month.localeCompare(a.month));
+        return [...hafalans].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }, [hafalans]);
     
-    const formatDisplayDate = (monthString) => {
+    const formatDisplayDate = (dateString) => {
         try {
-            const date = parse(monthString, 'yyyy-MM', new Date());
-            return format(date, 'MMMM yyyy', { locale: idLocale });
+            return format(parseISO(dateString), 'd MMMM yyyy', { locale: idLocale });
         } catch (e) {
-            return monthString;
+            return dateString;
         }
     };
 
@@ -129,9 +104,9 @@ export default function Hafalan({ hafalans, santriId }) {
                 </h2>
                 <Link
                     href={route("hafalan.create", { santri_id: santriId })}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 active:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-teal-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-teal-700 active:bg-teal-800 transition ease-in-out duration-150"
                 >
-                    <FiPlus/> Tambah
+                    <FiPlus/> Tambah Setoran
                 </Link>
             </div>
 
@@ -143,25 +118,26 @@ export default function Hafalan({ hafalans, santriId }) {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                    {/* Grafik di sisi kiri */}
                     <div className="lg:col-span-3 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
-                        <h3 className="font-bold text-lg mb-2 text-gray-800 dark:text-white flex items-center"><FiTrendingUp className="mr-2 text-teal-500"/>Progres Kumulatif</h3>
+                        <h3 className="font-bold text-lg mb-2 text-gray-800 dark:text-white flex items-center"><FiTrendingUp className="mr-2 text-teal-500"/>Peningkatan per Bulan</h3>
                         <HafalanChart hafalans={hafalans} />
                     </div>
 
-                    {/* Daftar Riwayat di sisi kanan */}
                     <div className="lg:col-span-2">
                         <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Detail Setoran</h3>
                         <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                             {sortedHafalansForList.map((hafalan) => (
                                 <div key={hafalan.id} className="bg-white dark:bg-gray-700 p-3 rounded-md shadow-sm flex items-center justify-between">
                                     <div>
-                                        <p className="font-bold text-gray-800 dark:text-white">Juz {hafalan.juz}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">{formatDisplayDate(hafalan.month)}</p>
+                                        <p className="font-bold text-gray-800 dark:text-white">Juz {hafalan.juz} - Hal. {hafalan.halaman}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{formatDisplayDate(hafalan.created_at)}</p>
                                     </div>
-                                    <Link href={route('hafalan.edit', hafalan.id)} className="p-2 text-gray-400 hover:text-blue-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition">
-                                        <FiEdit2 className="h-4 w-4" />
-                                    </Link>
+                                    <div className='flex items-center gap-2'>
+                                        <span className="font-bold text-teal-600 dark:text-teal-300">{hafalan.nilai}</span>
+                                        <Link href={route('hafalan.edit', hafalan.id)} className="p-2 text-gray-400 hover:text-blue-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 transition">
+                                            <FiEdit2 className="h-4 w-4" />
+                                        </Link>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -171,4 +147,3 @@ export default function Hafalan({ hafalans, santriId }) {
         </div>
     );
 }
-

@@ -27,6 +27,12 @@ class Hafalan extends Model
         return $this->belongsTo(Santri::class);
     }
 
+    // app/Models/Hafalan.php
+public function teacher()
+{
+    return $this->belongsTo(Teacher::class);
+}
+
 // Tambahkan relasi ini
 public function reportCard()
 {

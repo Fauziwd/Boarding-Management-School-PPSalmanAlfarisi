@@ -48,17 +48,17 @@ export default function AddressInfoForm({ data, setData, errors }) {
             </div>
 
             <div>
-                <InputLabel htmlFor="kabupaten_kota" value="Kabupaten/Kota" />
+                <InputLabel htmlFor="kabupaten" value="Kabupaten/Kota" />
                 <TextInput
-                    id="kabupaten_kota"
-                    name="kabupaten_kota"
+                    id="kabupaten"
+                    name="kabupaten"
                     className="mt-1 block w-full"
-                    value={data.kabupaten_kota}
-                    onChange={(e) => setData("kabupaten_kota", e.target.value)}
+                    value={data.kabupaten}
+                    onChange={(e) => setData("kabupaten", e.target.value)}
                     required
-                    autoComplete="kabupaten_kota"
+                    autoComplete="kabupaten"
                 />
-                <InputError className="mt-2" message={errors.kabupaten_kota} />
+                <InputError className="mt-2" message={errors.kabupaten} />
             </div>
 
             <div>

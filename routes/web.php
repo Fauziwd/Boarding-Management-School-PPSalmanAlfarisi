@@ -89,6 +89,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // MANAJEMEN AKADEMIK & HAFALAN
     Route::resource('akademik', AkademikController::class);
     Route::resource('hafalan', HafalanController::class);
+    Route::resource('hafalan', HafalanController::class);
+Route::get('/hafalans/history/{santri}', [HafalanController::class, 'getHafalanHistory'])->name('hafalans.history');
       Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
          ->name('internal-api.santri.study-classes');
     
@@ -98,6 +100,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('report-cards', ReportCardController::class)->only(['index', 'show']);
     Route::post('report-cards/generate', [ReportCardController::class, 'generate'])->name('report-cards.generate');
     Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
+
+    Route::get('/santri-map', [App\Http\Controllers\SantriController::class, 'map'])->name('santris.map');
 });
 
 /*

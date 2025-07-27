@@ -29,10 +29,10 @@ class Teacher extends Model
     /**
      * Relasi ke data User.
      */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+   public function user()
+{
+    return $this->belongsTo(User::class);
+}
 
     /**
      * Relasi ke Usroh yang diampu (sebagai Murobbi).
@@ -58,4 +58,5 @@ class Teacher extends Model
     {
         return $this->hasMany(StudyClass::class, 'teacher_id');
     }
+    
 }

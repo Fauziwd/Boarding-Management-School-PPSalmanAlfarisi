@@ -13,12 +13,11 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    // Daftar role yang valid. Didefinisikan sekali untuk konsistensi.
+    // Daftar role yang valid.
     private $validRoles = ['admin', 'user', 'Murobbi', 'Muhafidz', 'Mudaris', 'koperasi'];
 
     public function index()
     {
-        // Gunakan `latest()` untuk mengurutkan dari yang terbaru.
         $users = User::latest()->paginate(10);
 
         return Inertia::render('User/Index', [
@@ -28,13 +27,17 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('User/Create');
+        // Kirim daftar role ke frontend
+        return Inertia::render('User/Create', [
+            'roles' => $this->validRoles
+        ]);
     }
 
     public function edit(User $user)
     {
         return Inertia::render('User/Edit', [
-            'user' => $user
+            'user' => $user,
+            'roles' => $this->validRoles
         ]);
     }
 
@@ -59,7 +62,6 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // Mencegah admin mengubah role-nya sendiri
         if ($user->id === Auth::id() && $user->role !== $request->role) {
             return redirect()->back()->with('error', 'Anda tidak dapat mengubah role akun Anda sendiri.');
         }
@@ -71,13 +73,10 @@ class UserController extends Controller
             'password' => 'nullable|min:8|confirmed',
         ]);
     
-        // Simpan role lama untuk perbandingan
         $oldRole = $user->role;
         $newRole = $validated['role'];
 
-        // Gunakan transaksi untuk menjaga konsistensi data
         DB::transaction(function () use ($user, $validated, $oldRole, $newRole) {
-            // Update data user
             $user->update([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -87,14 +86,9 @@ class UserController extends Controller
 
             $teacherRoles = ['Murobbi', 'Muhafidz', 'Mudaris'];
 
-            // Logika: Jika role lama adalah guru TAPI role baru BUKAN guru
             if (in_array($oldRole, $teacherRoles) && !in_array($newRole, $teacherRoles)) {
-                // Hapus data dari tabel teachers
                 Teacher::where('user_id', $user->id)->delete();
-            }
-            // Logika: Jika role baru adalah guru
-            elseif (in_array($newRole, $teacherRoles)) {
-                // Update atau buat data di tabel teachers
+            } elseif (in_array($newRole, $teacherRoles)) {
                 Teacher::updateOrCreate(
                     ['user_id' => $user->id],
                     ['teacher_type' => $newRole]
@@ -107,7 +101,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Mencegah admin menghapus akunnya sendiri
         if ($user->id === Auth::id()) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }

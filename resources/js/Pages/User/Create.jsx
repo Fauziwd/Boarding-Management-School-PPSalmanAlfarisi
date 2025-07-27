@@ -1,25 +1,23 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
-import { Link, useForm } from "@inertiajs/react";
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import Selectbox from "@/Components/Selectbox";
-import roles from "@/data/roles.json";
 import { FaUserPlus, FaCheckCircle } from "react-icons/fa";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-export default function UserIndex({ auth }) {
+export default function UserCreate({ auth, roles }) {
     const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
             name: "",
             email: "",
             password: "",
             password_confirmation: "",
-            role: "user",
+            role: "", // default kosong, supaya wajib dipilih
             email_verified_at: new Date().toISOString(),
             remember_token: Math.random().toString(36).substring(2, 15),
         });
@@ -40,7 +38,6 @@ export default function UserIndex({ auth }) {
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Create New User" />
-
             <div className="py-6">
                 <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-6">
@@ -61,7 +58,6 @@ export default function UserIndex({ auth }) {
                             </Link>
                         </div>
                     </div>
-
                     <div className="overflow-hidden rounded-xl bg-white shadow-sm dark:bg-gray-800">
                         <div className="p-6 sm:p-8">
                             <section>
@@ -77,118 +73,80 @@ export default function UserIndex({ auth }) {
                                 <form onSubmit={submit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                         <div>
-                                            <InputLabel
-                                                htmlFor="name"
-                                                value="Full Name"
-                                                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                            />
+                                            <InputLabel htmlFor="name" value="Full Name" className="block text-sm font-medium text-gray-700 dark:text-gray-300" />
                                             <TextInput
                                                 id="name"
                                                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                                 value={data.name}
-                                                onChange={(e) =>
-                                                    setData("name", e.target.value)
-                                                }
+                                                onChange={(e) => setData("name", e.target.value)}
                                                 required
                                                 isFocused
                                                 autoComplete="name"
                                                 placeholder="Mang Kipli"
                                             />
-                                            <InputError
-                                                className="mt-1 text-sm"
-                                                message={errors.name}
-                                            />
+                                            <InputError className="mt-1 text-sm" message={errors.name} />
                                         </div>
 
                                         <div>
-                                            <InputLabel
-                                                htmlFor="email"
-                                                value="Email Address"
-                                                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                            />
+                                            <InputLabel htmlFor="email" value="Email Address" className="block text-sm font-medium text-gray-700 dark:text-gray-300" />
                                             <TextInput
                                                 id="email"
                                                 type="email"
                                                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                                 value={data.email}
-                                                onChange={(e) =>
-                                                    setData("email", e.target.value)
-                                                }
+                                                onChange={(e) => setData("email", e.target.value)}
                                                 required
                                                 autoComplete="email"
                                                 placeholder="user@example.com"
                                             />
-                                            <InputError
-                                                className="mt-1 text-sm"
-                                                message={errors.email}
-                                            />
+                                            <InputError className="mt-1 text-sm" message={errors.email} />
                                         </div>
 
                                         <div>
-                                            <InputLabel
-                                                htmlFor="password"
-                                                value="Password"
-                                                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                            />
+                                            <InputLabel htmlFor="password" value="Password" className="block text-sm font-medium text-gray-700 dark:text-gray-300" />
                                             <TextInput
                                                 id="password"
                                                 value={data.password}
-                                                onChange={(e) =>
-                                                    setData("password", e.target.value)
-                                                }
+                                                onChange={(e) => setData("password", e.target.value)}
                                                 type="password"
                                                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                                 autoComplete="new-password"
                                                 placeholder="••••••••"
                                             />
-                                            <InputError
-                                                message={errors.password}
-                                                className="mt-1 text-sm"
-                                            />
+                                            <InputError message={errors.password} className="mt-1 text-sm" />
                                         </div>
 
                                         <div>
-                                            <InputLabel
-                                                htmlFor="password_confirmation"
-                                                value="Confirm Password"
-                                                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                            />
+                                            <InputLabel htmlFor="password_confirmation" value="Confirm Password" className="block text-sm font-medium text-gray-700 dark:text-gray-300" />
                                             <TextInput
                                                 id="password_confirmation"
                                                 value={data.password_confirmation}
-                                                onChange={(e) =>
-                                                    setData("password_confirmation", e.target.value)
-                                                }
+                                                onChange={(e) => setData("password_confirmation", e.target.value)}
                                                 type="password"
                                                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                                                 autoComplete="new-password"
                                                 placeholder="••••••••"
                                             />
-                                            <InputError
-                                                message={errors.password_confirmation}
-                                                className="mt-1 text-sm"
-                                            />
+                                            <InputError message={errors.password_confirmation} className="mt-1 text-sm" />
                                         </div>
 
                                         <div className="sm:col-span-2">
-                                            <InputLabel
-                                                htmlFor="role"
-                                                value="User Role"
-                                                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                            />
-                                            <Selectbox
-                                                onChange={(e) =>
-                                                    setData("role", e.target.value)
-                                                }
-                                                currentValue={data.role}
+                                            <InputLabel htmlFor="role" value="User Role" className="block text-sm font-medium text-gray-700 dark:text-gray-300" />
+                                            <select
                                                 id="role"
-                                                options={roles}
+                                                value={data.role}
+                                                onChange={(e) => setData("role", e.target.value)}
                                                 className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                            />
-                                            <InputError
-                                                className="mt-1 text-sm"
-                                                message={errors.role}
-                                            />
+                                                required
+                                            >
+                                                <option value="">-- Pilih Role --</option>
+                                                {roles.map((role) => (
+                                                    <option key={role} value={role}>
+                                                        {role}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError className="mt-1 text-sm" message={errors.role} />
                                         </div>
                                     </div>
 
