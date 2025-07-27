@@ -40,6 +40,7 @@ const menuConfig = {
                 { label: "User Management", href: "users.index" },
                 { label: "Teacher Management", href: "teachers.index" },
                 { label: "Manajemen Tahun Santri", href: "tahun-santri.index" },
+                { label: "Peta Sebaran Murid", href: "santris.map" },
                 { label: "Manajemen Usroh", href: "usrohs.index" },
             ],
         },
@@ -48,8 +49,7 @@ const menuConfig = {
             icon: AcademicCapIcon,
             children: [
                 { label: "Student Management", href: "santris.index" },
-                { label: "Manajemen Kelas", href: "study-classes.index" },
-                { label: "Peta Sebaran Santri", href: "santris.map" }, 
+                { label: "Manajemen Kelas", href: "study-classes.index" }, 
                 { label: "Manajemen Halaqoh", href: "halaqohs.index" },
                 { label: "Academic", href: "akademik.index" },
                 { label: "Memorization", href: "hafalan.index" },

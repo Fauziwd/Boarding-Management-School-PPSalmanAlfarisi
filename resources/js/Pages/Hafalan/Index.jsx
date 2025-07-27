@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import React, { useState, useEffect, useCallback } from 'react';
+import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import Breadcrumbs from "@/Components/Breadcrumbs";
+import Breadcrumbs from "../../Components/Breadcrumbs";
 import axios from "axios";
-import { FiPlus, FiFilter, FiTrendingUp, FiX, FiList, FiEdit2, FiChevronRight, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiFilter, FiTrendingUp, FiX, FiList, FiEdit2, FiTrash2, FiChevronRight, FiLoader } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import Swal from 'sweetalert2';
 import Chart from 'react-apexcharts';
 
-// Komponen untuk Panel Detail Riwayat Hafalan
+// ==============================================================================
+// Panel Detail Riwayat Hafalan (Komponen Anak)
+// ==============================================================================
 const DetailPanel = ({ santri, onClose, onDataChange }) => {
     const [details, setDetails] = useState([]);
     const [chartData, setChartData] = useState([]);
@@ -17,7 +19,7 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
     const [period, setPeriod] = useState('monthly');
     const [customDates, setCustomDates] = useState({ start_date: '', end_date: '' });
 
-    const fetchDetails = () => {
+    const fetchDetails = useCallback(() => {
         setLoading(true);
         const params = { period };
         if (period === 'custom' && customDates.start_date && customDates.end_date) {
@@ -36,23 +38,11 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
                 Swal.fire({ icon: 'error', title: 'Gagal Memuat Detail', text: 'Terjadi kesalahan saat mengambil data riwayat.' });
             })
             .finally(() => setLoading(false));
-    };
+    }, [santri.santri_id, period, customDates]);
 
     useEffect(() => {
         fetchDetails();
-    }, [santri]);
-
-    useEffect(() => {
-        if (period !== 'custom') {
-            fetchDetails();
-        }
-    }, [period]);
-
-    const handleCustomDateApply = () => {
-        if (customDates.start_date && customDates.end_date) {
-            fetchDetails();
-        }
-    };
+    }, [fetchDetails]);
 
     useEffect(() => {
         const observer = new MutationObserver(() => setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light'));
@@ -62,7 +52,7 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
 
     const handleDelete = (hafalanId) => {
         Swal.fire({
-            title: 'Anda yakin?', text: "Data setoran ini akan dihapus secara permanen!", icon: 'warning',
+            title: 'Anda yakin?', text: "Data setoran ini akan dihapus permanen!", icon: 'warning',
             showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
             confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal',
             customClass: { popup: 'dark:bg-gray-800 dark:text-gray-200' }
@@ -72,8 +62,8 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
                     preserveScroll: true,
                     onSuccess: () => {
                         Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Data berhasil dihapus.', showConfirmButton: false, timer: 2000 });
-                        fetchDetails();
-                        onDataChange();
+                        fetchDetails(); // Muat ulang detail
+                        onDataChange(); // Muat ulang data summary di tabel utama
                     },
                     onError: () => Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: 'Gagal menghapus data.', showConfirmButton: false, timer: 2000 })
                 });
@@ -83,19 +73,25 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
 
     const chartOptions = {
         chart: { type: 'bar', height: 250, toolbar: { show: false }, background: 'transparent' },
-        plotOptions: { bar: { horizontal: false, columnWidth: '60%', endingShape: 'rounded' } },
+        plotOptions: { bar: { horizontal: false, columnWidth: '60%', borderRadius: 4 } },
         dataLabels: { enabled: false },
         stroke: { show: true, width: 2, colors: ['transparent'] },
-        series: [{ name: "Peningkatan Halaman", data: chartData.map(d => d.y) }],
+        series: [{ name: "Peningkatan Halaman", data: chartData.map(d => d.y || 0) }],
         colors: ["#38B2AC"],
         xaxis: { categories: chartData.map(d => d.x), labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } } },
-        yaxis: { title: { text: 'Jumlah Halaman', style: { color: theme === 'dark' ? '#a0aec0' : '#4a5568' } }, labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } } },
+        yaxis: { title: { text: 'Jml Halaman', style: { color: theme === 'dark' ? '#a0aec0' : '#4a5568' } }, labels: { style: { colors: theme === 'dark' ? "#a0aec0" : "#4a5568" } } },
         grid: { borderColor: theme === 'dark' ? "#2d3748" : "#e0e6ed" },
         tooltip: { theme: theme, y: { formatter: (val) => `${val} Halaman` } },
     };
 
     return (
-        <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="absolute top-0 right-0 h-full w-full lg:w-3/5 bg-gray-50 dark:bg-gray-900 shadow-2xl flex flex-col z-50">
+        <motion.div 
+            initial={{ x: "100%" }} 
+            animate={{ x: 0 }} 
+            exit={{ x: "100%" }} 
+            transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+            className="absolute top-0 right-0 h-full w-full lg:w-2/5 bg-gray-50 dark:bg-gray-900 shadow-2xl flex flex-col z-20 border-l border-gray-200 dark:border-gray-700"
+        >
             <header className="p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between flex-shrink-0">
                 <div>
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">Riwayat Setoran: {santri.nama_santri}</h2>
@@ -104,7 +100,9 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
                 <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"><FiX className="h-6 w-6 text-gray-600 dark:text-gray-300" /></button>
             </header>
             <div className="flex-grow p-6 overflow-y-auto">
-                {loading ? <div className="flex justify-center items-center h-full"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div></div> : (
+                {loading ? (
+                    <div className="flex justify-center items-center h-full"><FiLoader className="animate-spin h-12 w-12 text-teal-500" /></div>
+                ) : (
                     <>
                         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md mb-6">
                             <div className="flex justify-between items-center mb-2">
@@ -112,23 +110,15 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
                                 <select value={period} onChange={e => setPeriod(e.target.value)} className="text-sm border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                     <option value="monthly">Bulanan</option>
                                     <option value="weekly">Mingguan</option>
-                                    <option value="custom">Kustom</option>
                                 </select>
                             </div>
-                            {period === 'custom' && (
-                                <div className="flex gap-2 mb-2">
-                                    <input type="date" value={customDates.start_date} onChange={e => setCustomDates(p => ({...p, start_date: e.target.value}))} className="text-sm w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 rounded-md shadow-sm" />
-                                    <input type="date" value={customDates.end_date} onChange={e => setCustomDates(p => ({...p, end_date: e.target.value}))} className="text-sm w-full border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 rounded-md shadow-sm" />
-                                    <button onClick={handleCustomDateApply} className="px-3 py-1 bg-teal-600 text-white rounded-md text-sm">OK</button>
-                                </div>
-                            )}
                             <Chart options={chartOptions} series={chartOptions.series} type="bar" height={250} />
                         </div>
                         <div>
                             <h3 className="font-bold text-lg mb-4 text-gray-800 dark:text-white flex items-center"><FiList className="mr-2 text-teal-500"/>Daftar Setoran</h3>
                             <div className="space-y-3">
-                                {details.map(item => (
-                                    <div key={item.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                                {details.length > 0 ? details.map(item => (
+                                    <div key={item.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <p className="font-semibold text-gray-800 dark:text-white">Juz {item.juz}, Halaman {item.halaman}</p>
@@ -142,7 +132,7 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
                                         </div>
                                         {item.teacher && <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 pt-2 border-t dark:border-gray-700">Disetor ke: {item.teacher.user.name}</p>}
                                     </div>
-                                ))}
+                                )) : <p className="text-center text-gray-500 dark:text-gray-400 py-8">Tidak ada riwayat setoran pada periode ini.</p>}
                             </div>
                         </div>
                     </>
@@ -152,7 +142,9 @@ const DetailPanel = ({ santri, onClose, onDataChange }) => {
     );
 };
 
-// Komponen Utama Halaman Index
+// ==============================================================================
+// Halaman Index Utama
+// ==============================================================================
 export default function HafalanIndex({ auth, hafalanSummary, filters = {}, success }) {
     const [selectedSantri, setSelectedSantri] = useState(null);
     const [filterPreset, setFilterPreset] = useState(filters.filter_preset || 'last_week');
@@ -160,20 +152,28 @@ export default function HafalanIndex({ auth, hafalanSummary, filters = {}, succe
     const [customDates, setCustomDates] = useState({ start_date: filters.start_date || '', end_date: filters.end_date || '' });
 
     useEffect(() => { if (success) { Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: success, showConfirmButton: false, timer: 3000 }); } }, [success]);
+    
     const handlePresetChange = (e) => {
         const preset = e.target.value;
         setFilterPreset(preset);
         if (preset === 'custom') { setShowCustom(true); } else { setShowCustom(false); router.get(route("hafalan.index"), { filter_preset: preset }, { preserveState: true, replace: true }); }
     };
+
     const handleCustomDateChange = (e) => { setCustomDates(prev => ({ ...prev, [e.target.name]: e.target.value })); };
     const applyCustomFilter = () => { router.get(route("hafalan.index"), { filter_preset: 'custom', ...customDates }, { preserveState: true, replace: true }); };
+    
     const breadcrumbs = [{ label: "Home", href: route("dashboard") }, { label: "Hafalan" }];
 
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Pencapaian Hafalan" />
             <div className="relative flex h-screen overflow-hidden">
-                <motion.div animate={{ width: selectedSantri ? "40%" : "100%" }} transition={{ type: "spring", stiffness: 100, damping: 20 }} className={`h-full flex-shrink-0 overflow-y-auto bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 ${selectedSantri ? 'hidden lg:block' : 'block w-full'}`}>
+                {/* Main Content Area */}
+                <motion.div 
+                    animate={{ width: selectedSantri ? "60%" : "100%" }} 
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }} 
+                    className={`h-full flex-shrink-0 overflow-y-auto bg-gray-50 dark:bg-gray-800/50 ${selectedSantri ? 'hidden lg:block' : 'block w-full'}`}
+                >
                     <div className="mx-auto max-w-full p-6 lg:p-8">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                             <div>
@@ -182,7 +182,9 @@ export default function HafalanIndex({ auth, hafalanSummary, filters = {}, succe
                             </div>
                             <Link href={route("hafalan.create")} className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"><FiPlus size={18} /> Input Setoran</Link>
                         </div>
-                        <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg mb-6">
+                        
+                        {/* Filter Panel */}
+                        <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg mb-6 border dark:border-gray-700">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                                 <div className="md:col-span-1">
                                     <label htmlFor="filter_preset" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Periode Laporan</label>
@@ -192,13 +194,15 @@ export default function HafalanIndex({ auth, hafalanSummary, filters = {}, succe
                                 </div>
                                 {showCustom && (
                                     <>
-                                        <div><label htmlFor="start_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dari Tanggal</label><input type="date" name="start_date" id="start_date" value={customDates.start_date} onChange={handleCustomDateChange} className="block w-full pl-3 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:text-white" /></div>
-                                        <div><label htmlFor="end_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sampai Tanggal</label><input type="date" name="end_date" id="end_date" value={customDates.end_date} onChange={handleCustomDateChange} className="block w-full pl-3 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:text-white" /></div>
-                                        <button onClick={applyCustomFilter} className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"><FiFilter size={16} /> Terapkan</button>
+                                        <div><label htmlFor="start_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dari Tanggal</label><input type="date" name="start_date" id="start_date" value={customDates.start_date} onChange={handleCustomDateChange} className="block w-full pl-3 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white" /></div>
+                                        <div><label htmlFor="end_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sampai Tanggal</label><input type="date" name="end_date" id="end_date" value={customDates.end_date} onChange={handleCustomDateChange} className="block w-full pl-3 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 dark:text-white" /></div>
+                                        <button onClick={applyCustomFilter} className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-lg"><FiFilter size={16} /> Terapkan</button>
                                     </>
                                 )}
                             </div>
                         </div>
+
+                        {/* Tabel Utama */}
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -215,7 +219,7 @@ export default function HafalanIndex({ auth, hafalanSummary, filters = {}, succe
                                     <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                         {hafalanSummary.length > 0 ? (
                                             hafalanSummary.map((item) => (
-                                                <tr key={item.santri_id} onClick={() => setSelectedSantri(item)} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors duration-150 cursor-pointer">
+                                                <tr key={item.santri_id} onClick={() => setSelectedSantri(item)} className={`hover:bg-teal-50 dark:hover:bg-gray-700/40 transition-colors duration-150 cursor-pointer ${selectedSantri?.santri_id === item.santri_id ? 'bg-teal-100 dark:bg-gray-700' : ''}`}>
                                                     <td className="px-6 py-4 whitespace-nowrap"><div className="flex items-center"><img className="h-10 w-10 rounded-full object-cover" src={item.foto_url || `https://ui-avatars.com/api/?name=${item.nama_santri}&color=7F9CF5&background=EBF4FF`} alt="" /><div className="ml-4"><div className="text-sm font-semibold text-gray-900 dark:text-white">{item.nama_santri}</div><div className="text-sm text-gray-500 dark:text-gray-400 font-mono">{item.nis}</div></div></div></td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{item.start_hafalan}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap"><div className="text-sm text-gray-900 dark:text-white font-medium">{item.end_hafalan}</div><div className="text-xs text-blue-500 font-semibold">{item.end_quarter_text}</div></td>
@@ -233,9 +237,15 @@ export default function HafalanIndex({ auth, hafalanSummary, filters = {}, succe
                         </div>
                     </div>
                 </motion.div>
+                
+                {/* Detail Panel Area */}
                 <AnimatePresence>
                     {selectedSantri && (
-                        <DetailPanel santri={selectedSantri} onClose={() => setSelectedSantri(null)} onDataChange={() => router.reload({ only: ['hafalanSummary'] })} />
+                        <DetailPanel 
+                            santri={selectedSantri} 
+                            onClose={() => setSelectedSantri(null)} 
+                            onDataChange={() => router.reload({ only: ['hafalanSummary'] })} 
+                        />
                     )}
                 </AnimatePresence>
             </div>

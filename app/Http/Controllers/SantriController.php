@@ -8,29 +8,56 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
+
 
 class SantriController extends Controller
 {
     /**
      * Menampilkan daftar santri dengan filter dan paginasi.
      */
-    public function index(Request $request)
+     public function index(Request $request)
     {
+        // Validasi parameter sorting untuk keamanan
+        $request->validate([
+            'sort_by' => ['sometimes', Rule::in(['nama_santri', 'nis'])],
+            'sort_direction' => ['sometimes', Rule::in(['asc', 'desc'])],
+        ]);
+
         $query = Santri::query();
 
-        if ($request->has('search') && $request->input('search') != '') {
+        // Filter berdasarkan pencarian (NIS atau Nama)
+        if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('nama_santri', 'like', "%{$search}%")
-                    ->orWhere('nis', 'like', "%{$search}%");
+                  ->orWhere('nis', 'like', "%{$search}%");
             });
         }
 
-        $query->orderBy('nama_santri', 'asc');
+        // Filter berdasarkan Status Santri
+        if ($request->filled('status')) {
+            $query->where('status_santri', $request->input('status'));
+        }
+
+        // Filter berdasarkan Jenis Kelamin
+        if ($request->filled('gender')) {
+            $query->where('jenis_kelamin', $request->input('gender'));
+        }
+
+        // PEMBARUAN: Menggunakan parameter sorting dari request, dengan default 'nama_santri' 'asc'
+        $sortBy = $request->input('sort_by', 'nama_santri');
+        $sortDirection = $request->input('sort_direction', 'asc');
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Paginasi
         $perPage = $request->input('perPage', 10);
         $santris = $query->paginate($perPage)->withQueryString();
 
+        // Tambahkan URL foto ke setiap item santri
         $santris->getCollection()->transform(function ($santri) {
             $santri->foto_url = $santri->foto ? Storage::url($santri->foto) : null;
             return $santri;
@@ -38,7 +65,9 @@ class SantriController extends Controller
 
         return Inertia::render('Santri/Index', [
             'santris' => $santris,
-            'filters' => $request->only(['search', 'perPage']),
+            // PEMBARUAN: Kirim parameter sorting ke frontend
+            'filters' => $request->all(['search', 'status', 'gender', 'perPage', 'sort_by', 'sort_direction']),
+            'success' => session('success'),
         ]);
     }
 
@@ -86,7 +115,7 @@ class SantriController extends Controller
             'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
             'agama' => 'required|string',
             'anak_ke' => 'required|integer',
-            'status_yatim_piatu' => 'required|string|in:Ya,Tidak',
+            'status_yatim_piatu' => 'string|in:Ya,Tidak',
             'nama_bapak' => 'nullable|string|max:255',
             'pekerjaan_bapak' => 'nullable|string|max:255',
             'no_hp_bapak' => 'nullable|string|max:20',
@@ -98,6 +127,8 @@ class SantriController extends Controller
             'kecamatan' => 'required|string|max:255',
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -151,6 +182,8 @@ class SantriController extends Controller
             'kecamatan' => 'required|string|max:255',
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_santri' => 'required|string|in:Aktif,Lulus,Keluar',
@@ -198,24 +231,17 @@ class SantriController extends Controller
         return response()->json(['exists' => $exists]);
     }
 
-    public function map()
-    {
-        // Kelompokkan santri berdasarkan provinsi, hanya yang Lulus/Keluar
-        $santriByProvince = Santri::whereIn('status_santri', ['Lulus', 'Keluar'])
-            ->whereNotNull('provinsi')
-            ->select('provinsi', DB::raw('count(*) as total'))
-            ->groupBy('provinsi')
-            ->orderBy('total', 'desc')
-            ->get();
+// di SantriController.php
+public function map()
+{
+    // Cukup ambil semua santri yang memiliki latitude dan longitude
+    $santris = Santri::whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->get(['id', 'nama_santri', 'kabupaten', 'latitude', 'longitude']);
 
-        // Detail santri (untuk popup info box)
-        $allSantriDetails = Santri::whereIn('status_santri', ['Lulus', 'Keluar'])
-            ->whereNotNull('provinsi')
-            ->get(['id', 'nama_santri', 'nis', 'provinsi', 'kabupaten as kabupaten']);
+    return Inertia::render('Santri/Map', [
+        'santris' => $santris,
+    ]);
+}
 
-        return Inertia::render('Santri/Map', [
-            'santriByProvince' => $santriByProvince,
-            'allSantriDetails' => $allSantriDetails,
-        ]);
-    }
 }

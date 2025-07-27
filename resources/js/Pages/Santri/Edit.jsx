@@ -5,6 +5,7 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import AddressInfoForm from "@/CreateSantri/AddressInfoForm";
 import Swal from "sweetalert2";
 import {
     FiArrowLeft,
@@ -18,26 +19,18 @@ import {
 // Komponen untuk menampilkan ringkasan error di bagian atas form
 const ErrorSummary = ({ errors }) => {
     if (Object.keys(errors).length === 0) return null;
-
     return (
         <div className="p-4 mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 rounded-md">
             <div className="flex">
                 <div className="flex-shrink-0">
-                    <FiAlertCircle
-                        className="h-5 w-5 text-red-500 dark:text-red-400"
-                        aria-hidden="true"
-                    />
+                    <FiAlertCircle className="h-5 w-5 text-red-500 dark:text-red-400" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
                     <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                        Terdapat {Object.keys(errors).length} kesalahan pada
-                        data Anda.
+                        Terdapat {Object.keys(errors).length} kesalahan pada data Anda.
                     </h3>
                     <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                        <p>
-                            Silakan periksa semua tab dan perbaiki isian yang
-                            salah.
-                        </p>
+                        <p>Silakan periksa semua tab dan perbaiki isian yang salah.</p>
                     </div>
                 </div>
             </div>
@@ -73,6 +66,8 @@ export default function Edit({ auth, santri }) {
         provinsi: santri.provinsi || "",
         kode_pos: santri.kode_pos || "",
         foto: null,
+          latitude: santri.latitude || "",
+        longitude: santri.longitude || "",
     });
 
     const [filePreview, setFilePreview] = useState(santri.foto_url || null);
@@ -84,6 +79,14 @@ export default function Edit({ auth, santri }) {
             setData("foto", file);
             setFilePreview(URL.createObjectURL(file));
         }
+    };
+
+      const handlePositionChange = (latlng) => {
+        setData((prevData) => ({
+            ...prevData,
+            latitude: latlng.lat.toFixed(8),
+            longitude: latlng.lng.toFixed(8),
+        }));
     };
 
     const handleSubmit = (e) => {
@@ -536,140 +539,17 @@ export default function Edit({ auth, santri }) {
                                     </div>
 
                                     {/* --- KONTEN TAB ALAMAT --- */}
-                                    <div
-                                        className={`${
-                                            activeTab === "address"
-                                                ? "block"
-                                                : "hidden"
-                                        }`}
-                                    >
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 animate-fade-in">
-                                            <div className="sm:col-span-2">
-                                                <InputLabel
-                                                    htmlFor="alamat"
-                                                    value="Alamat Lengkap"
-                                                    isRequired
-                                                />
-                                                <textarea
-                                                    id="alamat"
-                                                    rows="3"
-                                                    className="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-                                                    value={data.alamat}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "alamat",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                ></textarea>
-                                                <InputError
-                                                    message={errors.alamat}
-                                                />
-                                            </div>
-                                            <div>
-                                                <InputLabel
-                                                    htmlFor="kelurahan"
-                                                    value="Kelurahan/Desa"
-                                                    isRequired
-                                                />
-                                                <TextInput
-                                                    id="kelurahan"
-                                                    value={data.kelurahan}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "kelurahan",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <InputError
-                                                    message={errors.kelurahan}
-                                                />
-                                            </div>
-                                            <div>
-                                                <InputLabel
-                                                    htmlFor="kecamatan"
-                                                    value="Kecamatan"
-                                                    isRequired
-                                                />
-                                                <TextInput
-                                                    id="kecamatan"
-                                                    value={data.kecamatan}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "kecamatan",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <InputError
-                                                    message={errors.kecamatan}
-                                                />
-                                            </div>
-                                            <div>
-                                                <InputLabel
-                                                    htmlFor="kabupaten"
-                                                    value="Kabupaten/Kota"
-                                                    isRequired
-                                                />
-                                                <TextInput
-                                                    id="kabupaten"
-                                                    value={data.kabupaten}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "kabupaten",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <InputError
-                                                    message={errors.kabupaten}
-                                                />
-                                            </div>
-                                            <div>
-                                                <InputLabel
-                                                    htmlFor="provinsi"
-                                                    value="Provinsi"
-                                                    isRequired
-                                                />
-                                                <TextInput
-                                                    id="provinsi"
-                                                    value={data.provinsi}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "provinsi",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <InputError
-                                                    message={errors.provinsi}
-                                                />
-                                            </div>
-                                            <div>
-                                                <InputLabel
-                                                    htmlFor="kode_pos"
-                                                    value="Kode Pos"
-                                                    isRequired
-                                                />
-                                                <TextInput
-                                                    type="number"
-                                                    id="kode_pos"
-                                                    value={data.kode_pos}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "kode_pos",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                                <InputError
-                                                    message={errors.kode_pos}
-                                                />
-                                            </div>
+                                    <div className={`${activeTab === "address" ? "block" : "hidden"}`}>
+                                        <div className="animate-fade-in">
+                                            <AddressInfoForm
+                                                data={data}
+                                                setData={setData}
+                                                errors={errors}
+                                                onPositionChange={handlePositionChange}
+                                            />
                                         </div>
                                     </div>
-
+                                    
                                     {/* --- KONTEN TAB FOTO --- */}
                                     <div
                                         className={`${

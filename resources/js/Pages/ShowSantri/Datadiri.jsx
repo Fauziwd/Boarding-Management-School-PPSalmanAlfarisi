@@ -149,13 +149,7 @@ const Datadiri = ({ santri }) => {
                             Alamat
                         </th>
                         <td className="px-6 py-3 text-sm text-gray-800 dark:text-gray-100 rounded-br-xl">
-                            {`${santri.alamat || ""}, ${
-                                santri.kelurahan || ""
-                            }, ${santri.kecamatan || ""}, ${
-                                santri.kabupaten || ""
-                            }, ${santri.provinsi || ""} - ${
-                                santri.kode_pos || ""
-                            }`}
+                            {santri.alamat || ""}
                         </td>
                     </tr>
                 </tbody>

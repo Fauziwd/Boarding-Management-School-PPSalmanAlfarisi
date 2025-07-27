@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import Pagination from '@/Components/Pagination';
@@ -16,8 +16,58 @@ const getRoleColor = (role) => {
     }
 };
 
+const ROLE_OPTIONS = [
+    { value: '', label: 'Semua Peran' },
+    { value: 'Murobbi', label: 'Murobbi' },
+    { value: 'Muhafidz', label: 'Muhafidz' },
+    { value: 'Mudaris', label: 'Mudaris' }
+];
+
+const SORT_OPTIONS = [
+    { value: '', label: 'Urutkan berdasarkan' },
+    { value: 'az', label: 'Nama (A-Z)' },
+    { value: 'za', label: 'Nama (Z-A)' },
+    { value: 'newest', label: 'Terbaru' },
+    { value: 'oldest', label: 'Terlama' }
+];
+
 export default function Index({ auth, teachers }) {
     const { delete: destroy } = useForm();
+    const [search, setSearch] = useState('');
+    const [roleFilter, setRoleFilter] = useState('');
+    const [sortBy, setSortBy] = useState('');
+
+    // Filter, search, and sort data locally (for demo; for production, move to backend)
+    const filteredTeachers = useMemo(() => {
+        let data = teachers.data;
+
+        // Filter by role
+        if (roleFilter) {
+            data = data.filter(teacher =>
+                teacher.roles && teacher.roles.includes(roleFilter)
+            );
+        }
+        // Search by name/email
+        if (search) {
+            const s = search.toLowerCase();
+            data = data.filter(teacher =>
+                teacher.user.name.toLowerCase().includes(s) ||
+                teacher.user.email.toLowerCase().includes(s)
+            );
+        }
+        // Sort
+        if (sortBy === 'az') {
+            data = [...data].sort((a, b) => a.user.name.localeCompare(b.user.name));
+        } else if (sortBy === 'za') {
+            data = [...data].sort((a, b) => b.user.name.localeCompare(a.user.name));
+        } else if (sortBy === 'newest') {
+            data = [...data].sort((a, b) => new Date(b.user.created_at) - new Date(a.user.created_at));
+        } else if (sortBy === 'oldest') {
+            data = [...data].sort((a, b) => new Date(a.user.created_at) - new Date(b.user.created_at));
+        }
+
+        return data;
+    }, [teachers.data, search, roleFilter, sortBy]);
 
     const deleteTeacher = (teacher) => {
         Swal.fire({
@@ -58,7 +108,7 @@ export default function Index({ auth, teachers }) {
             }
         });
     };
-    
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title="Manajemen Guru" />
@@ -87,6 +137,8 @@ export default function Index({ auth, teachers }) {
                                         type="text"
                                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                         placeholder="Cari guru..."
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
                                     />
                                 </div>
                                 
@@ -110,22 +162,27 @@ export default function Index({ auth, teachers }) {
                             </div>
                             
                             <div className="relative">
-                                <select className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 pl-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm">
-                                    <option>Semua Peran</option>
-                                    <option>Murobbi</option>
-                                    <option>Muhafidz</option>
-                                    <option>Mudaris</option>
+                                <select
+                                    className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 pl-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                                    value={roleFilter}
+                                    onChange={e => setRoleFilter(e.target.value)}
+                                >
+                                    {ROLE_OPTIONS.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
                                 </select>
                                 <ChevronUpDownIcon className="w-5 h-5 absolute right-2 top-2 text-gray-400 pointer-events-none" />
                             </div>
                             
                             <div className="relative">
-                                <select className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 pl-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm">
-                                    <option>Urutkan berdasarkan</option>
-                                    <option>Nama (A-Z)</option>
-                                    <option>Nama (Z-A)</option>
-                                    <option>Terbaru</option>
-                                    <option>Terlama</option>
+                                <select
+                                    className="appearance-none bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 pl-3 pr-8 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                                    value={sortBy}
+                                    onChange={e => setSortBy(e.target.value)}
+                                >
+                                    {SORT_OPTIONS.map(opt => (
+                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
                                 </select>
                                 <ChevronUpDownIcon className="w-5 h-5 absolute right-2 top-2 text-gray-400 pointer-events-none" />
                             </div>
@@ -156,7 +213,7 @@ export default function Index({ auth, teachers }) {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    {teachers.data.map((teacher) => (
+                                    {filteredTeachers.length > 0 ? filteredTeachers.map((teacher) => (
                                         <tr key={teacher.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center">
@@ -218,31 +275,29 @@ export default function Index({ auth, teachers }) {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={4} className="text-center py-12">
+                                                <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
+                                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum ada data guru</h3>
+                                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                    Mulai dengan menambahkan guru baru.
+                                                </p>
+                                                <div className="mt-6">
+                                                    <Link
+                                                        href={route('teachers.create')}
+                                                        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                                                    >
+                                                        <PlusCircleIcon className="-ml-1 mr-2 h-5 w-5" />
+                                                        Tambah Guru
+                                                    </Link>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
-                        
-                        {/* Empty State */}
-                        {teachers.data.length === 0 && (
-                            <div className="text-center py-12">
-                                <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
-                                <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Belum ada data guru</h3>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    Mulai dengan menambahkan guru baru.
-                                </p>
-                                <div className="mt-6">
-                                    <Link
-                                        href={route('teachers.create')}
-                                        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-                                    >
-                                        <PlusCircleIcon className="-ml-1 mr-2 h-5 w-5" />
-                                        Tambah Guru
-                                    </Link>
-                                </div>
-                            </div>
-                        )}
-                        
                         {/* Pagination */}
                         {teachers.data.length > 0 && (
                             <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/20">

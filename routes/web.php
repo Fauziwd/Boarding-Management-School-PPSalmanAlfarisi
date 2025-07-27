@@ -70,6 +70,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('teachers', TeacherController::class);
     Route::resource('santris', SantriController::class);
+    Route::get('/santri/map', [SantriController::class, 'map'])->name('santri.map');
 
     // MANAJEMEN TAHUN, USROH, HALAQOH & KELAS
     Route::resource('tahun-santri', TahunSantriController::class)->except(['show']);
@@ -90,9 +91,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('akademik', AkademikController::class);
     Route::resource('hafalan', HafalanController::class);
     Route::resource('hafalan', HafalanController::class);
-Route::get('/hafalans/history/{santri}', [HafalanController::class, 'getHafalanHistory'])->name('hafalans.history');
-      Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
+    Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
          ->name('internal-api.santri.study-classes');
+    Route::get('/hafalans/history/{santri}', [HafalanController::class, 'history'])->name('hafalans.history');
     
     // MANAJEMEN Tahun & RAPOR
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);

@@ -12,27 +12,30 @@ class Santri extends Model
     use HasFactory;
 
     /**
-     * Semua kolom dapat mass-assignment kecuali 'id'.
+     * Semua kolom dapat diisi secara massal (mass-assignment) kecuali 'id'.
+     * Ini berarti 'latitude' dan 'longitude' sudah otomatis diizinkan.
      */
     protected $guarded = ['id'];
 
     /**
-     * Cast tanggal lahir jadi instance Carbon (otomatis).
+     * Secara otomatis mengubah tipe data kolom saat diakses.
      */
     protected $casts = [
         'tanggal_lahir' => 'date',
+        'latitude' => 'float',  // <-- PEMBARUAN
+        'longitude' => 'float', // <-- PEMBARUAN
     ];
 
     /**
      * ==========================
-     *      ELOQUENT RELATIONS
+     * ELOQUENT RELATIONS
      * ==========================
      */
 
     /**
      * Relasi ke User (jika ada foreign key user_id).
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -40,7 +43,7 @@ class Santri extends Model
     /**
      * Relasi ke Kelas.
      */
-    public function kelas()
+    public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class);
     }
@@ -48,7 +51,7 @@ class Santri extends Model
     /**
      * Relasi ke Akademik (riwayat akademik santri).
      */
-    public function akademiks()
+    public function akademiks(): HasMany
     {
         return $this->hasMany(Akademik::class);
     }
@@ -56,7 +59,7 @@ class Santri extends Model
     /**
      * Relasi ke Hafalan.
      */
-    public function hafalans()
+    public function hafalans(): HasMany
     {
         return $this->hasMany(Hafalan::class);
     }
@@ -64,7 +67,7 @@ class Santri extends Model
     /**
      * Relasi ke Achievement (prestasi santri).
      */
-     public function achievements(): HasMany
+    public function achievements(): HasMany
     {
         return $this->hasMany(Achievement::class, 'santri_id');
     }
@@ -72,7 +75,7 @@ class Santri extends Model
     /**
      * Relasi ke Attendance (absensi santri).
      */
-    public function attendances()
+    public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
     }
@@ -106,7 +109,7 @@ class Santri extends Model
 
     /**
      * ==========================
-     *        ACCESSORS
+     * ACCESSORS
      * ==========================
      */
 
@@ -127,10 +130,18 @@ class Santri extends Model
         $tahunKe = ($tahunSekarang - $tahunMasuk) + 1;
         return $tahunKe > 6 ? 'Lulus' : $tahunKe;
     }
+    
+    /**
+     * Contoh method custom, misal ambil alamat lengkap.
+     */
+    public function getAlamatLengkapAttribute(): string
+    {
+        return "{$this->alamat}, {$this->kelurahan}, {$this->kecamatan}, {$this->kabupaten}, {$this->provinsi}, {$this->kode_pos}";
+    }
 
     /**
      * ==========================
-     *         MUTATORS
+     * MUTATORS
      * ==========================
      */
 
@@ -141,19 +152,4 @@ class Santri extends Model
     {
         $this->attributes['nama_santri'] = ucwords(strtolower($value));
     }
-
-    /**
-     * ==========================
-     *      CUSTOM METHODS
-     * ==========================
-     */
-
-    /**
-     * Contoh method custom, misal ambil alamat lengkap.
-     */
-    public function getAlamatLengkapAttribute()
-    {
-        return "{$this->alamat}, {$this->kelurahan}, {$this->kecamatan}, {$this->kabupaten}, {$this->provinsi}, {$this->kode_pos}";
-    }
-
 }

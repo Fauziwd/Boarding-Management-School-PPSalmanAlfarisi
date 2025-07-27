@@ -50,18 +50,30 @@ class UserController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
     
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => Hash::make($request->password),
-        ]);
-    
+        // Gunakan transaksi agar data konsisten
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => $request->role,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $teacherRoles = ['Murobbi', 'Muhafidz', 'Mudaris'];
+            if (in_array($request->role, $teacherRoles)) {
+                Teacher::create([
+                    'user_id' => $user->id,
+                    'teacher_type' => $request->role
+                ]);
+            }
+        });
+
         return redirect()->route('users.index')->with('success', 'User berhasil dibuat!');
     }     
 
     public function update(Request $request, User $user)
     {
+        // Mencegah admin mengubah role-nya sendiri
         if ($user->id === Auth::id() && $user->role !== $request->role) {
             return redirect()->back()->with('error', 'Anda tidak dapat mengubah role akun Anda sendiri.');
         }
@@ -86,9 +98,12 @@ class UserController extends Controller
 
             $teacherRoles = ['Murobbi', 'Muhafidz', 'Mudaris'];
 
+            // Jika awalnya guru, lalu bukan guru, hapus dari tabel teachers
             if (in_array($oldRole, $teacherRoles) && !in_array($newRole, $teacherRoles)) {
                 Teacher::where('user_id', $user->id)->delete();
-            } elseif (in_array($newRole, $teacherRoles)) {
+            }
+            // Jika awalnya bukan guru, lalu jadi guru, atau role guru berubah, update/buat di tabel teachers
+            elseif (in_array($newRole, $teacherRoles)) {
                 Teacher::updateOrCreate(
                     ['user_id' => $user->id],
                     ['teacher_type' => $newRole]
@@ -101,6 +116,7 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Mencegah admin menghapus akunnya sendiri
         if ($user->id === Auth::id()) {
             return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }

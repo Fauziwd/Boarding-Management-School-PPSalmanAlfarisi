@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class HafalanController extends Controller
 {
@@ -192,5 +193,53 @@ class HafalanController extends Controller
         }
 
         return response()->json(['history' => $history, 'chartData' => $finalChartData->values()]);
+    }
+
+     public function history(Request $request, Santri $santri)
+    {
+        // Validasi input periode
+        $request->validate([
+            'period' => 'in:monthly,weekly',
+        ]);
+
+        $period = $request->input('period', 'monthly');
+        
+        // Tentukan rentang tanggal berdasarkan periode
+        $endDate = Carbon::now();
+        $startDate = Carbon::now();
+
+        if ($period === 'monthly') {
+            $startDate->subYear(); // Data 12 bulan terakhir
+        } else { // weekly
+            $startDate->subWeeks(12); // Data 12 minggu terakhir
+        }
+
+        // 1. Ambil data riwayat setoran (untuk daftar detail)
+        $history = Hafalan::where('santri_id', $santri->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->with('teacher.user:id,name') // Eager load relasi untuk nama penyimak
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 2. Siapkan data untuk grafik
+        $query = Hafalan::where('santri_id', $santri->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->select(
+                DB::raw('SUM(halaman) as y'), // 'y' untuk sumbu y grafik
+                // Kelompokkan data berdasarkan bulan atau minggu
+                $period === 'monthly'
+                    ? DB::raw("DATE_FORMAT(created_at, '%b %Y') as x") // Format: Jan 2023
+                    : DB::raw("DATE_FORMAT(created_at, 'Pekan %V') as x") // Format: Pekan 34
+            )
+            ->groupBy('x')
+            ->orderBy(DB::raw('MIN(created_at)'))
+            ->get();
+            
+        $chartData = $query;
+
+        return response()->json([
+            'history' => $history,
+            'chartData' => $chartData,
+        ]);
     }
 }
