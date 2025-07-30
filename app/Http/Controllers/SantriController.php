@@ -34,7 +34,7 @@ class SantriController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('nama_santri', 'like', "%{$search}%")
-                  ->orWhere('nis', 'like', "%{$search}%");
+                    ->orWhere('nis', 'like', "%{$search}%");
             });
         }
 
@@ -236,41 +236,46 @@ class SantriController extends Controller
      */
     public function map()
     {
-        // Daftar status yang ingin ditampilkan
         $statuses = ['Aktif', 'Lulus', 'Keluar'];
-
-        // Mengambil santri dengan data yang relevan untuk peta dan chart
-        $santris = Santri::whereNotNull('provinsi')
+        $santris = Santri::whereIn('status_santri', $statuses)
+                         ->whereNotNull('provinsi')
                          ->where('provinsi', '!=', '')
-                         ->whereIn('status_santri', $statuses)
-                         ->get(['nama_santri', 'provinsi', 'nis']);
+                         ->get();
 
-        // Menstandarkan nama provinsi untuk pengelompokan yang akurat
-        $santrisByProvince = $santris->map(function ($santri) {
-            $standardizedProvince = Str::title(trim(preg_replace('/\s+/', ' ', $santri->provinsi)));
+        $santriByProvince = $santris->groupBy(function ($santri) {
+            $normalizedProvince = Str::title(trim(preg_replace('/\s+/', ' ', $santri->provinsi)));
             
-            // Menangani variasi nama provinsi yang umum
-            switch ($standardizedProvince) {
-                case 'Dki Jakarta':
-                case 'Jakarta':
-                    $santri->provinsi = 'Dki Jakarta';
-                    break;
-                case 'Di Yogyakarta':
-                case 'Yogyakarta':
-                case 'Jogja':
-                    $santri->provinsi = 'Daerah Istimewa Yogyakarta';
-                    break;
-                default:
-                    $santri->provinsi = $standardizedProvince;
-                    break;
-            }
-            
-            return $santri;
-        })->groupBy('provinsi');
+            // PEMBARUAN: Peta normalisasi yang lebih lengkap
+            $provinceMap = [
+                'Dki Jakarta' => 'DKI Jakarta', 'Jakarta' => 'DKI Jakarta',
+                'Di Yogyakarta' => 'Daerah Istimewa Yogyakarta', 'D.I. Yogyakarta' => 'Daerah Istimewa Yogyakarta', 'Yogyakarta' => 'Daerah Istimewa Yogyakarta', 'Jogja' => 'Daerah Istimewa Yogyakarta', 'Diy' => 'Daerah Istimewa Yogyakarta',
+                'Jabar' => 'Jawa Barat', 'Jateng' => 'Jawa Tengah', 'Jatim' => 'Jawa Timur',
+                'Babel' => 'Kepulauan Bangka Belitung', 'Kepulauan Babel' => 'Kepulauan Bangka Belitung',
+                'Kepri' => 'Kepulauan Riau', 'Nanggroe Aceh Darussalam' => 'Aceh',
+            ];
 
-        // Mengirim data yang sudah dikelompokkan ke view
+            return $provinceMap[$normalizedProvince] ?? $normalizedProvince;
+
+        })->map(function ($group, $provinceName) {
+            $yearlyData = $group->groupBy(function ($santri) {
+                return substr($santri->nis, 0, 4);
+            })->map(function ($yearGroup, $year) {
+                return ['year' => $year, 'count' => $yearGroup->count()];
+            })->sortBy('year')->values();
+
+            return [
+                'name' => $provinceName,
+                'count' => $group->count(),
+                'santris' => $group->map(function ($santri) {
+                    return ['id' => $santri->id, 'nama_santri' => $santri->nama_santri];
+                })->all(),
+                'yearlyData' => $yearlyData,
+            ];
+        })->values();
+
         return Inertia::render('Santri/Map', [
-            'santrisByProvince' => $santrisByProvince,
+            'santriByProvince' => $santriByProvince,
+            'totalSantri' => $santris->count(),
         ]);
     }
 }
