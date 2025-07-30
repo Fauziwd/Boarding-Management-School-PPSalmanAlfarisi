@@ -19,7 +19,7 @@ class SantriController extends Controller
     /**
      * Menampilkan daftar santri dengan filter dan paginasi.
      */
-     public function index(Request $request)
+    public function index(Request $request)
     {
         // Validasi parameter sorting untuk keamanan
         $request->validate([
@@ -128,7 +128,7 @@ class SantriController extends Controller
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -183,7 +183,7 @@ class SantriController extends Controller
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'kode_pos' => 'required|string|max:10',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status_santri' => 'required|string|in:Aktif,Lulus,Keluar',
@@ -231,17 +231,46 @@ class SantriController extends Controller
         return response()->json(['exists' => $exists]);
     }
 
-// di SantriController.php
-public function map()
-{
-    // Cukup ambil semua santri yang memiliki latitude dan longitude
-    $santris = Santri::whereNotNull('latitude')
-        ->whereNotNull('longitude')
-        ->get(['id', 'nama_santri', 'kabupaten', 'latitude', 'longitude']);
+    /**
+     * Menyiapkan data untuk peta sebaran santri berdasarkan provinsi.
+     */
+    public function map()
+    {
+        // Daftar status yang ingin ditampilkan
+        $statuses = ['Aktif', 'Lulus', 'Keluar'];
 
-    return Inertia::render('Santri/Map', [
-        'santris' => $santris,
-    ]);
-}
+        // Mengambil santri dengan data yang relevan untuk peta dan chart
+        $santris = Santri::whereNotNull('provinsi')
+                         ->where('provinsi', '!=', '')
+                         ->whereIn('status_santri', $statuses)
+                         ->get(['nama_santri', 'provinsi', 'nis']);
 
+        // Menstandarkan nama provinsi untuk pengelompokan yang akurat
+        $santrisByProvince = $santris->map(function ($santri) {
+            $standardizedProvince = Str::title(trim(preg_replace('/\s+/', ' ', $santri->provinsi)));
+            
+            // Menangani variasi nama provinsi yang umum
+            switch ($standardizedProvince) {
+                case 'Dki Jakarta':
+                case 'Jakarta':
+                    $santri->provinsi = 'Dki Jakarta';
+                    break;
+                case 'Di Yogyakarta':
+                case 'Yogyakarta':
+                case 'Jogja':
+                    $santri->provinsi = 'Daerah Istimewa Yogyakarta';
+                    break;
+                default:
+                    $santri->provinsi = $standardizedProvince;
+                    break;
+            }
+            
+            return $santri;
+        })->groupBy('provinsi');
+
+        // Mengirim data yang sudah dikelompokkan ke view
+        return Inertia::render('Santri/Map', [
+            'santrisByProvince' => $santrisByProvince,
+        ]);
+    }
 }
