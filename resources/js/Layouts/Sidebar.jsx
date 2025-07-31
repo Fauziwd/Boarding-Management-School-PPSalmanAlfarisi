@@ -38,9 +38,9 @@ const menuConfig = {
             icon: UsersIcon,
             children: [
                 { label: "User", href: "users.index" },
-                { label: "Management", href: "teachers.index" },
-                { label: "Tahun Santri", href: "tahun-santri.index" },
-                { label: "Sebaran Santri", href: "santris.map" },
+                { label: "Guru", href: "teachers.index" },
+                { label: "Tahun Pendidikan", href: "tahun-santri.index" },
+                { label: "Peta Murid", href: "santris.map" },
                 { label: "Usroh", href: "usrohs.index" },
             ],
         },

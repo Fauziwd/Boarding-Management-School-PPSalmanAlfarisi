@@ -239,10 +239,10 @@ export default function SantriMap({ auth, santriByProvince, totalSantri }) {
                     >
                         <motion.div variants={itemVariants}>
                             <h1 className="text-2xl font-bold mb-2">
-                                Dashboard Sebaran Santri
+                                Domisili Santri
                             </h1>
                             <p className="opacity-90">
-                                Visualisasi data distribusi santri di seluruh
+                                Visualisasi data lokasi sebaran santri di seluruh
                                 Indonesia
                             </p>
                         </motion.div>
@@ -308,7 +308,7 @@ export default function SantriMap({ auth, santriByProvince, totalSantri }) {
                                 </span>
                             </div>
                             <motion.div
-                                className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+                                className="p-7 rounded-lg overflow-hidden"
                                 whileHover={{ scale: 1.005 }}
                                 transition={{ duration: 0.3 }}
                             >
@@ -931,7 +931,7 @@ export default function SantriMap({ auth, santriByProvince, totalSantri }) {
                                                                                 >
                                                                                     <div className="flex justify-between items-center mb-4">
                                                                                         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                                                                                            Grafik Sebaran Santri per Provinsi
+                                                                                            Grafik Domisili Santri per Provinsi
                                                                                         </h3>
                                                                                        
                                                                                     </div>
