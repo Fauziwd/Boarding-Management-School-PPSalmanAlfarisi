@@ -242,7 +242,7 @@ export default function SantriMap({ auth, santriByProvince, totalSantri }) {
                                 Domisili Santri
                             </h1>
                             <p className="opacity-90">
-                                Visualisasi data lokasi sebaran santri di seluruh
+                                Visualisasi data lokasi domisili santri di seluruh
                                 Indonesia
                             </p>
                         </motion.div>
@@ -393,7 +393,7 @@ export default function SantriMap({ auth, santriByProvince, totalSantri }) {
                         >
                             <div className="flex-1">
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">
-                                    Informasi Sebaran
+                                    Informasi Domisili
                                 </h3>
 
                                 {/* Dropdown in Info Panel */}

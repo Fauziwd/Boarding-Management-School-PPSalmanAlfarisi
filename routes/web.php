@@ -88,12 +88,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/study-classes/{study_class}/remove-santri', [StudyClassController::class, 'removeSantri'])->name('study-classes.removeSantri');
 
     // MANAJEMEN AKADEMIK & HAFALAN
-    Route::resource('akademik', AkademikController::class);
-    Route::resource('hafalan', HafalanController::class);
-    Route::resource('hafalan', HafalanController::class);
-    Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
-         ->name('internal-api.santri.study-classes');
-    Route::get('/hafalans/history/{santri}', [HafalanController::class, 'history'])->name('hafalans.history');
+Route::resource('akademik', AkademikController::class);
+
+// perbaikan: hapus duplikasi resource
+Route::resource('hafalans', HafalanController::class);
+
+// route untuk histori hafalan santri
+Route::get('/hafalans/history/{santri}', [HafalanController::class, 'history'])
+     ->name('hafalans.history');
+
+// internal API untuk akademik
+Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
+     ->name('internal-api.santri.study-classes');
+
     
     // MANAJEMEN Tahun & RAPOR
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);
@@ -104,6 +111,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/santri-map', [App\Http\Controllers\SantriController::class, 'map'])->name('santris.map');
 });
+
+Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/attendances/students', [AttendanceController::class, 'getStudentsForAttendance'])->name('attendance.getStudents');
+    Route::get('/akademiks/{santriId}', [AkademikController::class, 'getBySantriId'])->name('akademiks.getBySantriId');
+
+    // perbaikan: konsisten pakai 'hafalans'
+    Route::get('/hafalans/{santriId}', [HafalanController::class, 'getBySantriId'])->name('hafalans.getBySantriId');
+
+    Route::get('/check-nis/{nis}', [SantriController::class, 'checkNis'])->name('santri.checkNis');
+    Route::get('/check-nisn/{nisn}', [SantriController::class, 'checkNisn'])->name('santri.checkNisn');
+});
+
 
 /*
 |--------------------------------------------------------------------------
