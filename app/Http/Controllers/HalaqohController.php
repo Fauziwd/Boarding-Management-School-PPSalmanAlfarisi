@@ -22,13 +22,9 @@ class HalaqohController extends Controller
     {
         $activeYear = AcademicYear::where('is_active', true)->first();
 
-        // Ambil semua guru dengan role Muhafidz
         $muhafidzRoleTeachers = Teacher::whereJsonContains('roles', 'Muhafidz')->pluck('id');
-
-        // Ambil ID guru yang sudah mengampu halaqoh di tahun ajaran aktif
         $assignedTeacherIds = Halaqoh::where('academic_year_id', $activeYear ? $activeYear->id : null)->pluck('teacher_id');
 
-        // Guru yang tersedia adalah yang memiliki role Muhafidz dan belum mengampu
         $availableTeachers = Teacher::with('user')
             ->whereIn('id', $muhafidzRoleTeachers)
             ->whereNotIn('id', $assignedTeacherIds)
@@ -54,10 +50,20 @@ class HalaqohController extends Controller
     public function show(Halaqoh $halaqoh)
     {
         $halaqoh->load(['teacher.user', 'academicYear', 'santris.kelas']);
-        $availableSantris = Santri::whereDoesntHave('halaqohs', function ($query) use ($halaqoh) {
-            $query->where('academic_year_id', $halaqoh->academic_year_id);
-        })->get();
-        return Inertia::render('Halaqoh/Show', ['halaqoh' => $halaqoh, 'availableSantris' => $availableSantris]);
+
+        // --- PERUBAHAN DI SINI ---
+        // Memastikan hanya santri berstatus 'Aktif' yang belum punya halaqoh di tahun ajaran ini yang diambil
+        $availableSantris = Santri::where('status_santri', 'Aktif')
+            ->whereDoesntHave('halaqohs', function ($query) use ($halaqoh) {
+                $query->where('academic_year_id', $halaqoh->academic_year_id);
+            })
+            ->orderBy('nama_santri', 'asc')
+            ->get(['id', 'nama_santri', 'nis']);
+            
+        return Inertia::render('Halaqoh/Show', [
+            'halaqoh' => $halaqoh, 
+            'availableSantris' => $availableSantris
+        ]);
     }
 
     public function addSantri(Request $request, Halaqoh $halaqoh)

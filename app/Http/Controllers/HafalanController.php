@@ -194,6 +194,6 @@ class HafalanController extends Controller
             $lastPeriodTotal = $currentTotal;
         }
 
-        return response()->json(['history' => $history, 'chartData' => $finalChartData->values()]);
+        return response()->json(['history' => $history, 'chartData' => []]); 
     }
 }

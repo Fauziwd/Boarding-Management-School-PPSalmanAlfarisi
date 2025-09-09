@@ -40,6 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rute untuk mengambil riwayat hafalan (dibutuhkan oleh halaman Index Hafalan)
+    Route::get('/hafalan/{santri}/history', [HafalanController::class, 'getHafalanHistory'])->name('hafalan.history');
 });
 
 /*
@@ -51,20 +54,16 @@ Route::middleware(['auth', 'verified'])->prefix('absensi')->name('absensi.')->gr
     Route::get('/', [AttendanceController::class, 'index'])->name('index');
     Route::get('/create', [AttendanceController::class, 'create'])->name('create');
     Route::post('/', [AttendanceController::class, 'store'])->name('store');
-    
-    // PERBAIKAN: Menggunakan middleware 'admin' yang akan kita daftarkan
     Route::patch('/update-by-admin', [AttendanceController::class, 'updateByAdmin'])
         ->name('updateByAdmin')
         ->middleware('admin'); 
 });
-
 
 /*
 |--------------------------------------------------------------------------
 | Rute Khusus untuk Peran 'admin'
 |--------------------------------------------------------------------------
 */
-// PERBAIKAN: Menggunakan middleware 'admin' yang akan kita daftarkan
 Route::middleware(['auth', 'admin'])->group(function () {
     // MANAJEMEN INTI
     Route::resource('users', UserController::class);
@@ -88,41 +87,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/study-classes/{study_class}/remove-santri', [StudyClassController::class, 'removeSantri'])->name('study-classes.removeSantri');
 
     // MANAJEMEN AKADEMIK & HAFALAN
-Route::resource('akademik', AkademikController::class);
+    Route::resource('akademik', AkademikController::class);
+    Route::resource('hafalan', HafalanController::class);
 
-// perbaikan: hapus duplikasi resource
-Route::resource('hafalans', HafalanController::class);
-
-// route untuk histori hafalan santri
-Route::get('/hafalans/history/{santri}', [HafalanController::class, 'history'])
-     ->name('hafalans.history');
-
-// internal API untuk akademik
-Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
-     ->name('internal-api.santri.study-classes');
-
+    // internal API untuk akademik
+    Route::get('/internal-api/santri/{santri}/study-classes', [AkademikController::class, 'getStudyClassesForSantri'])
+        ->name('internal-api.santri.study-classes');
     
-    // MANAJEMEN Tahun & RAPOR
+    // MANAJEMEN TAHUN & RAPOR
     Route::resource('academic-years', AcademicYearController::class)->except(['show']);
     Route::post('academic-years/{academicYear}/set-active', [AcademicYearController::class, 'setActive'])->name('academic-years.set-active');
     Route::resource('report-cards', ReportCardController::class)->only(['index', 'show']);
     Route::post('report-cards/generate', [ReportCardController::class, 'generate'])->name('report-cards.generate');
     Route::get('/report-cards/{reportCard}/download', [ReportCardController::class, 'downloadPdf'])->name('report-cards.download');
-
-    Route::get('/santri-map', [App\Http\Controllers\SantriController::class, 'map'])->name('santris.map');
 });
-
-Route::middleware(['auth'])->prefix('api')->name('api.')->group(function () {
-    Route::get('/attendances/students', [AttendanceController::class, 'getStudentsForAttendance'])->name('attendance.getStudents');
-    Route::get('/akademiks/{santriId}', [AkademikController::class, 'getBySantriId'])->name('akademiks.getBySantriId');
-
-    // perbaikan: konsisten pakai 'hafalans'
-    Route::get('/hafalans/{santriId}', [HafalanController::class, 'getBySantriId'])->name('hafalans.getBySantriId');
-
-    Route::get('/check-nis/{nis}', [SantriController::class, 'checkNis'])->name('santri.checkNis');
-    Route::get('/check-nisn/{nisn}', [SantriController::class, 'checkNisn'])->name('santri.checkNisn');
-});
-
 
 /*
 |--------------------------------------------------------------------------
